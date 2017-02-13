@@ -1,5 +1,5 @@
 class SeasonsController < ApplicationController
-  before_action :authenticate_user
+  before_action :authenticate_user, except: [ :index ]
   before_action :set_season, only: [:show, :update, :destroy]
 
   # GET /seasons
