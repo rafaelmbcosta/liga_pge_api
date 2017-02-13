@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170211150710) do
+ActiveRecord::Schema.define(version: 20170213015420) do
 
   create_table "battles", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "first_id",                               null: false
@@ -79,6 +79,15 @@ ActiveRecord::Schema.define(version: 20170211150710) do
     t.datetime "updated_at",                null: false
     t.index ["player_id"], name: "index_teams_on_player_id", using: :btree
     t.index ["season_id"], name: "index_teams_on_season_id", using: :btree
+  end
+
+  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "email"
+    t.string   "auth0_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["auth0_id"], name: "index_users_on_auth0_id", unique: true, using: :btree
+    t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
   end
 
   add_foreign_key "battles", "rounds"
