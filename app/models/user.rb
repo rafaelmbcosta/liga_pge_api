@@ -1,3 +1,3 @@
 class User < ApplicationRecord
-  def self.from_token_payload payload
+  has_secure_password
 end

@@ -27,7 +27,7 @@ ActiveRecord::Schema.define(version: 20170213015420) do
   end
 
   create_table "dispute_months", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "number"
+    t.integer  "number",     null: false
     t.string   "details"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -71,7 +71,7 @@ ActiveRecord::Schema.define(version: 20170213015420) do
   end
 
   create_table "teams", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string   "name"
+    t.string   "name",                      null: false
     t.boolean  "active",     default: true, null: false
     t.integer  "season_id"
     t.integer  "player_id"
@@ -83,10 +83,9 @@ ActiveRecord::Schema.define(version: 20170213015420) do
 
   create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.string   "email"
-    t.string   "auth0_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["auth0_id"], name: "index_users_on_auth0_id", unique: true, using: :btree
+    t.string   "password_digest"
+    t.datetime "created_at",      null: false
+    t.datetime "updated_at",      null: false
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
   end
 
