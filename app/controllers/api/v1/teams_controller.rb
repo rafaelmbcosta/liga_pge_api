@@ -1,4 +1,4 @@
-class TeamsController < ApplicationController
+class Api::V1::TeamsController < ApplicationController
   before_action :set_team, only: [:show, :update, :destroy]
 
   # GET /teams

@@ -1,4 +1,4 @@
-class DisputeMonthsController < ApplicationController
+class Api::V1::DisputeMonthsController < ApplicationController
   before_action :set_dispute_month, only: [:show, :update, :destroy]
 
   # GET /dispute_months
