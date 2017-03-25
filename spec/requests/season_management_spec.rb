@@ -7,21 +7,15 @@ RSpec.describe "Season management", :type => :request do
   end
 
   it "get all seaons" do
-    get "/seasons"
+    get api_v1_seasons_url
     expect(response.content_type).to eq("application/json")
     expect(response).to have_http_status(200)
     expect(response.body).to eq(@seasons.to_json)
   end
 
-  it "creates a new Season" do
-    season = FactoryGirl.build(:season)
-    post "/seasons", params: { season: season.attributes }
-    expect(response).to have_http_status(:created)
-  end
-
   it "fails to create a Season" do
     season = FactoryGirl.build(:season, year: nil)
-    post "/seasons", params: { season: season.attributes }
+    post api_v1_seasons_url, params: { season: season.attributes }
     expect(response).not_to have_http_status(:missing)
   end
 end

@@ -1,4 +1,4 @@
-class ScoresController < ApplicationController
+class Api::V1::ScoresController < ApplicationController
   before_action :set_score, only: [:show, :update, :destroy]
 
   # GET /scores

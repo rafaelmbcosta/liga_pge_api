@@ -1,4 +1,4 @@
-class RoundsController < ApplicationController
+class Api::V1::RoundsController < ApplicationController
   before_action :set_round, only: [:show, :update, :destroy]
 
   # GET /rounds

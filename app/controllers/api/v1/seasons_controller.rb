@@ -1,10 +1,10 @@
-class SeasonsController < ApplicationController
+class Api::V1::SeasonsController < ApplicationController
   before_action :authenticate_user, except: [ :index ]
   before_action :set_season, only: [:show, :update, :destroy]
 
   # GET /seasons
   def index
-    @seasons = Season.all
+    @seasons = Api::V1::Season.all
 
     render json: @seasons
   end

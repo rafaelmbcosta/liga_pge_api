@@ -1,4 +1,4 @@
-class BattlesController < ApplicationController
+class Api::V1::BattlesController < ApplicationController
   before_action :set_battle, only: [:show, :update, :destroy]
 
   # GET /battles
