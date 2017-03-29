@@ -16,7 +16,7 @@ class Api::V1::SeasonsController < ApplicationController
 
   # POST /seasons
   def create
-    @season = Season.new(season_params)
+    @season = Api::V1::Season.new(season_params)
 
     if @season.save
       render json: @season, status: :created, location: @season
@@ -42,7 +42,7 @@ class Api::V1::SeasonsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_season
-      @season = Season.find(params[:id])
+      @season = Api::V1::Season.find(params[:id])
     end
 
     # Only allow a trusted parameter "white list" through.
