@@ -7,7 +7,7 @@ class CreateRounds < ActiveRecord::Migration[5.0]
       t.date :market_open
       t.date :market_close
       t.boolean :finished, null: false, default: false
-
+      t.references :dispute_month, foreign_key: true
       t.timestamps
     end
   end
