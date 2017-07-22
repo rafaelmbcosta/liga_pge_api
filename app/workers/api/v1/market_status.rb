@@ -46,6 +46,7 @@ module Api
           current_round = market_status["rodada_atual"]
           round = verify_round(current_round, season)
           #verifica se já tem temporada
+          PartialScore.perform
         end
       end
     end
