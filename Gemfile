@@ -5,7 +5,7 @@ git_source(:github) do |repo_name|
   "https://github.com/#{repo_name}.git"
 end
 
-
+gem 'resque'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
 gem 'rails', '~> 5.0.1'
 # Use mysql as the database for Active Record
@@ -41,7 +41,6 @@ group :development, :test do
 
   # Fake attributes for factories
   gem 'faker'
-  gem 'resque'
 end
 
 group :development do
