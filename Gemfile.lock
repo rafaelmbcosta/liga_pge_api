@@ -99,7 +99,6 @@ GEM
     mono_logger (1.1.0)
     multi_json (1.12.1)
     mustermann (1.0.0)
-    mysql2 (0.4.5)
     nenv (0.3.0)
     nio4r (1.2.1)
     nokogiri (1.7.0.1)
@@ -107,6 +106,7 @@ GEM
     notiffany (0.1.1)
       nenv (~> 0.1)
       shellany (~> 0.0)
+    pg (0.20.0)
     pry (0.10.4)
       coderay (~> 1.1.0)
       method_source (~> 0.8.1)
@@ -230,7 +230,7 @@ DEPENDENCIES
   guard-rspec
   knock
   listen (~> 3.0.5)
-  mysql2 (>= 0.3.18, < 0.5)
+  pg
   puma (~> 3.0)
   pusher
   rack-cors
