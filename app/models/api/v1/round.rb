@@ -2,6 +2,13 @@ module Api
   module V1
     class Round < ApplicationRecord
       belongs_to :season
+      belongs_to :dispute_month
+
+
+      def self.partials
+        last_round = Round.last
+        scores = Score.where(round: last_round).order('partial_score desc')
+      end
 
       def self.battle_generator
         fantasma = Player.where("name = 'Fantasma'").first

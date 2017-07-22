@@ -4,19 +4,25 @@ require 'open-uri'
 module Web
   module ApiCartola
     class Connection
-
+      STATUS_URL = "https://api.cartolafc.globo.com/mercado/status"
       URL_TEAM_SCORE = "https://api.cartolafc.globo.com/time/slug/"
-      # URL_TEAM_SCORE = "https://api.cartolafc.globo.com/time/slug/fabayern-fc/5"
 
-      def self.get_team_score(slug, round=nil)
+      def self.connect(uri)
+        http = Net::HTTP::Proxy(ENV["proxy_name"], ENV["proxy_port"],
+          ENV["proxy_user"], ENV["proxy_password"]) if Rails.env == "development"
+        request = http.get_response(uri)
+        return JSON.parse(request.body)
+      end
+
+      def self.team_score(slug, round=nil)
         uri = URI(URL_TEAM_SCORE + "#{slug}")
         uri = URI(URL_TEAM_SCORE + "#{slug}/#{round}") unless round.nil?
+        return connect(uri)
+      end
 
-        # http = Net::HTTP::Proxy(@proxy_host, @proxy_port, @proxy_user, @proxy_pass)
-        http = Net::HTTP::Proxy('proxy', '3128', 'fabi', 'passwd')
-        request = http.get_response(uri)
-        return request.body
-
+      def self.market_status
+        uri = URI(STATUS_URL)
+        return connect(uri)
       end
     end
   end

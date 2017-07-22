@@ -10,6 +10,12 @@ module Api
         render json: @rounds
       end
 
+      def partials
+        @partials = Round.partials
+
+        render json: @partials
+      end
+
       # GET /rounds/1
       def show
         render json: @round

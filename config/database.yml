@@ -15,7 +15,8 @@ default: &default
   pool: 5
   username: root
   password: 123456
-  socket: /var/run/mysqld/mysqld.sock
+  host: 127.0.0.1
+  # socket: /var/run/mysqld/mysqld.sock
 
 development:
   <<: *default

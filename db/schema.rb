@@ -27,10 +27,13 @@ ActiveRecord::Schema.define(version: 20170213015420) do
   end
 
   create_table "dispute_months", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "number",     null: false
+    t.string   "name",           null: false
+    t.integer  "season_id"
     t.string   "details"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.string   "dispute_rounds"
+    t.datetime "created_at",     null: false
+    t.datetime "updated_at",     null: false
+    t.index ["season_id"], name: "index_dispute_months_on_season_id", using: :btree
   end
 
   create_table "players", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
@@ -41,19 +44,23 @@ ActiveRecord::Schema.define(version: 20170213015420) do
   end
 
   create_table "rounds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "number",                       null: false
-    t.boolean  "golden",       default: false, null: false
+    t.integer  "number",                           null: false
+    t.boolean  "golden",           default: false, null: false
     t.integer  "season_id"
     t.date     "market_open"
     t.date     "market_close"
-    t.boolean  "finished",     default: false, null: false
-    t.datetime "created_at",                   null: false
-    t.datetime "updated_at",                   null: false
+    t.boolean  "finished",         default: false, null: false
+    t.integer  "dispute_month_id"
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.index ["dispute_month_id"], name: "index_rounds_on_dispute_month_id", using: :btree
     t.index ["season_id"], name: "index_rounds_on_season_id", using: :btree
   end
 
   create_table "scores", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "team_id"
+    t.string   "team_name"
+    t.string   "player_name"
     t.integer  "round_id"
     t.float    "partial_score", limit: 24, default: 0.0
     t.float    "final_score",   limit: 24, default: 0.0
@@ -64,19 +71,22 @@ ActiveRecord::Schema.define(version: 20170213015420) do
   end
 
   create_table "seasons", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "year",                       null: false
-    t.boolean  "finished",   default: false, null: false
-    t.datetime "created_at",                 null: false
-    t.datetime "updated_at",                 null: false
+    t.integer  "year",                          null: false
+    t.boolean  "finished",      default: false, null: false
+    t.string   "golden_rounds"
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
   end
 
   create_table "teams", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.string   "name",                      null: false
-    t.boolean  "active",     default: true, null: false
+    t.string   "name",                          null: false
+    t.boolean  "active",         default: true, null: false
+    t.string   "slug"
+    t.string   "url_escudo_png"
     t.integer  "season_id"
     t.integer  "player_id"
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
     t.index ["player_id"], name: "index_teams_on_player_id", using: :btree
     t.index ["season_id"], name: "index_teams_on_season_id", using: :btree
   end
@@ -90,6 +100,7 @@ ActiveRecord::Schema.define(version: 20170213015420) do
   end
 
   add_foreign_key "battles", "rounds"
+  add_foreign_key "rounds", "dispute_months"
   add_foreign_key "rounds", "seasons"
   add_foreign_key "scores", "rounds"
   add_foreign_key "scores", "teams"
