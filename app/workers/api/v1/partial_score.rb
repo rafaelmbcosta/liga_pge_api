@@ -6,7 +6,7 @@ module Api
         last_round = Round.last
         teams = Team.where(season: last_round.season)
         teams.each do |team|
-            pontuacao = Web::ApiCartola::Connection.team_score(team.slug, last_round.number)
+            pontuacao = Connection.team_score(team.slug, last_round.number)
             score = Score.find{|sc| sc.team_id == team.id and  sc.round_id == last_round.id}
             if score.nil?
               score = Score.create(team: team, round: last_round,

@@ -40,7 +40,7 @@ module Api
         # "fechamento"=>{"dia"=>22, "mes"=>7, "ano"=>2017, "hora"=>14, "minuto"=>0,
         #   "timestamp"=>1500742800},
         # "mercado_pos_rodada"=>true, "aviso"=>""}
-        market_status = Web::ApiCartola::Connection.market_status
+        market_status = Connection.market_status
         unless market_status["game_over"]
           season = verify_season(market_status["temporada"])
           current_round = market_status["rodada_atual"]

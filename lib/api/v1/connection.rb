@@ -1,8 +1,8 @@
 #encoding:utf-8
 require 'net/http'
 require 'open-uri'
-module Web
-  module ApiCartola
+module Api
+  module V1
     class Connection
       STATUS_URL = "https://api.cartolafc.globo.com/mercado/status"
       URL_TEAM_SCORE = "https://api.cartolafc.globo.com/time/slug/"
