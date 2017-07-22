@@ -6,6 +6,7 @@ module Api
     class Connection
       STATUS_URL = "https://api.cartolafc.globo.com/mercado/status"
       URL_TEAM_SCORE = "https://api.cartolafc.globo.com/time/slug/"
+      ATHLETES_SCORES = "https://api.cartolafc.globo.com/atletas/pontuados"
 
       def self.connect(uri)
         # For proxy development change coment lines below
@@ -24,6 +25,11 @@ module Api
 
       def self.market_status
         uri = URI(STATUS_URL)
+        return connect(uri)
+      end
+
+      def self.athletes_scores
+        uri = URI(ATHLETES_SCORES)
         return connect(uri)
       end
     end
