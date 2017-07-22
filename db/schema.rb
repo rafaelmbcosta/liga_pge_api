@@ -12,21 +12,24 @@
 
 ActiveRecord::Schema.define(version: 20170213015420) do
 
-  create_table "battles", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
-    t.integer  "first_id",                               null: false
-    t.string   "second_id",                              null: false
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
+
+  create_table "battles", force: :cascade do |t|
+    t.integer  "first_id",                    null: false
+    t.string   "second_id",                   null: false
     t.integer  "round_id"
     t.boolean  "first_win"
-    t.float    "first_points",  limit: 24, default: 0.0
+    t.float    "first_points",  default: 0.0
     t.boolean  "draw"
     t.boolean  "second_win"
-    t.float    "second_points", limit: 24, default: 0.0
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.float    "second_points", default: 0.0
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.index ["round_id"], name: "index_battles_on_round_id", using: :btree
   end
 
-  create_table "dispute_months", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "dispute_months", force: :cascade do |t|
     t.string   "name",           null: false
     t.integer  "season_id"
     t.string   "details"
@@ -36,14 +39,14 @@ ActiveRecord::Schema.define(version: 20170213015420) do
     t.index ["season_id"], name: "index_dispute_months_on_season_id", using: :btree
   end
 
-  create_table "players", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "players", force: :cascade do |t|
     t.string   "name",                      null: false
     t.boolean  "active",     default: true, null: false
     t.datetime "created_at",                null: false
     t.datetime "updated_at",                null: false
   end
 
-  create_table "rounds", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "rounds", force: :cascade do |t|
     t.integer  "number",                           null: false
     t.boolean  "golden",           default: false, null: false
     t.integer  "season_id"
@@ -57,20 +60,20 @@ ActiveRecord::Schema.define(version: 20170213015420) do
     t.index ["season_id"], name: "index_rounds_on_season_id", using: :btree
   end
 
-  create_table "scores", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "scores", force: :cascade do |t|
     t.integer  "team_id"
     t.string   "team_name"
     t.string   "player_name"
     t.integer  "round_id"
-    t.float    "partial_score", limit: 24, default: 0.0
-    t.float    "final_score",   limit: 24, default: 0.0
-    t.datetime "created_at",                             null: false
-    t.datetime "updated_at",                             null: false
+    t.float    "partial_score", default: 0.0
+    t.float    "final_score",   default: 0.0
+    t.datetime "created_at",                  null: false
+    t.datetime "updated_at",                  null: false
     t.index ["round_id"], name: "index_scores_on_round_id", using: :btree
     t.index ["team_id"], name: "index_scores_on_team_id", using: :btree
   end
 
-  create_table "seasons", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "seasons", force: :cascade do |t|
     t.integer  "year",                          null: false
     t.boolean  "finished",      default: false, null: false
     t.string   "golden_rounds"
@@ -78,7 +81,7 @@ ActiveRecord::Schema.define(version: 20170213015420) do
     t.datetime "updated_at",                    null: false
   end
 
-  create_table "teams", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "teams", force: :cascade do |t|
     t.string   "name",                          null: false
     t.boolean  "active",         default: true, null: false
     t.string   "slug"
@@ -91,7 +94,7 @@ ActiveRecord::Schema.define(version: 20170213015420) do
     t.index ["season_id"], name: "index_teams_on_season_id", using: :btree
   end
 
-  create_table "users", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+  create_table "users", force: :cascade do |t|
     t.string   "email"
     t.string   "password_digest"
     t.datetime "created_at",      null: false
