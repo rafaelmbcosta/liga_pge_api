@@ -27,8 +27,9 @@ ActiveRecord::Schema.define(version: 20170213015420) do
   end
 
   create_table "dispute_months", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
+    t.string   "name",           null: false
     t.integer  "season_id"
-    t.string   "name"
+    t.string   "details"
     t.string   "dispute_rounds"
     t.datetime "created_at",     null: false
     t.datetime "updated_at",     null: false
@@ -58,6 +59,8 @@ ActiveRecord::Schema.define(version: 20170213015420) do
 
   create_table "scores", force: :cascade, options: "ENGINE=InnoDB DEFAULT CHARSET=utf8" do |t|
     t.integer  "team_id"
+    t.string   "team_name"
+    t.string   "player_name"
     t.integer  "round_id"
     t.float    "partial_score", limit: 24, default: 0.0
     t.float    "final_score",   limit: 24, default: 0.0

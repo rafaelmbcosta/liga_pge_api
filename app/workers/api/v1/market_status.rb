@@ -8,26 +8,26 @@ module Api
           previous_season = Season.find{|s| s.year == (year - 1)}
           previous season.finished = true
           season = Season.create(year: year, finished: false)
-          DisputeMonth.create(number: 1, season: season, details: "Primeiro mês de disputa", rounds: [1])
+          # DisputeMonth.create(number: 1, season: season, details: "Primeiro mês de disputa", rounds: [1])
           # if this happen, teams need to be included for the new season
         end
         return season
       end
 
-      def verify_round(number, season)
-           round = Round.find{|r| r.season.id == season.id and r.number == number}
-           if round.nil?
-             ## verify if its golden (on seasons)
-             golden = season.golden_rounds.include?(number)
-             ## verify dispute month (if configured )
-             dispute = DisputeMonth.find{|d| d.season_id == season.id and d.dispute_rounds.include?(number)}
-             round = Round.create(number: number, dispute_month: dispute, golden: golden, finished: false)
-             ## new battles
-             ## finish previous battles
-             ## verify winners
-             ## update rankings
-           end
-           return round
+      def self.verify_round(number, season)
+       round = Round.find{|r| r.season.id == season.id and r.number == number}
+       if round.nil?
+         ## verify if its golden (on seasons)
+         golden = season.golden_rounds.include?(number)
+         ## verify dispute month (if configured )
+         dispute = DisputeMonth.find{|d| d.season_id == season.id and d.dispute_rounds.include?(number)}
+         round = Round.create(number: number, season: season, dispute_month: dispute, golden: golden, finished: false)
+         ## new battles
+         ## finish previous battles
+         ## verify winners
+         ## update rankings
+       end
+       return round
       end
 
       def self.perform
@@ -41,7 +41,7 @@ module Api
         #   "timestamp"=>1500742800},
         # "mercado_pos_rodada"=>true, "aviso"=>""}
         market_status = Web::ApiCartola::Connection.market_status
-        unless market_status["game_over"]?
+        unless market_status["game_over"]
           season = verify_season(market_status["temporada"])
           current_round = market_status["rodada_atual"]
           round = verify_round(current_round, season)
