@@ -11,8 +11,6 @@ module Api
       end
 
       def partials
-        MarketStatus.perform
-        PartialScore.perform
         @partials = Round.partials
 
         render json: @partials
