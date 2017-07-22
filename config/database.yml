@@ -18,5 +18,5 @@ test:
 production:
   <<: *default
   database: cartolapgeapi_production
-  username: ccartolapgeapi
+  username: cartolapgeapi
   password: <%= ENV['RUBY-CARTOLAPGEAPI_DATABASE_PASSWORD'] %>
