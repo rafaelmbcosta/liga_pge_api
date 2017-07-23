@@ -12,6 +12,7 @@ Rails.application.routes.draw do
       resources :seasons
 
       get 'partials' => 'rounds#partials'
+      get 'partials/:id' => 'rounds#partial'
     end
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html

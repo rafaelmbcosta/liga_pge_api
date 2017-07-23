@@ -16,6 +16,12 @@ module Api
         render json: @partials
       end
 
+      def partial
+        team = Team.find(params[:id])
+        @partial = Round.partial(team)
+        render json: @partial
+      end
+
       # GET /rounds/1
       def show
         render json: @round

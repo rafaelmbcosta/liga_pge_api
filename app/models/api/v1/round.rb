@@ -10,6 +10,29 @@ module Api
         scores = Score.where(round: last_round).order('partial_score desc')
       end
 
+      def self.partial(team)
+        last_round = Round.last
+        team_athletes = Connection.team_score(team.slug, last_round.number)
+        athletes = Connection.athletes_scores
+        result = []
+        team_athletes["atletas"].each do |team_athlete|
+          partial = Hash.new
+          partial["nickname"] = team_athlete["apelido"]
+          partial["points"] = "-"
+          partial["scouts"] = "-"
+          partial["team"] = team_athletes["clubes"][team_athlete["clube_id"].to_s]["abreviacao"]
+          partial["team_logo"] = team_athletes["clubes"][team_athlete["clube_id"].to_s]["escudos"]["45x45"]
+          athlete_id = team_athlete["atleta_id"].to_s
+          if athletes["atletas"].include?(athlete_id)
+            partial["points"] = athletes["atletas"][athlete_id.to_s]["pontuacao"]
+            scouts = athletes["atletas"][athlete_id.to_s]["scout"]
+            partial["scouts"] = scouts.collect{|k,v| "#{k}x#{v}"}.join(" ").gsub("x1","")
+          end
+          result << partial
+        end
+        return result
+      end
+
       def self.battle_generator
         fantasma = Player.where("name = 'Fantasma'").first
         round = Round.new
