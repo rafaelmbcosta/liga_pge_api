@@ -20,6 +20,8 @@ module Api
           partial["nickname"] = team_athlete["apelido"]
           partial["points"] = "-"
           partial["scouts"] = "-"
+          partial["team_name"] = team.name
+          partial["player_name"] = team.player.name
           partial["team"] = team_athletes["clubes"][team_athlete["clube_id"].to_s]["abreviacao"]
           partial["team_logo"] = team_athletes["clubes"][team_athlete["clube_id"].to_s]["escudos"]["45x45"]
           athlete_id = team_athlete["atleta_id"].to_s
