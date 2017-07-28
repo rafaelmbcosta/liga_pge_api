@@ -245,7 +245,24 @@ task :previous_battles => :environment do
   {"t1" => "	Marciano Araújo ( Cearabarça FC )	", "t2" => "	Victor Santiago ( VBSantiago FC )	", "round" => "	1	"},
   {"t1" => "	Ronilson Costa ( Phode Chorarr FC )	", "t2" => "	Reginaldo Ramos ( Hr Premoldados )	", "round" => "	1	"},
   {"t1" => "	Leonardo Brandão ( Guerreiros do Vila )	", "t2" => "	Daniel Oliveira ( PIEDADE FCF )	", "round" => "	1	"},
-  {"t1" => "	Marcelo Faustino ( Palestra Cangaceiro )	", "t2" => "	Felipe Phelype ( IslandOfCatsFootball )	", "round" => "	1	"}]
+  {"t1" => "	Marcelo Faustino ( Palestra Cangaceiro )	", "t2" => "	Felipe Phelype ( IslandOfCatsFootball )	", "round" => "	1	"},
+  {"t1" => "	Fabio Gurgel ( FaBayern FC )	", "t2" => "	Lucas Batista ( vovo S.C )	", "round" => "	17	"},
+  {"t1" => "	Cayo Luiz ( C.Luiz )	", "t2" => "	Daniel Oliveira ( PIEDADE FCF )	", "round" => "	17	"},
+  {"t1" => "	Marciano Araújo ( Cearabarça FC )	", "t2" => "	Ronilson Costa ( Phode Chorarr FC )	", "round" => "	17	"},
+  {"t1" => "	José Carlos ( Boa Viagem E. Clube )	", "t2" => "	Renan Benevides ( simple man )	", "round" => "	17	"},
+  {"t1" => "	Vanduy Sales ( Vanduka FC )	", "t2" => "	Cleber Ramos ( 47 DO SEGUNDO TEMPO FC )	", "round" => "	17	"},
+  {"t1" => "	Rafael Costa ( Ferrim Saint-Germain )	", "t2" => "	Fantasma ( Fantasma )	", "round" => "	17	"},
+  {"t1" => "	Márcio Ayres ( Down Futball United )	", "t2" => "	Danielson Filho ( Raimundões FC )	", "round" => "	17	"},
+  {"t1" => "	Felipe Phelype ( IslandOfCatsFootball )	", "t2" => "	Caio Batista ( Batista S.C )	", "round" => "	17	"},
+  {"t1" => "	Bruno Dias ( Valério Central F. C )	", "t2" => "	Victor Santiago ( VBSantiago FC )	", "round" => "	17	"},
+  {"t1" => "	Vladimir Gomes ( Emilly Acsa FC )	", "t2" => "	Felipe Parteira ( Cearamor Messejana )	", "round" => "	17	"},
+  {"t1" => "	Matheus Batista ( orlof F.C )	", "t2" => "	Vanderson Cabral ( FC Cara Seca )	", "round" => "	17	"},
+  {"t1" => "	Emival Queiroz ( Emival SCCP )	", "t2" => "	Rennan Batista ( Chico e Gunha FC )	", "round" => "	17	"},
+  {"t1" => "	Marcelo Almeida ( Camisa10daGavea )	", "t2" => "	Felipe Batista ( Cachagol FC )	", "round" => "	17	"},
+  {"t1" => "	Victor Gomes ( Victor Gomes CSC )	", "t2" => "	Marcelo Faustino ( Palestra Cangaceiro )	", "round" => "	17	"},
+  {"t1" => "	Alberto Perdigão ( PerdiCartola F.C )	", "t2" => "	Reginaldo Ramos ( Hr Premoldados )	", "round" => "	17	"},
+  {"t1" => "	Leonardo Brandão ( Guerreiros do Vila )	", "t2" => "	Jorge Pereira ( CARAI DEMAIS )	", "round" => "	17	"}
+]
 
   battles.each do |battle|
     season = Api::V1::Season.last
