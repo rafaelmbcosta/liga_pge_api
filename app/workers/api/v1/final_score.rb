@@ -1,7 +1,6 @@
 module Api
   module V1
     class FinalScore
-
       def self.perform(round)
         teams = Team.where(season: round.season)
         teams.each do |team|
@@ -15,7 +14,9 @@ module Api
           else
             score.update_attributes(final_score: points.round(2))
           end
+          round.update_attributes(finished: true)
         end
+        BattleResults.perform(round) if Battle.where(round: round.id).any?
       end
     end
   end

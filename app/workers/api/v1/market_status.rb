@@ -23,8 +23,6 @@ module Api
          dispute = DisputeMonth.find{|d| d.season_id == season.id and d.dispute_rounds.include?(number)}
          round = Round.create(number: number, season: season, dispute_month: dispute, golden: golden, finished: false)
          ## new battles
-         previous_round = Round.find{|r| r.number == number-1 and finished == false}
-         FinalScore.perform(previous_round) unless previous_round.nil?
          ## finish previous battles
          ## verify winners
          ## update rankings
@@ -39,11 +37,13 @@ module Api
         round = verify_round(current_round, season)
         unless market_status["game_over"]
           #verifica se já tem temporada
-          if market_status["status_mercado"] == 2 # 16
+          if market_status["status_mercado"] == 2 #Fechado
             PartialScore.perform
           end
-          if market_status["status_mercado"] == 18 # ABERTO 17
-            # o que roda uma vez, faz na criação do round
+          if market_status["status_mercado"] == 1 # ABERTO 1
+            # Verifica se o round anterior existe e está finalizado
+            previous_round = Round.find{|r| r.number == number-1 and finished == false}
+            FinalScore.perform(previous_round) unless previous_round.nil?
           end
         end
       end

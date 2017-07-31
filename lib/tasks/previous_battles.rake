@@ -279,7 +279,7 @@ task :previous_battles => :environment do
     Api::V1::Battle.create( round_id: round.id, first_id: first_id, second_id: second_id )
   end
 
-  # (1..15).to_a.each do |round_number|
+  # (1..16).to_a.each do |round_number|
   #   round = Api::V1::Round.find{|r| r.number == round_number}
   #   Api::V1::FinalScore.perform(round) unless round.nil?
   # end
