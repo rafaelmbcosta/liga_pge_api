@@ -22,10 +22,6 @@ module Api
          ## verify dispute month (if configured )
          dispute = DisputeMonth.find{|d| d.season_id == season.id and d.dispute_rounds.include?(number)}
          round = Round.create(number: number, season: season, dispute_month: dispute, golden: golden, finished: false)
-         ## new battles
-         ## finish previous battles
-         ## verify winners
-         ## update rankings
        end
        return round
       end
@@ -36,9 +32,13 @@ module Api
         current_round = market_status["rodada_atual"]
         round = verify_round(current_round, season)
         unless market_status["game_over"]
-          #verifica se já tem temporada
+          fechamento = market_status["fechamento"]
+          #
           if market_status["status_mercado"] == 2 #Fechado
-            PartialScore.perform
+            NewBattle.perform(round) if (round.battles.empty? && Time.now.day == fechamento["dia"] &&
+              Time.now.month == fechamento["mes"] && Time.now.year == fechamento["ano"] )
+              puts "Round id: #{round.id} number: #{round.number}"
+            PartialScore.perform(round)
           end
           if market_status["status_mercado"] == 1 # ABERTO 1
             # Verifica se o round anterior existe e está finalizado

@@ -2,8 +2,7 @@ module Api
   module V1
     class PartialScore
 
-      def self.perform
-        last_round = Round.last
+      def self.perform(last_round)
         teams = Team.where(season: last_round.season)
         athletes = Connection.athletes_scores["atletas"]
         teams.each do |team|

@@ -16,7 +16,7 @@ module Api
           end
           round.update_attributes(finished: true)
         end
-        BattleResults.perform(round) if Battle.where(round: round.id).any?
+        BattleResults.perform(round)
       end
     end
   end

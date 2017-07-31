@@ -4,6 +4,7 @@ module Api
       belongs_to :season
       belongs_to :dispute_month
       has_many :scores
+      has_many :battles
 
       def self.check_golden(round_number)
         Api::V1::Season.last.golden_rounds.include?(round_number)
