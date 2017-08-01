@@ -6,6 +6,8 @@ module Api
       has_many :scores
       has_many :battles
 
+      default_scope { order("number asc")}
+
       def self.check_golden(round_number)
         Api::V1::Season.last.golden_rounds.include?(round_number)
       end
