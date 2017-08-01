@@ -7,7 +7,13 @@ module Api
       def index
         @dispute_months = DisputeMonth.all
 
-        render json: @dispute_months
+        render json: @dispute_months, include: [:rounds]
+      end
+
+      def league_points
+        @league_points = DisputeMonth.battle_points
+
+        render json: @league_points
       end
 
       # GET /dispute_months/1

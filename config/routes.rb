@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       resources :players
       resources :seasons
 
+      get 'league' => 'dispute_months#league_points'
       get 'partials' => 'rounds#partials'
       get 'partials/:id' => 'rounds#partial'
     end
