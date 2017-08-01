@@ -10,14 +10,12 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170722200524) do
+ActiveRecord::Schema.define(version: 20170724133902) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "battles", force: :cascade do |t|
-    t.integer  "first_id",                    null: false
-    t.string   "second_id",                   null: false
     t.integer  "round_id"
     t.boolean  "first_win"
     t.float    "first_points",  default: 0.0
@@ -26,6 +24,8 @@ ActiveRecord::Schema.define(version: 20170722200524) do
     t.float    "second_points", default: 0.0
     t.datetime "created_at",                  null: false
     t.datetime "updated_at",                  null: false
+    t.integer  "second_id"
+    t.integer  "first_id"
     t.index ["round_id"], name: "index_battles_on_round_id", using: :btree
   end
 
