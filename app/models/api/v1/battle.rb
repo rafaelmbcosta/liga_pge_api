@@ -8,7 +8,7 @@ module Api
         if id.nil?
           name = "Fantasma"
         else
-          team = teams.find(id)
+          team = teams.find{|t| t.id == id}
           name = "#{team.player.name} ( #{team.name} )"
         end
       end
@@ -19,7 +19,7 @@ module Api
         full_list = []
         battles.each do |k,v|
           list = Hash.new
-          list["round"] = k
+          list["round"] = Round.find(k).number
           list["battles"] = Array.new
           v.each do |battle|
             list_battle = battle.attributes
@@ -29,7 +29,7 @@ module Api
           end
           full_list << list
         end
-        return full_list
+        return full_list.sort_by{|list| list["round"]}.reverse
       end
     end
   end
