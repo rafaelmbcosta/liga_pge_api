@@ -5,7 +5,7 @@ module Api
 
     # GET /battles
     def index
-      @battles = Battle.all
+      @battles = Battle.list_battles
 
       render json: @battles
     end

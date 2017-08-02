@@ -34,9 +34,9 @@ module Api
               player["points"] = player["points"].round(2)
               month["players"] << player
             end
+            month["players"].sort_by!{ |e| e["points"] }.reverse!
+            months << month
           end
-          month["players"].sort_by!{ |e| e["points"] }.reverse!
-          months << month
         end
         return months
       end
@@ -54,7 +54,7 @@ module Api
             teams.each do |team|
               player = Hash.new
               player["name"] = team.player.name
-              player["team_name"] = team.name
+              player["team"] = team.name
               player["details"] = Array.new
               player["points"] = 0
               player["diff_points"] = 0
@@ -76,6 +76,7 @@ module Api
                 end
                 player["details"] << detail
               end
+              player["diff_points"] = player["diff_points"].round(2)
               league["players"] << player
             end
             league["players"].sort_by!{ |e| [e["points"], e["diff_points"]] }.reverse!
