@@ -42,7 +42,7 @@ module Api
           end
           if market_status["status_mercado"] == 1 # ABERTO 1
             # Verifica se o round anterior existe e está finalizado
-            previous_round = Round.find{|r| r.number == number-1 and finished == false}
+            previous_round = Round.find{|r| r.number == round.number-1 and r.finished == false}
             FinalScore.perform(previous_round) unless previous_round.nil?
           end
         end
