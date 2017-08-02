@@ -3,8 +3,43 @@ module Api
     class DisputeMonth < ApplicationRecord
       belongs_to :season
       has_many :rounds
+      has_many :scores, through: :rounds
       has_many :battles, through: :rounds
       serialize :dispute_rounds
+
+      def self.scores
+        dispute_months = DisputeMonth.all
+        teams = Team.where(active: true)
+        months = []
+        dispute_months.each do |dm|
+          scores = dm.scores
+          month = Hash.new
+          month["name"] = dm.name
+          month["players"] = Array.new
+          if scores.any?
+            teams.each do |team|
+              player = Hash.new
+              player["name"] = team.player.name
+              player["team"] = team.name
+              player["points"] = 0
+              player["details"] = Array.new
+              player_scores = scores.where("team_id = ?", team.id)
+              player_scores.each do |score|
+                detail = Hash.new
+                detail["round"] = score.round.number
+                detail["points"] = score.final_score
+                player["points"] += score.final_score
+                player["details"] << detail
+              end
+              player["points"] = player["points"].round(2)
+              month["players"] << player
+            end
+          end
+          month["players"].sort_by!{ |e| e["points"] }.reverse!
+          months << month
+        end
+        return months
+      end
 
       def self.battle_points
         dispute_months = DisputeMonth.all
