@@ -5,9 +5,9 @@ module Api
 
       # GET /dispute_months
       def index
-        @dispute_months = DisputeMonth.all
+        @dispute_months = DisputeMonth.scores
 
-        render json: @dispute_months, include: [:rounds]
+        render json: @dispute_months
       end
 
       def league_points
