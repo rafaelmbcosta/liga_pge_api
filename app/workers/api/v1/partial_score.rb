@@ -6,25 +6,26 @@ module Api
         teams = Team.where(season: last_round.season)
         athletes = Connection.athletes_scores["atletas"]
         teams.each do |team|
-            pontuacao = Connection.team_score(team.slug, last_round.number)
-            points = 0
-            players = 0
-            pontuacao["atletas"].each do |athlete|
-              athlete_id = athlete["atleta_id"]
-              if athletes.include?(athlete_id.to_s)
-                points += athletes[athlete_id.to_s]["pontuacao"]
-                players += 1
-              end
+          pontuacao = Connection.team_score(team.slug, last_round.number)
+          points = 0
+          players = 0
+          pontuacao["atletas"].each do |athlete|
+            athlete_id = athlete["atleta_id"]
+            if athletes.include?(athlete_id.to_s)
+              points += athletes[athlete_id.to_s]["pontuacao"]
+              players += 1
             end
-            score = Score.find{|sc| sc.team_id == team.id and  sc.round_id == last_round.id}
-            if score.nil?
-              score = Score.create(team: team, round: last_round,
-                  partial_score: points, team_name: team.name,
-                  player_name: team.player.name, players: players )
-            else
-              score.update_attributes(partial_score: points, players: players)
-            end
+          end
+          score = Score.find{|sc| sc.team_id == team.id and  sc.round_id == last_round.id}
+          if score.nil?
+            score = Score.create(team: team, round: last_round,
+                partial_score: points, team_name: team.name,
+                player_name: team.player.name, players: players )
+          else
+            score.update_attributes(partial_score: points, players: players)
+          end
         end
+        PartialReport.perform
       end
     end
   end
