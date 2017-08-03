@@ -17,8 +17,7 @@ module Api
       end
 
       def partial
-        team = Team.find(params[:id])
-        @partial = Round.partial(team)
+        @partial = Round.partial(params[:id])
         render json: @partial
       end
 
