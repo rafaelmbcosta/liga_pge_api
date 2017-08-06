@@ -9,6 +9,7 @@ module Api
           battles = dm.battles
           league = Hash.new
           league["name"] = dm.name
+          league["id"] = dm.id
           league["players"] = Array.new
           if battles.any?
             teams.each do |team|
@@ -43,7 +44,7 @@ module Api
             leagues << league
           end
         end
-        $redis.set("league", leagues.to_json)
+        $redis.set("league", leagues.reverse.to_json)
       end
     end
   end

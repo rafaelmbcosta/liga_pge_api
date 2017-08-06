@@ -3,9 +3,6 @@ module Api
     class PartialReport
 
       def self.perform
-        last_round = Round.last
-        scores = Score.where(round: last_round).order('partial_score desc')
-        $redis.set("partials", scores.to_json)
         Team.where("active is true").each do |team|
           partial(team)
         end
@@ -16,11 +13,15 @@ module Api
         team_athletes = Connection.team_score(team.slug, last_round.number)
         athletes = Connection.athletes_scores
         result = []
+        positions = team_athletes["posicoes"]
         team_athletes["atletas"].each do |team_athlete|
           partial = Hash.new
           partial["nickname"] = team_athlete["apelido"]
           partial["points"] = "-"
           partial["scouts"] = "-"
+          partial["position_id"] = team_athlete["posicao_id"]
+          partial["position"] = positions[team_athlete["posicao_id"].to_s]["nome"]
+          partial["position_id"] =  team_athlete["posicao_id"]
           partial["team_name"] = team.name
           partial["player_name"] = team.player.name
           partial["team"] = team_athletes["clubes"][team_athlete["clube_id"].to_s]["abreviacao"]
@@ -33,7 +34,7 @@ module Api
           end
           result << partial
         end
-        $redis.set("partial_#{team.id}",result.to_json)
+        $redis.set("partial_#{team.id}",result.sort_by{|r| r["position_id"].to_i}.to_json)
       end
     end
   end
