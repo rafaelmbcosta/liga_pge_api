@@ -29,7 +29,7 @@ module Api
           attributes["team_symbol"] = pontuacao["time"]["url_escudo_png"]
           scores << attributes
         end
-        $redis.set("partials", scores.to_json)
+        $redis.set("partials", scores.sort_by{|r| r["partial_score"]}.reverse.to_json)
         PartialReport.perform
       end
     end
