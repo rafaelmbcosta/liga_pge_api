@@ -5,6 +5,7 @@ module Api
       def self.perform(last_round)
         teams = Team.where(season: last_round.season)
         athletes = Connection.athletes_scores["atletas"]
+        scores = []
         teams.each do |team|
           pontuacao = Connection.team_score(team.slug, last_round.number)
           points = 0
@@ -24,7 +25,11 @@ module Api
           else
             score.update_attributes(partial_score: points, players: players)
           end
+          attributes = score.attributes
+          attributes["team_symbol"] = pontuacao["time"]["url_escudo_png"]
+          scores << attributes
         end
+        $redis.set("partials", scores.to_json)
         PartialReport.perform
       end
     end

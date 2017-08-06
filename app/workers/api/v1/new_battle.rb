@@ -34,6 +34,7 @@ module Api
             Battle.create(first_id: team, second_id: adversario, round_id: round.id )
           end
         end
+        BattlesReport.perform
       end
     end
   end

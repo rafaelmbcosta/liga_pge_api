@@ -9,6 +9,7 @@ module Api
           scores = dm.scores
           month = Hash.new
           month["name"] = dm.name
+          month["id"] = dm.id
           month["players"] = Array.new
           if scores.any?
             teams.each do |team|
@@ -32,7 +33,7 @@ module Api
             months << month
           end
         end
-        $redis.set("scores", months.to_json)
+        $redis.set("scores", months.reverse.to_json)
       end
     end
   end
