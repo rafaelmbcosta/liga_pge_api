@@ -8,8 +8,15 @@ module Api
         end
       end
 
+      def self.opponent(battle, team, teams)
+        opponent_id = nil
+        battle.first_id == team.id ? opponent_id = battle.second_id : opponent_id = battle.first_id
+        opponent_id.nil? ? (return "Fantasma") : (return "#{teams.find(opponent_id).name}")
+      end
+
       def self.partial(team)
         last_round = Round.last
+        battles = Battle.where(round: round)
         team_athletes = Connection.team_score(team.slug, last_round.number)
         athletes = Connection.athletes_scores
         result = []
@@ -26,6 +33,7 @@ module Api
           partial["player_name"] = team.player.name
           partial["team"] = team_athletes["clubes"][team_athlete["clube_id"].to_s]["abreviacao"]
           partial["team_logo"] = team_athletes["clubes"][team_athlete["clube_id"].to_s]["escudos"]["45x45"]
+          # partial["situacao"] = "empate"
           athlete_id = team_athlete["atleta_id"].to_s
           if athletes["atletas"].include?(athlete_id)
             partial["points"] = athletes["atletas"][athlete_id.to_s]["pontuacao"]
