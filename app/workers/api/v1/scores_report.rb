@@ -1,6 +1,7 @@
 module Api
   module V1
     class ScoresReport
+
       def self.perform
         dispute_months = DisputeMonth.all
         teams = Team.where(active: true)

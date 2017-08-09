@@ -1,6 +1,13 @@
 module Api
   module V1
     class LeagueReport
+
+      def self.opponent(battle, team, teams)
+        opponent_id = nil
+        battle.first_id == team.id ? opponent_id = battle.second_id : opponent_id = battle.first_id
+        opponent_id.nil? ? (return "Fantasma") : (return "#{teams.find(opponent_id).name}")
+      end
+
       def self.perform
         dispute_months = DisputeMonth.all
         teams = Team.where(active: true)
@@ -24,6 +31,8 @@ module Api
                 detail = Hash.new
                 detail["round"] = battle.round.number
                 detail["points"] = 0
+                detail["diff_points"] = 0
+                detail["opponent"] = opponent(battle, team, teams)
                 if battle.draw
                   player["points"] += 1
                   detail["points"] = 1
@@ -33,7 +42,8 @@ module Api
                     player["points"] += 3
                     detail["points"] = 3
                   end
-                  player["diff_points"] += battle.first_points + battle.second_points if detail["points"] == 3
+                  detail["diff_points"] = battle.first_points + battle.second_points if detail["points"] == 3
+                  player["diff_points"] += detail["diff_points"] if detail["points"] == 3
                 end
                 player["details"] << detail
               end
