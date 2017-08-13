@@ -16,7 +16,6 @@ module Api
 
       def self.partial(team)
         last_round = Round.last
-        battles = Battle.where(round: round)
         team_athletes = Connection.team_score(team.slug, last_round.number)
         athletes = Connection.athletes_scores
         result = []

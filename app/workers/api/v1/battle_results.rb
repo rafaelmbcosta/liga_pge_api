@@ -4,16 +4,8 @@ module Api
 
       def self.team_score(team_id, scores, round)
         score = 0
-        team_id.nil? ? score = ghost_score(round) : score = scores.find{|s| s.team_id == team_id}.final_score
+        team_id.nil? ? score = round.ghost_score : score = scores.find{|s| s.team_id == team_id}.final_score
         return score
-      end
-
-      def self.ghost_score(round)
-        ghost_battle = Battle.find{|b| (b.first_id.nil? or b.second_id.nil?) and b.round_id == round.id}
-        ghost_battle.first_id.nil? ? ghost_buster = Team.find(ghost_battle.second_id) : ghost_buster = Team.find(ghost_battle.first_id)
-        ghost_buster_score = round.scores.find{|s| s.team_id == ghost_buster.id}.final_score
-        ghost_score = (round.scores.sum(:final_score) - ghost_buster_score)/(round.scores.count -1)
-        return ghost_score
       end
 
       def self.perform(round)

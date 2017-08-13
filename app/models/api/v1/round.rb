@@ -20,6 +20,22 @@ module Api
         $redis.get("partial_#{team}")
       end
 
+      def ghost_score
+        ghost_battle = Battle.find{|b| (b.first_id.nil? or b.second_id.nil?) and b.round_id == self.id}
+        ghost_battle.first_id.nil? ? ghost_buster = Team.find(ghost_battle.second_id) : ghost_buster = Team.find(ghost_battle.first_id)
+        ghost_buster_score = self.scores.find{|s| s.team_id == ghost_buster.id}.final_score
+        ghost_score = (self.scores.sum(:final_score) - ghost_buster_score)/(self.scores.count -1)
+        return ghost_score
+      end
+
+      def ghost_partial_score
+        ghost_battle = Battle.find{|b| (b.first_id.nil? or b.second_id.nil?) and b.round_id == self.id}
+        ghost_battle.first_id.nil? ? ghost_buster = Team.find(ghost_battle.second_id) : ghost_buster = Team.find(ghost_battle.first_id)
+        ghost_buster_score = self.scores.find{|s| s.team_id == ghost_buster.id}.partial_score
+        ghost_score = (self.scores.sum(:partial_score) - ghost_buster_score)/(self.scores.count -1)
+        return ghost_score
+      end
+
       def self.battle_generator
         fantasma = Player.where("name = 'Fantasma'").first
         round = Round.new

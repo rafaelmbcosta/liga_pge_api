@@ -2,17 +2,37 @@ module Api
   module V1
     class PartialScore
 
-      def self.battle_opponent(battle, team, teams)
+      def self.opponent(id, teams, round)
+        opponent_name = ""
+        opponent_points = 0
+        if id.nil?
+          opponent_name = "Fantasma"
+          opponent_points = round.ghost_partial_score
+        else
+          opponent_name = teams.find{|t| t.id == id}.name
+          opponent_points = Score.find{|s| s.round_id == round.id and s.team_id == id}.partial_score
+        end
+        return opponent_name, opponent_points
+      end
+
+      def self.battle_status(battle, team, teams, score)
         battle_class = ""
+        opponent_name = ""
+        diff_points = 0
+        opponent_points = 0
+
         if battle.first_id == team.id
           opponent_id = battle.second_id
-          battle_class = "success" if  (battle.first_points - battle.second_points > 5)
-          battle_class = "danger" if  (battle.first_points - battle.second_points < 5)
+          opponent_name, opponent_points = opponent(opponent_id, teams, battle.round)
         else
-          battle_class = "success" if  (battle.first_points - battle.second_points < 5)
-          battle_class = "danger" if  (battle.first_points - battle.second_points > 5)
+          opponent_id = battle.first_id
+          opponent_name, opponent_points = opponent(opponent_id, teams, battle.round)
         end
-        battle_class
+        if (score.partial_score - opponent_points).abs > 5
+          (score.partial_score > opponent_points) ? battle_class = "success" : battle_class = "danger"
+        end
+        diff_points = (score.partial_score - opponent_points).abs
+        return battle_class, opponent_name, diff_points
       end
 
       def self.perform(last_round)
@@ -38,10 +58,10 @@ module Api
           else
             score.update_attributes(partial_score: points, players: players)
           end
-          battle = Battle.find{|b| (b.first_id == team.id or b.second_id) and b.round_id == last_round.id}
+          battle = Battle.find{|b| (b.first_id == team.id or b.second_id == team.id) and b.round_id == last_round.id}
           attributes = score.attributes
           attributes["team_symbol"] = pontuacao["time"]["url_escudo_png"]
-          attributes["battle_class"] = battle_status(battle, team, teams)
+          attributes["battle_class"], attributes["battle_opponent"], attributes["diff_points"] = battle_status(battle, team, teams, score)
           scores << attributes
         end
         $redis.set("partials", scores.sort_by{|r| r["partial_score"]}.reverse.to_json)
