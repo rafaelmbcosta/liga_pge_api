@@ -10,7 +10,8 @@ module Api
           opponent_points = round.ghost_partial_score
         else
           opponent_name = teams.find{|t| t.id == id}.name
-          opponent_points = Score.find{|s| s.round_id == round.id and s.team_id == id}.partial_score
+          score = Score.find{|s| s.round_id == round.id and s.team_id == id}
+          opponent_points = score.partial_score unless score.nil?
         end
         return opponent_name, opponent_points
       end
