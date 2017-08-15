@@ -10,7 +10,7 @@ module Api
 
       def self.perform
         dispute_months = DisputeMonth.all
-        teams = Team.where(active: true)
+        teams = Team.all
         leagues = []
         dispute_months.each do |dm|
           battles = dm.battles
@@ -20,35 +20,37 @@ module Api
           league["players"] = Array.new
           if battles.any?
             teams.each do |team|
-              player = Hash.new
-              player["name"] = team.player.name
-              player["team"] = team.name
-              player["details"] = Array.new
-              player["points"] = 0
-              player["diff_points"] = 0
-              battles_team = battles.where("first_id = ? or second_id = ?", team.id, team.id)
-              battles_team.each do |battle|
-                detail = Hash.new
-                detail["round"] = battle.round.number
-                detail["points"] = 0
-                detail["diff_points"] = 0
-                detail["opponent"] = opponent(battle, team, teams)
-                if battle.draw
-                  player["points"] += 1
-                  detail["points"] = 1
-                else
-                  if (battle.first_id == team.id && battle.first_win) ||
-                    ( battle.second_id == team.id && battle.second_win)
-                    player["points"] += 3
-                    detail["points"] = 3
+              if team.active
+                player = Hash.new
+                player["name"] = team.player.name
+                player["team"] = team.name
+                player["details"] = Array.new
+                player["points"] = 0
+                player["diff_points"] = 0
+                battles_team = battles.where("first_id = ? or second_id = ?", team.id, team.id)
+                battles_team.each do |battle|
+                  detail = Hash.new
+                  detail["round"] = battle.round.number
+                  detail["points"] = 0
+                  detail["diff_points"] = 0
+                  detail["opponent"] = opponent(battle, team, teams)
+                  if battle.draw
+                    player["points"] += 1
+                    detail["points"] = 1
+                  else
+                    if (battle.first_id == team.id && battle.first_win) ||
+                      ( battle.second_id == team.id && battle.second_win)
+                      player["points"] += 3
+                      detail["points"] = 3
+                    end
+                    detail["diff_points"] = battle.first_points + battle.second_points if detail["points"] == 3
+                    player["diff_points"] += detail["diff_points"] if detail["points"] == 3
                   end
-                  detail["diff_points"] = battle.first_points + battle.second_points if detail["points"] == 3
-                  player["diff_points"] += detail["diff_points"] if detail["points"] == 3
+                  player["details"] << detail
                 end
-                player["details"] << detail
+                player["diff_points"] = player["diff_points"].round(2)
+                league["players"] << player
               end
-              player["diff_points"] = player["diff_points"].round(2)
-              league["players"] << player
             end
             league["players"].sort_by!{ |e| [e["points"], e["diff_points"]] }.reverse!
             leagues << league

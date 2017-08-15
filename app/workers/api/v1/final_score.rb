@@ -4,7 +4,7 @@ module Api
       def self.perform(round)
         market_status = Connection.market_status
         unless market_status["status_mercado"] ==  4
-          teams = Team.where(season: round.season)
+          teams = Team.where(season: round.season, active: true)
           teams.each do |team|
             pontuacao = Connection.team_score(team.slug, round.number)
             points = pontuacao["pontos"] || 0
