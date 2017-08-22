@@ -21,10 +21,14 @@ module Api
       end
 
       def ghost_score
+        # battle againts the ghost (null id)
         ghost_battle = Battle.find{|b| (b.first_id.nil? or b.second_id.nil?) and b.round_id == self.id}
+        # ghost buster is the player against the ghost
         ghost_battle.first_id.nil? ? ghost_buster = Team.find(ghost_battle.second_id) : ghost_buster = Team.find(ghost_battle.first_id)
         ghost_buster_score = self.scores.find{|s| s.team_id == ghost_buster.id}.final_score
-        ghost_score = (self.scores.sum(:final_score) - ghost_buster_score)/(self.scores.count -1)
+        total_scores = self.scores.select{|s| s.team.active == true}.count - 1
+        sum_scores = self.scores.select{|s| s.team.active == true}.collect{|sc| sc.final_score}.sum
+        ghost_score = (sum_scores - ghost_buster_score)/total_scores
         return ghost_score
       end
 
@@ -32,7 +36,9 @@ module Api
         ghost_battle = Battle.find{|b| (b.first_id.nil? or b.second_id.nil?) and b.round_id == self.id}
         ghost_battle.first_id.nil? ? ghost_buster = Team.find(ghost_battle.second_id) : ghost_buster = Team.find(ghost_battle.first_id)
         ghost_buster_score = self.scores.find{|s| s.team_id == ghost_buster.id}.partial_score
-        ghost_score = (self.scores.sum(:partial_score) - ghost_buster_score)/(self.scores.count -1)
+        total_scores = self.scores.select{|s| s.team.active == true}.count - 1
+        sum_scores = self.scores.select{|s| s.team.active == true}.collect{|sc| sc.partial_score}.sum
+        ghost_score = (sum_scores - ghost_buster_score)/total_scores
         return ghost_score
       end
 
