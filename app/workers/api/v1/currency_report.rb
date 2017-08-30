@@ -27,7 +27,7 @@ module Api
             end
             dispute_month["teams"] << team_hash unless team_hash["difference"].nil?
           end
-          dispute_month["teams"].sort_by!{|t| t["difference"]}
+          dispute_month["teams"].sort_by!{|t| t["difference"]}.reverse!
           currencies << dispute_month unless dispute_month["teams"].empty?
         end
         currencies.sort_by!{|c| c["id"]}.reverse!
