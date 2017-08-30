@@ -18,12 +18,13 @@ module Api
             team_hash["difference"] = nil
             team_hash["details"] =  []
             initial_currency = nil
-            team_currencies = Currency.where("team_id = ? and round_id in(?)", team.id, dm.dispute_rounds).order("round_id asc")
+            team_currencies = Currency.select{|c| c.team_id == team.id and c.round.number.in?(dm.dispute_rounds)}
             unless team_currencies.empty?
               team_hash["difference"] = team_currencies.collect{|c| c.difference}.sum
               team_currencies.each do |currency|
                 team_hash["details"] << { :value => currency.value, :difference => currency.difference, :round => currency.round.number}
               end
+              team_hash["details"].sort_by!{|d| d[:round]}
             end
             dispute_month["teams"] << team_hash unless team_hash["difference"].nil?
           end
