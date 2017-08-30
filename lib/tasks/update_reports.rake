@@ -8,5 +8,7 @@ task :update_reports => :environment do
   Api::V1::ScoresReport.perform
   puts "Scores Season..."
   Api::V1::SeasonReport.perform
+  puts "Currency Report..."
+  Api::V1::CurrencyReport.perform
   puts "done."
 end
