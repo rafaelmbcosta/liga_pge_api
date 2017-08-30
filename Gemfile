@@ -35,7 +35,7 @@ group :development, :test do
   gem 'byebug', platform: :mri
 
   # Rspec for rails 5
-  gem 'rspec-rails', '~> 3.5'
+  gem 'rspec-rails', '~> 3.6'
 
   # Mock rails models
   gem 'factory_girl_rails'

@@ -16,7 +16,6 @@ module Api
             else
               score.update_attributes(final_score: points.round(2))
             end
-            round.update_attributes(finished: true)
           end
           BattleResults.perform(round)
         end
