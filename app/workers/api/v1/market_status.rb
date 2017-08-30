@@ -44,6 +44,8 @@ module Api
             # Verifica se o round anterior existe e está finalizado
             previous_round = Round.find{|r| r.number == round.number-1 and r.finished == false}
             FinalScore.perform(previous_round) unless previous_round.nil?
+            FinalCurrency.perform(previous_round) unless previous_round.nil?
+            previous_round.update_attributes(finished: true)
           end
         end
       end

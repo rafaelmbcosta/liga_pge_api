@@ -4,6 +4,7 @@ module Api
       belongs_to :season
       belongs_to :dispute_month
       has_many :scores
+      has_many :currencies
       has_many :battles
 
       default_scope { order("number asc")}
