@@ -18,6 +18,7 @@ module Api
               player["name"] = team.player.name
               player["team"] = team.name
               player["points"] = 0
+              player["team_symbol"] = Connection.team_score(team.slug)["time"]["url_escudo_svg"]
               player["details"] = Array.new
               player_scores = scores.where("team_id = ?", team.id)
               player_scores.each do |score|
