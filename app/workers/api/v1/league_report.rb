@@ -24,6 +24,7 @@ module Api
                 player = Hash.new
                 player["name"] = team.player.name
                 player["team"] = team.name
+                player["team_symbol"] = Connection.team_score(team.slug)["time"]["url_escudo_svg"]
                 player["details"] = Array.new
                 player["points"] = 0
                 player["diff_points"] = 0
