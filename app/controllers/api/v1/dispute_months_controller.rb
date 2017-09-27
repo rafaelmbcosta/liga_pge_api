@@ -1,6 +1,7 @@
 module Api
   module V1
     class DisputeMonthsController < ApplicationController
+      before_action :authenticate_user, except: [ :index, :league_points]
       before_action :set_dispute_month, only: [:show, :update, :destroy]
 
       # GET /dispute_months

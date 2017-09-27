@@ -1,6 +1,7 @@
 module Api
   module V1
   class BattlesController < ApplicationController
+    before_action :authenticate_user, except: [ :index ]
     before_action :set_battle, only: [:show, :update, :destroy]
 
     # GET /battles

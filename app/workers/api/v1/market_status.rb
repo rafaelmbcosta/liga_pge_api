@@ -1,6 +1,13 @@
 module Api
   module V1
     class MarketStatus
+      def self.create_activities(dispute_month)
+        Team.all.where("active is true").each do |team|
+          activiy = MonthActivity.find{|ma| ma.dispute_month.id == dispute_month.id && ma.team.id == team.id }
+          MonthActivity.create(team: team, dispute_month: dispute_month, active: true, payed: true) if activity.nil?
+        end
+      end
+
       def self.verify_season(year)
         season = Season.find{|s| s.year == year}
         if season.nil?
@@ -8,6 +15,7 @@ module Api
           previous_season = Season.find{|s| s.year == (year - 1)}
           unless previous_season.nil?
             previous_season.finished = true
+            previous_season.save
           end
           season = Season.create(year: year, finished: false)
         end
@@ -22,6 +30,7 @@ module Api
          ## verify dispute month (if configured )
          dispute = DisputeMonth.find{|d| d.season_id == season.id and d.dispute_rounds.include?(number)}
          round = Round.create(number: number, season: season, dispute_month: dispute, golden: golden, finished: false)
+         create_activities(dispute)
        end
        return round
       end

@@ -1,5 +1,4 @@
 Rails.application.routes.draw do
-
   post 'user_token' => 'user_token#create'
 
   namespace :api do
@@ -12,6 +11,8 @@ Rails.application.routes.draw do
       resources :players
       resources :seasons
       resources :currencies
+      resources :awards
+      resources :month_activities
       get 'league' => 'dispute_months#league_points'
       get 'partials' => 'rounds#partials'
       get 'partials/:id' => 'rounds#partial'
