@@ -6,6 +6,7 @@ module Api
       has_many :scores
       has_many :currencies
       has_many :battles
+      has_many :month_activities
 
       default_scope { order("number asc")}
 

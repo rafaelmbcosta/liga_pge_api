@@ -5,6 +5,7 @@ module Api
       has_many :rounds
       has_many :scores, through: :rounds
       has_many :battles, through: :rounds
+      has_many :month_activities
       serialize :dispute_rounds
 
       def self.scores
