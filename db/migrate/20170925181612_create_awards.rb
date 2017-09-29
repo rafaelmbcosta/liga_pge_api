@@ -7,6 +7,7 @@ class CreateAwards < ActiveRecord::Migration[5.0]
       t.integer :position
       t.references :season, foreign_key: true
       t.float :prize, null: false
+      t.references :round, foreign_key: true
 
       t.timestamps
     end

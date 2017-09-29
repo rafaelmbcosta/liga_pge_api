@@ -12,6 +12,17 @@ module Api
         $redis.get("scores")
       end
 
+      def golden_count
+        self.month_activities.where("active is true and payed is true").count
+      end
+
+      def golden_prize
+        # Total prize equals to 33.3 % of the total prize
+        # divided by the ammount of golden rounds
+        golden_prize_pool = self.season.total_money/3.0/self.golden_count unless self.golden_count == 0
+        return golden_prize_pool*0.5 , golden_prize_pool*0.3, golden_prize_pool*0.2
+      end
+
       def self.battle_points
         $redis.get("league")
       end
