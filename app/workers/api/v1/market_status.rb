@@ -42,19 +42,18 @@ module Api
         round = verify_round(current_round, season)
         unless market_status["game_over"]
           fechamento = market_status["fechamento"]
-          #
-          if market_status["status_mercado"] == 2 #Fechado
+          if market_status["status_mercado"] == 2 #Closed
             NewBattle.perform(round) if (round.battles.empty? && Time.now.day == fechamento["dia"] &&
               Time.now.month == fechamento["mes"] && Time.now.year == fechamento["ano"] )
               puts "Round id: #{round.id} number: #{round.number}"
             PartialScore.perform(round)
           end
-          if market_status["status_mercado"] == 1 # ABERTO 1
-            # Verifica se o round anterior existe e está finalizado
+          if market_status["status_mercado"] == 1 # Open
+            # Check if the market is open
             previous_round = Round.find{|r| r.number == round.number-1 and r.finished == false}
             FinalScore.perform(previous_round) unless previous_round.nil?
             FinalCurrency.perform(previous_round) unless previous_round.nil?
-            # Chama award aqui.
+            AwardWorker.perform(previous_round) unless previous_round.nil?
             previous_round.update_attributes(finished: true)
           end
         end
