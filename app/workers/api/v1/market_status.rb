@@ -3,7 +3,7 @@ module Api
     class MarketStatus
       def self.create_activities(dispute_month)
         Team.all.where("active is true").each do |team|
-          activiy = MonthActivity.find{|ma| ma.dispute_month.id == dispute_month.id && ma.team.id == team.id }
+          activity = MonthActivity.find{|ma| ma.dispute_month.id == dispute_month.id && ma.team.id == team.id }
           MonthActivity.create(team: team, dispute_month: dispute_month, active: true, payed: true) if activity.nil?
         end
       end
@@ -54,6 +54,7 @@ module Api
             previous_round = Round.find{|r| r.number == round.number-1 and r.finished == false}
             FinalScore.perform(previous_round) unless previous_round.nil?
             FinalCurrency.perform(previous_round) unless previous_round.nil?
+            # Chama award aqui.
             previous_round.update_attributes(finished: true)
           end
         end

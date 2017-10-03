@@ -42,26 +42,64 @@ module Api
           .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
           .sort_by{|x| x[:scores]}
           .last(3).reverse
-          (0..2).to_a.each do |i|
-            x = Award.create(team_id: winners[i][:team_id],
-            season: round.season,
-            award_type: 5,
-            position: i+1,
-            prize: golden_prize[i],
-            round: round)
-          end
+        (0..2).to_a.each do |i|
+          x = Award.create(team_id: winners[i][:team_id],
+          season: round.season,
+          award_type: 5,
+          position: i+1,
+          dispute_month: round.dispute_month,
+          prize: golden_prize[i],
+          round: round)
+        end
       end
 
       def self.award_month(dispute)
-
+        monthly_prize = dispute.monthly_prize
+        winners = dispute.scores.joins(:team)
+          .where("teams.active is true")
+          .group_by{ |s| s.team }
+          .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
+          .sort_by{|x| x[:scores]}
+          .last(3).reverse
+        (0..2).to_a.each do |i|
+          x = Award.create(team_id: winners[i][:team_id],
+          season: dispute.season,
+          award_type: 1,
+          dispute_month: dispute,
+          position: i+1,
+          prize: monthly_prize[i])
+        end
       end
 
       def self.award_league(dispute)
-
+        league_prize = dispute.league_prize
+        LeagueReport.perform
+        winners = JSON.parse($redis.get("league")).select{|l| l["id"] == dispute.id}
+        winners = winners[0]["players"][0..2]
+        (0..2).to_a.each do |i|
+          x = Award.create(team_id: winners[i]["id"],
+          season: dispute.season,
+          award_type: 2,
+          dispute_month: dispute,
+          position: i+1,
+          prize: league_prize[i])
+        end
       end
 
       def self.award_currency(dispute)
-
+        dispute_month_winners = Award.where(dispute_month_id: dispute.id, season: dispute.season).collect{|aw| aw.team_id }.uniq
+        currency_ranking = dispute.currencies
+          .select{|not_winner| !dispute_month_winners.include?(not_winner.id)}
+          .group_by{|c| c.team_id }
+          .collect{|score| { team_id: score[0], difference: score[1].sum(&:difference) }}
+          .sort_by{|currencies| currencies[:difference]}
+          .reverse
+        winner_id = currency_ranking.first[:team_id]
+        Award.create(team_id: winner_id,
+          season: dispute.season,
+          award_type: 6,
+          dispute_month: dispute,
+          prize: dispute.currency_prize)
       end
 
       def self.perform(round)
@@ -72,7 +110,7 @@ module Api
         award_first_turn(round.season) if round.number == 19
 
         ## Golden round
-        award_round(round) if round.golden
+        award_golden(round) if round.golden
 
         # Monthly awards:
         if dispute.dispute_rounds.last == round.number

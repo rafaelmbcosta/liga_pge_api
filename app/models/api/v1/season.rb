@@ -9,11 +9,10 @@ module Api
 
       def total_money
         total = 0
-        self.dispute_months.each do |dm|
-          active_players = dm.month_activities.where(active: true, payed: true)
-          total+= active_players.size * dm.price
-        end
-        return total
+        self.dispute_months.collect{|dm| dm.prize_pool}.sum#ach do |dm|
+        #   total+= dm.prize_pool
+        # end
+        # return total
       end
 
       def second_half_prize

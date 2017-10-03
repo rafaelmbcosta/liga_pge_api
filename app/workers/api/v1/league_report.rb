@@ -24,6 +24,7 @@ module Api
                 player = Hash.new
                 player["name"] = team.player.name
                 player["team"] = team.name
+                player["id"] = team.id
                 player["details"] = Array.new
                 player["points"] = 0
                 player["diff_points"] = 0

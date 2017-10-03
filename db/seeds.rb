@@ -49,7 +49,8 @@ module Api
       {name: "Felipe Martins", team:	"Cearamor Messejana"},
       {name: "Felipe Batista", team:	"Cachagol FC"},
       {name: "Renan Benevides", team:	"simple man"},
-      {name: "JORGE PEREIRA", team:	"CARAI DEMAIS"}
+      {name: "JORGE PEREIRA", team:	"CARAI DEMAIS"},
+      # {name: " Daniel Djimis", team: ""}
     ]
 
     season = Season.last
@@ -66,5 +67,19 @@ module Api
       p.teams << Team.new(name: data[:team], season: season, slug: slug(data[:team]))
       p.save
     end
+
+    # Filling rounds
+
+    # season = Api::V1::Season.last
+    # (1..26).to_a.each do |number|
+    #   round = Api::V1::Round.find{|r| r.season.id == season.id and r.number == number}
+    #   if round.nil?
+    #     ## verify if its golden (on seasons)
+    #     golden = season.golden_rounds.include?(number)
+    #     ## verify dispute month (if configured )
+    #     dispute = Api::V1::DisputeMonth.find{|d| d.season_id == season.id and d.dispute_rounds.include?(number)}
+    #     round = Api::V1::Round.create(number: number, season: season, dispute_month: dispute, golden: golden, finished: false)
+    #   end
+    # end
   end
 end
