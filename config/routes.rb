@@ -18,6 +18,8 @@ Rails.application.routes.draw do
       get 'partials/:id' => 'rounds#partial'
       get 'season_score' => 'seasons#scores'
       get 'search_player/:name' => 'players#search_player'
+      get 'championship' => 'awards#championship'
+      get 'monthly' => 'awards#monthly'
     end
   end
   # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
