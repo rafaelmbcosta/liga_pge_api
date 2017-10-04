@@ -15,11 +15,10 @@ task :previous_activities => :environment do
     end
   end
   puts "Done !"
-  puts "Updating awards" do
-    (1..26).to_a.each do |number|
-      round = Api::V1::Round.find{|r| r.number == number}
-      Api::V1::AwardWorker.perform(round)
-    end
-    puts "Done"
+  puts "Updating awards"
+  (1..26).to_a.each do |number|
+    round = Api::V1::Round.find{|r| r.number == number}
+    Api::V1::AwardWorker.perform(round)
   end
+    puts "Done"
 end

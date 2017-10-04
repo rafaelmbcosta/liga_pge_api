@@ -9,11 +9,7 @@ module Api
       ATHLETES_SCORES = "https://api.cartolafc.globo.com/atletas/pontuados"
 
       def self.connect(uri)
-        # For proxy development change coment lines below
-        http = Net::HTTP::Proxy(ENV["proxy_name"], ENV["proxy_port"],
-          ENV["proxy_user"], ENV["proxy_password"]) if Rails.env == "development"
-        request = http.get_response(uri).body
-        # request = Net::HTTP.get(uri)
+        request = Net::HTTP.get(uri)
         return JSON.parse(request)
       end
 
