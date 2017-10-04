@@ -1,7 +1,7 @@
 module Api
   module V1
     class PlayersController < ApplicationController
-      before_action :authenticate_user, except: [ :index ]
+      before_action :authenticate_user, except: [ :index, :search_player ]
       before_action :set_player, only: [:show, :update, :destroy]
 
       # GET /players
@@ -9,6 +9,11 @@ module Api
         @players = Player.all
 
         render json: @players
+      end
+
+      def search_player
+        @player = Player.search_player(params["team_name"])
+        render json: @player
       end
 
       # GET /players/1

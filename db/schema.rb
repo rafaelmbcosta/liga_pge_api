@@ -10,10 +10,26 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170724133902) do
+ActiveRecord::Schema.define(version: 20170927181445) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "awards", force: :cascade do |t|
+    t.integer  "award_type",       null: false
+    t.integer  "dispute_month_id"
+    t.integer  "team_id",          null: false
+    t.integer  "position"
+    t.integer  "season_id"
+    t.float    "prize",            null: false
+    t.integer  "round_id"
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["dispute_month_id"], name: "index_awards_on_dispute_month_id", using: :btree
+    t.index ["round_id"], name: "index_awards_on_round_id", using: :btree
+    t.index ["season_id"], name: "index_awards_on_season_id", using: :btree
+    t.index ["team_id"], name: "index_awards_on_team_id", using: :btree
+  end
 
   create_table "battles", force: :cascade do |t|
     t.integer  "round_id"
@@ -29,14 +45,37 @@ ActiveRecord::Schema.define(version: 20170724133902) do
     t.index ["round_id"], name: "index_battles_on_round_id", using: :btree
   end
 
+  create_table "currencies", force: :cascade do |t|
+    t.float    "value"
+    t.integer  "team_id"
+    t.integer  "round_id"
+    t.float    "difference"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["round_id"], name: "index_currencies_on_round_id", using: :btree
+    t.index ["team_id"], name: "index_currencies_on_team_id", using: :btree
+  end
+
   create_table "dispute_months", force: :cascade do |t|
-    t.string   "name",           null: false
+    t.string   "name",                          null: false
     t.integer  "season_id"
     t.string   "details"
     t.string   "dispute_rounds"
-    t.datetime "created_at",     null: false
-    t.datetime "updated_at",     null: false
+    t.datetime "created_at",                    null: false
+    t.datetime "updated_at",                    null: false
+    t.float    "price",          default: 30.0, null: false
     t.index ["season_id"], name: "index_dispute_months_on_season_id", using: :btree
+  end
+
+  create_table "month_activities", force: :cascade do |t|
+    t.integer  "team_id",          null: false
+    t.integer  "dispute_month_id", null: false
+    t.boolean  "active",           null: false
+    t.boolean  "payed",            null: false
+    t.datetime "created_at",       null: false
+    t.datetime "updated_at",       null: false
+    t.index ["dispute_month_id"], name: "index_month_activities_on_dispute_month_id", using: :btree
+    t.index ["team_id"], name: "index_month_activities_on_team_id", using: :btree
   end
 
   create_table "players", force: :cascade do |t|
@@ -91,6 +130,7 @@ ActiveRecord::Schema.define(version: 20170724133902) do
     t.integer  "player_id"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
+    t.integer  "start_round",    default: 1
     t.index ["player_id"], name: "index_teams_on_player_id", using: :btree
     t.index ["season_id"], name: "index_teams_on_season_id", using: :btree
   end
@@ -103,7 +143,15 @@ ActiveRecord::Schema.define(version: 20170724133902) do
     t.index ["email"], name: "index_users_on_email", unique: true, using: :btree
   end
 
+  add_foreign_key "awards", "dispute_months"
+  add_foreign_key "awards", "rounds"
+  add_foreign_key "awards", "seasons"
+  add_foreign_key "awards", "teams"
   add_foreign_key "battles", "rounds"
+  add_foreign_key "currencies", "rounds"
+  add_foreign_key "currencies", "teams"
+  add_foreign_key "month_activities", "dispute_months"
+  add_foreign_key "month_activities", "teams"
   add_foreign_key "rounds", "dispute_months"
   add_foreign_key "rounds", "seasons"
   add_foreign_key "scores", "rounds"

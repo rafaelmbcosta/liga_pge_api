@@ -1,7 +1,7 @@
 module Api
   module V1
     class SeasonsController < ApplicationController
-      before_action :authenticate_user, except: [ :index, :scores]
+      before_action :authenticate_user, except: [ :index, :scores ]
       before_action :set_season, only: [:show, :update, :destroy]
 
       # GET /seasons

@@ -1,6 +1,7 @@
 module Api
   module V1
     class RoundsController < ApplicationController
+      before_action :authenticate_user, except: [ :index ]
       before_action :set_round, only: [:show, :update, :destroy]
 
       # GET /rounds
