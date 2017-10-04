@@ -1,12 +1,18 @@
 module Api
   module V1
-    class ChapionshipReport
+    class ChampionshipReport
       def self.format_award(results)
         return nil if results.empty?
         winners = []
-        results.each do |result|
-
+        results.sort_by{|x| x.position}.each do |result|
+          winners << {
+            :team_name => result.team.name,
+            :position => result.position,
+            :prize => result.prize,
+            :team_symbol => Connection.team_score(result.team.slug)["time"]["url_escudo_svg"]
+          }
         end
+        return winners
       end
 
       def self.perform
