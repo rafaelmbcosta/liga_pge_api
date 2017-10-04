@@ -10,7 +10,7 @@ module Api
         team_scores = season.scores.joins(:team).where("teams.active is true").group_by{|s| s.team}
         team_scores = team_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(3).reverse
         # Collects the first 3 scorers from the second half
-        second_half_scores = season.scores.joins(:team).where("teams.active is true").select{|ts| ts.round.number >= 19}.group_by{|s| s.team}
+        second_half_scores = season.scores.joins(:team).where("teams.active is true").select{|ts| ts.round.number > 19}.group_by{|s| s.team}
         second_half_scores = second_half_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(3).reverse
         (0..2).to_a.each do |i|
           # Second Turn
@@ -24,7 +24,7 @@ module Api
         first_half_prize = season.first_half_prize
         first_half_scores = season.scores.joins(:team)
           .where("teams.active is true")
-          .select{|ts| ts.round.number >= 19}
+          .select{|ts| ts.round.number <= 19}
           .group_by{|s| s.team}
           .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
           .sort_by{|x| x[:scores]}
