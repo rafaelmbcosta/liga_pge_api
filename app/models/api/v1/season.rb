@@ -20,7 +20,7 @@ module Api
         self.dispute_months.each do |dm|
           if dm.dispute_rounds.last >= 19
             active_players = dm.month_activities.where(active: true, payed: true)
-            if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.last != 19)
+            if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.first != 19)
               total+= active_players.size * dm.price*0.083 * 0.5
             else
               total+= active_players.size * dm.price*0.083
@@ -34,13 +34,15 @@ module Api
         total = 0
         self.dispute_months.each do |dm|
           if dm.dispute_rounds.first <= 19
+            puts "DM = #{dm.name}"
             active_players = dm.month_activities.where(active: true, payed: true)
-            if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.last == 19)
-              total+= active_players.size * dm.price*0.083
-            else
+            if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.last != 19)
               total+= active_players.size * dm.price*0.083 * 0.5
+            else
+              total+= active_players.size * dm.price*0.083
             end
           end
+          puts "Final: #{total}"
         end
         return total*0.5, total*0.3, total*0.2
       end
