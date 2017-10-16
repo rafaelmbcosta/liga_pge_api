@@ -32,7 +32,7 @@ module Api
           end
           report << dispute
         end
-        $redis.set("monthly_awards", report.to_json)
+        $redis.set("monthly_awards", report.reverse.to_json)
       end
     end
   end
