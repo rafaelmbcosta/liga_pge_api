@@ -15,6 +15,7 @@ module Api
             team_hash = Hash.new
             team_hash["name"] = team.name
             team_hash["player"] = team.player.name
+            team_hash["team_symbol"] = team.url_escudo_png
             team_hash["difference"] = nil
             team_hash["details"] =  []
             initial_currency = nil

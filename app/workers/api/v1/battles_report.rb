@@ -12,6 +12,15 @@ module Api
         end
       end
 
+      def self.team_symbol(id, teams)
+        symbol = ""
+        unless id.nil?
+          team = teams.find{|t| t.id == id}
+          symbol = team.url_escudo_png
+        end
+        return symbol
+      end
+
       def self.perform
         teams = Team.all
         battles = Battle.all.group_by(&:round_id)
@@ -24,6 +33,8 @@ module Api
             list_battle = battle.attributes
             list_battle["first_name"] = team_name(battle.first_id, teams)
             list_battle["second_name"] = team_name(battle.second_id, teams)
+            list_battle["first_team_symbol"] = team_symbol(battle.first_id, teams)
+            list_battle["second_team_symbol"] = team_symbol(battle.second_id, teams)
             list["battles"] << list_battle
           end
           full_list << list

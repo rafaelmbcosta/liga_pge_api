@@ -9,7 +9,7 @@ module Api
             :team_name => result.team.name,
             :position => result.position,
             :prize => result.prize,
-            :team_symbol => Connection.team_score(result.team.slug)["time"]["url_escudo_svg"]
+            :team_symbol => result.team.url_escudo_png
           }
         end
         return winners

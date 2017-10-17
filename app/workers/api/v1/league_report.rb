@@ -25,7 +25,7 @@ module Api
                 player["name"] = team.player.name
                 player["team"] = team.name
                 player["id"] = team.id
-                player["team_symbol"] = Connection.team_score(team.slug)["time"]["url_escudo_svg"]
+                player["team_symbol"] = team.url_escudo_png
                 player["details"] = Array.new
                 player["points"] = 0
                 player["diff_points"] = 0
