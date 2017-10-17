@@ -6,7 +6,7 @@ module Api
           :team_name => winner.team.name,
           :position => winner.position,
           :prize => winner.prize,
-          :team_symbol => Connection.team_score(winner.team.slug)["time"]["url_escudo_svg"]
+          :team_symbol => winner.team.url_escudo_png
         }
         return hash
       end
