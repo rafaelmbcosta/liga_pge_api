@@ -31,6 +31,7 @@ module Api
             dispute["awards"] << award
           end
           report << dispute
+          report.sort_by!{|aw| aw["id"]}
         end
         $redis.set("monthly_awards", report.reverse.to_json)
       end
