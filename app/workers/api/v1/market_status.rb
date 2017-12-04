@@ -1,6 +1,11 @@
 module Api
   module V1
     class MarketStatus
+      def self.last_round(market_status)
+        (market_status["status_mercado"] == 6 && market_status["game_over"] &&
+                                                 market_status["rodada_atual"] == 38)
+      end
+
       def self.create_activities(dispute_month)
         Team.all.where("active is true").each do |team|
           activity = MonthActivity.find{|ma| ma.dispute_month.id == dispute_month.id && ma.team.id == team.id }
@@ -40,7 +45,7 @@ module Api
         season = verify_season(market_status["temporada"])
         current_round = market_status["rodada_atual"]
         round = verify_round(current_round, season)
-        unless market_status["game_over"]
+        unless season.finished
           fechamento = market_status["fechamento"]
           if market_status["status_mercado"] == 2 #Closed
             NewBattle.perform(round) if (round.battles.empty? && Time.now.day == fechamento["dia"] &&
@@ -48,13 +53,20 @@ module Api
               puts "Round id: #{round.id} number: #{round.number}"
             PartialScore.perform(round)
           end
-          if market_status["status_mercado"] == 1 # Open
+          if market_status["status_mercado"] == 1 || last_round(market_status)# Open
             # Check if the market is open
-            previous_round = Round.find{|r| r.number == round.number-1 and r.finished == false}
-            FinalScore.perform(previous_round) unless previous_round.nil?
-            FinalCurrency.perform(previous_round) unless previous_round.nil?
-            AwardWorker.perform(previous_round) unless previous_round.nil?
-            previous_round.update_attributes(finished: true)
+            round_number = last_round(market_status) ? round.number : round.number-1
+            previous_round = Round.find{|r| r.number == round_number and r.finished == false}
+            unless previous_round.nil?
+              FinalScore.perform(previous_round)
+              FinalCurrency.perform(previous_round)
+              AwardWorker.perform(previous_round)
+              previous_round.update_attributes(finished: true)
+              if last_round(market_status)
+                season.finished = true
+                season.save
+              end
+            end
           end
         end
       end
