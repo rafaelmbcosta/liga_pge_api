@@ -20,8 +20,7 @@ module Api
       end
 
       def golden_count
-        golden_rounds = self.season.golden_rounds
-        self.rounds.collect{|r| golden_rounds.include?(r.number) ? 1 : 0}.sum
+        (self.season.golden_rounds & self.dispute_rounds).count
       end
 
       def currency_prize

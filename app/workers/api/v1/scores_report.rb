@@ -18,7 +18,7 @@ module Api
               player["name"] = team.player.name
               player["team"] = team.name
               player["points"] = 0
-              player["team_symbol"] = url_escudo_png
+              player["team_symbol"] = team.url_escudo_png
               player["details"] = Array.new
               player_scores = scores.where("team_id = ?", team.id)
               player_scores.each do |score|
