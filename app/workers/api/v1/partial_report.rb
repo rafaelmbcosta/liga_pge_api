@@ -3,7 +3,7 @@ module Api
     class PartialReport
 
       def self.perform
-        Team.where("active is true").each do |team|
+        Team.where(active: true, season: Season.last).each do |team|
           partial(team)
         end
       end
@@ -15,7 +15,7 @@ module Api
       end
 
       def self.partial(team)
-        last_round = Round.last
+        last_round = Round.where(season: Season.last).last
         team_athletes = Connection.team_score(team.slug, last_round.number)
         athletes = Connection.athletes_scores
         result = []
