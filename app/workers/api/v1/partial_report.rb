@@ -20,11 +20,13 @@ module Api
         athletes = Connection.athletes_scores
         result = []
         positions = team_athletes["posicoes"]
+        captain_id = team_athletes["capitao_id"]
         team_athletes["atletas"].each do |team_athlete|
           partial = Hash.new
           partial["nickname"] = team_athlete["apelido"]
           partial["points"] = "-"
           partial["scouts"] = "-"
+          partial["captain"] = (team_athlete["atleta_id"] == captain_id) ? true : false
           partial["position_id"] = team_athlete["posicao_id"]
           partial["position"] = positions[team_athlete["posicao_id"].to_s]["nome"]
           partial["position_id"] =  team_athlete["posicao_id"]
@@ -35,7 +37,8 @@ module Api
           # partial["situacao"] = "empate"
           athlete_id = team_athlete["atleta_id"].to_s
           if athletes["atletas"].include?(athlete_id)
-            partial["points"] = athletes["atletas"][athlete_id.to_s]["pontuacao"]
+            player_points = athletes["atletas"][athlete_id.to_s]["pontuacao"]
+            partial["points"] = player_points
             scouts = athletes["atletas"][athlete_id.to_s]["scout"]
             partial["scouts"] = scouts.collect{|k,v| "#{k}x#{v}"}.join(" ").gsub("x1","")
           end
