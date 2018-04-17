@@ -56,7 +56,7 @@ module Api
           if market_status["status_mercado"] == 1 || last_round(market_status)# Open
             # Check if the market is open
             round_number = last_round(market_status) ? round.number : round.number-1
-            previous_round = Round.find{|r| r.number == round_number and r.finished == false}
+            previous_round = Round.find{|r| r.number == round_number and r.finished == false and r.season == season}
             unless previous_round.nil?
               FinalScore.perform(previous_round)
               FinalCurrency.perform(previous_round)
