@@ -4,7 +4,7 @@ module Api
 
       def self.perform
         season = Season.last
-        teams = Team.where(active: true)
+        teams = Team.where(active: true, season: season)
         currencies = []
         season.dispute_months.each do |dm|
           dispute_month = Hash.new
