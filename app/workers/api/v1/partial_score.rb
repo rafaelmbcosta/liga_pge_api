@@ -44,10 +44,13 @@ module Api
           pontuacao = Connection.team_score(team.slug, last_round.number)
           points = 0
           players = 0
+          captain_id = pontuacao["capitao_id"]
           pontuacao["atletas"].each do |athlete|
             athlete_id = athlete["atleta_id"]
             if athletes.include?(athlete_id.to_s)
-              points += athletes[athlete_id.to_s]["pontuacao"]
+              player_points = athletes[athlete_id.to_s]["pontuacao"]
+              player_points *= 2 if athlete_id == captain_id
+              points += player_points
               players += 1
             end
           end
