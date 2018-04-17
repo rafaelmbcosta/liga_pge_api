@@ -6,7 +6,7 @@ module Api
       def self.perform(round)
         #round == 23
         previous_round = Round.find{|r| r.number == round.number - 1 and r.season = Season.last}
-        Team.all.each do |team|
+        Team.where(season: round.season).each do |team|
           last_currency = nil
           variation = 0
           actual_currency = 0
