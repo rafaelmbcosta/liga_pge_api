@@ -4,7 +4,7 @@ module Api
 
       def self.perform
         dispute_months = DisputeMonth.where(season: Season.last)
-        teams = Team.where(active: true)
+        teams = Team.where(active: true, season: Season.last)
         months = []
         dispute_months.each do |dm|
           scores = dm.scores
