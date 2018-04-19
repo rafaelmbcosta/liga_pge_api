@@ -3,16 +3,16 @@ module Api
     class AwardWorker
 
       def self.award_champions(season)
-        # Prizes for 1 2 and 3
+        # Prizes for 1 2 and 3 (or 4)
         prizes = season.championship_prize
         second_half_prize = season.second_half_prize
-        # Collects the first 3 scorers from the championship
+        # Collects the first 3 or 4 scorers from the championship
         team_scores = season.scores.joins(:team).where("teams.active is true").group_by{|s| s.team}
-        team_scores = team_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(3).reverse
+        team_scores = team_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(prizes.size).reverse
         # Collects the first 3 scorers from the second half
         second_half_scores = season.scores.joins(:team).where("teams.active is true").select{|ts| ts.round.number > 19}.group_by{|s| s.team}
-        second_half_scores = second_half_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(3).reverse
-        (0..2).to_a.each do |i|
+        second_half_scores = second_half_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(prizes.size).reverse
+        (0..prizes.size).to_a.each do |i|
           # Second Turn
           x = Award.create(team_id: second_half_scores[i][:team_id], season: season, award_type: 4, position: i+1, prize: second_half_prize[i] )
           # Championship
@@ -28,8 +28,8 @@ module Api
           .group_by{|s| s.team}
           .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
           .sort_by{|x| x[:scores]}
-          .last(3).reverse
-        (0..2).to_a.each do |i|
+          .last(first_half_prize.size).reverse
+        (0..first_half_prize.size).to_a.each do |i|
           x = Award.create(team_id: first_half_scores[i][:team_id], season: season, award_type: 3, position: i+1, prize: first_half_prize[i] )
         end
       end

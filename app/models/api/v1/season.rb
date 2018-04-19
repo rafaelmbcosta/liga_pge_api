@@ -9,10 +9,7 @@ module Api
 
       def total_money
         total = 0
-        self.dispute_months.collect{|dm| dm.prize_pool}.sum#ach do |dm|
-        #   total+= dm.prize_pool
-        # end
-        # return total
+        self.dispute_months.collect{|dm| dm.prize_pool}.sum
       end
 
       def second_half_prize
@@ -27,7 +24,8 @@ module Api
             end
           end
         end
-        return total*0.5, total*0.3, total*0.2
+        # return total*0.5, total*0.3, total*0.2
+        return split_prizes(active_players, total)
       end
 
       def first_half_prize
@@ -44,14 +42,16 @@ module Api
           end
           puts "Final: #{total}"
         end
-        return total*0.5, total*0.3, total*0.2
+        return split_prizes(active_players, total)
       end
 
       def championship_prize
         # pool is about 5 % of the total money
         # 50 % 30 % 20 for the first, second and third
+        dm = self.dispute_months.last
+        active_players = dm.month_activities.where(active: true, payed: true)
         championship_prize_pool = total_money*0.05
-        return championship_prize_pool*0.5, championship_prize_pool*0.3, championship_prize_pool*0.2
+        return split_prizes(active_players, championship_prize_pool)
       end
     end
   end
