@@ -42,12 +42,15 @@ module Api
         # Total prize equals to 33.3 % of the total prize
         # divided by the ammount of golden rounds
         monthly_prize_pool = prize_pool/3.0
-        return monthly_prize_pool*0.5 , monthly_prize_pool*0.3, monthly_prize_pool*0.2
+        # return monthly_prize_pool*0.5 , monthly_prize_pool*0.3, monthly_prize_pool*0.2
+        return split_prizes(self.active_players, monthly_prize_pool)
+
       end
 
       def league_prize
         monthly_prize_pool = prize_pool*0.166666
-        return monthly_prize_pool*0.5 , monthly_prize_pool*0.3, monthly_prize_pool*0.2
+        # return monthly_prize_pool*0.5 , monthly_prize_pool*0.3, monthly_prize_pool*0.2
+        return split_prizes(self.active_players, monthly_prize_pool)
       end
 
       def self.battle_points
