@@ -20,14 +20,16 @@ module Api
         end
       end
 
+      # Calculates the prize pool for the first 3 or 4 best players of the turn
+
       def self.award_first_turn(season)
         first_half_prize = season.first_half_prize
         first_half_scores = season.scores.joins(:team)
           .where("teams.active is true")
-          .select{|ts| ts.round.number <= 19}
-          .group_by{|s| s.team}
-          .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
-          .sort_by{|x| x[:scores]}
+          .select{ |team_score| team_score.round.number <= 19 }
+          .group_by{ |score| score.team }
+          .collect{ |team_score| { team_id: team_score[0].id, scores: team_score[1].sum(&:final_score) } }
+          .sort_by{ |hash| hash[:scores] }
           .last(first_half_prize.size).reverse
         (0..first_half_prize.size-1).to_a.each do |i|
           x = Award.create(team_id: first_half_scores[i][:team_id], season: season, award_type: 3, position: i+1, prize: first_half_prize[i] )

@@ -7,12 +7,12 @@ module Api
       describe "Validations" do
         it { should have_many(:dispute_months) }
         it { should have_many(:rounds) }
-        it { should have_many(:scores ) }
+        it { should have_many(:scores) }
         it { should validate_presence_of(:year) }
       end
 
       describe "Serialization" do
-        let (:season ) { FactoryGirl.create(:season) }
+        let (:season) { FactoryBot.create(:v1_season) }
         it "Should serialize golden rounds" do
           season.golden_rounds = [1,2,3,4,5]
           season.save
