@@ -22,7 +22,6 @@ module Api
 
       describe "Scope 'award_first_turn'" do
         it 'Should create 3 awards if less than 35 teams' do
-          raise Season.all.inspect
           expect(true).to eq(true)
         end
       end
