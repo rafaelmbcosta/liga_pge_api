@@ -3,16 +3,16 @@ module Api
     class AwardWorker
 
       def self.award_champions(season)
-        # Prizes for 1 2 and 3
+        # Prizes for 1 2 and 3 (or 4)
         prizes = season.championship_prize
         second_half_prize = season.second_half_prize
-        # Collects the first 3 scorers from the championship
+        # Collects the first 3 or 4 scorers from the championship
         team_scores = season.scores.joins(:team).where("teams.active is true").group_by{|s| s.team}
-        team_scores = team_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(3).reverse
+        team_scores = team_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(prizes.size).reverse
         # Collects the first 3 scorers from the second half
         second_half_scores = season.scores.joins(:team).where("teams.active is true").select{|ts| ts.round.number > 19}.group_by{|s| s.team}
-        second_half_scores = second_half_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(3).reverse
-        (0..2).to_a.each do |i|
+        second_half_scores = second_half_scores.collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}.sort_by{|x| x[:scores]}.last(prizes.size).reverse
+        (0..prizes.size-1).to_a.each do |i|
           # Second Turn
           x = Award.create(team_id: second_half_scores[i][:team_id], season: season, award_type: 4, position: i+1, prize: second_half_prize[i] )
           # Championship
@@ -20,16 +20,18 @@ module Api
         end
       end
 
+      # Calculates the prize pool for the first 3 or 4 best players of the turn
+
       def self.award_first_turn(season)
         first_half_prize = season.first_half_prize
         first_half_scores = season.scores.joins(:team)
           .where("teams.active is true")
-          .select{|ts| ts.round.number <= 19}
-          .group_by{|s| s.team}
-          .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
-          .sort_by{|x| x[:scores]}
-          .last(3).reverse
-        (0..2).to_a.each do |i|
+          .select{ |team_score| team_score.round.number <= 19 }
+          .group_by{ |score| score.team }
+          .collect{ |team_score| { team_id: team_score[0].id, scores: team_score[1].sum(&:final_score) } }
+          .sort_by{ |hash| hash[:scores] }
+          .last(first_half_prize.size).reverse
+        (0..first_half_prize.size-1).to_a.each do |i|
           x = Award.create(team_id: first_half_scores[i][:team_id], season: season, award_type: 3, position: i+1, prize: first_half_prize[i] )
         end
       end
@@ -41,8 +43,8 @@ module Api
           .group_by{ |s| s.team }
           .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
           .sort_by{|x| x[:scores]}
-          .last(3).reverse
-        (0..2).to_a.each do |i|
+          .last(golden_prize.size).reverse
+        (0..golden_prize.size-1).to_a.each do |i|
           x = Award.create(team_id: winners[i][:team_id],
           season: round.season,
           award_type: 5,
@@ -60,8 +62,8 @@ module Api
           .group_by{ |s| s.team }
           .collect{|ts| {team_id: ts[0].id, scores: ts[1].sum(&:final_score)}}
           .sort_by{|x| x[:scores]}
-          .last(3).reverse
-        (0..2).to_a.each do |i|
+          .last(monthly_prize.size).reverse
+        (0..monthly_prize.size-1).to_a.each do |i|
           x = Award.create(team_id: winners[i][:team_id],
           season: dispute.season,
           award_type: 1,
@@ -75,8 +77,8 @@ module Api
         league_prize = dispute.league_prize
         LeagueReport.perform
         winners = JSON.parse($redis.get("league")).select{|l| l["id"] == dispute.id}
-        winners = winners[0]["players"][0..2]
-        (0..2).to_a.each do |i|
+        winners = winners[0]["players"][0..league_prize-1]
+        (0..league_prize.size-1).to_a.each do |i|
           x = Award.create(team_id: winners[i]["id"],
           season: dispute.season,
           award_type: 2,
@@ -95,11 +97,20 @@ module Api
           .sort_by{|currencies| currencies[:difference]}
           .reverse
         winner_id = currency_ranking.first[:team_id]
+        second_id = currency_ranking.second[:team_id]
+        prize = dispute.currency_prize
+        players = dispute.active_players
+        prize = prize/2.0 if players >= 35
         Award.create(team_id: winner_id,
           season: dispute.season,
           award_type: 6,
           dispute_month: dispute,
-          prize: dispute.currency_prize)
+          prize: prize)
+        Award.create(team_id: second_id,
+          season: dispute.season,
+          award_type: 6,
+          dispute_month: dispute,
+          prize: prize) if players >= 35
       end
 
       def self.perform(round)

@@ -1,5 +1,9 @@
 require 'rails_helper'
 
-RSpec.describe Currency, type: :model do
-  pending "add some examples to (or delete) #{__FILE__}"
+module Api
+  module V1
+    RSpec.describe Currency, type: :model do
+
+    end
+  end
 end
