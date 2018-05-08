@@ -4,7 +4,7 @@ module Api
 
       def self.team_score(team_id, scores, round)
         score = 0
-        team_id.nil? ? score = round.ghost_score : score = scores.find{|s| s.team_id == team_id}.final_score
+        team_id.nil? ? score = round.ghost_score : score = scores.find{|s| s.team_id == team_id and s.round_id == round.id}.final_score
         return score
       end
 
