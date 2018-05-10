@@ -53,6 +53,22 @@ module Api
         championship_prize_pool = total_money*0.05
         return split_prizes(active_players, championship_prize_pool)
       end
+
+      def cash
+        payed_values = self.dispute_months
+              .select("month_activities.payed_value")
+              .joins(:month_activities)
+              .where("month_activities.payed is true")
+        received = payed_values.collect{ |value| value.payed_value }.sum
+
+        prizes = self.dispute_months
+              .select("awards.prize")
+              .joins(:awards)
+              .where("awards.payed is true")
+
+        payed = prizes.collect{ |value| value.prize }.sum
+        return received - payed
+      end
     end
   end
 end
