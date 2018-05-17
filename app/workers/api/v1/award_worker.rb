@@ -89,6 +89,7 @@ module Api
       end
 
       def self.award_currency(dispute)
+        # this prize is only for the ones that haven`t won yet
         dispute_month_winners = Award.where(dispute_month_id: dispute.id, season: dispute.season).collect{|aw| aw.team_id }.uniq
         currency_ranking = dispute.currencies
           .select{|not_winner| !dispute_month_winners.include?(not_winner.team_id)}
@@ -100,7 +101,8 @@ module Api
         second_id = currency_ranking.second[:team_id]
         prize = dispute.currency_prize
         players = dispute.active_players
-        prize = prize/2.0 if players >= 35
+        prize = prize*0.6 if players >= 35
+        second_prize = prize * 0.4
         Award.create(team_id: winner_id,
           season: dispute.season,
           award_type: 6,
@@ -110,7 +112,7 @@ module Api
           season: dispute.season,
           award_type: 6,
           dispute_month: dispute,
-          prize: prize) if players >= 35
+          prize: second_prize) if players >= 35
       end
 
       def self.perform(round)
@@ -131,6 +133,7 @@ module Api
           award_league(dispute)
           ## Patrimônio
           award_currency(dispute)
+          dispute.update_attributes(finished: true)
         end
       end
     end

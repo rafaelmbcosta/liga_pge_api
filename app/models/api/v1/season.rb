@@ -16,7 +16,8 @@ module Api
         total = 0
         self.dispute_months.each do |dm|
           if dm.dispute_rounds.last >= 19
-            active_players = dm.month_activities.where(active: true, payed: true)
+            # to get how many winners for this prize
+            active_players = dm.month_activities.where(active: true)
             if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.first != 19)
               total+= active_players.size * dm.price*0.083 * 0.5
             else
@@ -32,8 +33,8 @@ module Api
         total = 0
         self.dispute_months.each do |dm|
           if dm.dispute_rounds.first <= 19
-            puts "DM = #{dm.name}"
-            active_players = dm.month_activities.where(active: true, payed: true)
+            # to get how many winners for this prize
+            active_players = dm.month_activities.where(active: true)
             if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.last != 19)
               total+= active_players.size * dm.price*0.083 * 0.5
             else
@@ -49,7 +50,8 @@ module Api
         # pool is about 5 % of the total money
         # 50 % 30 % 20 for the first, second and third
         dm = self.dispute_months.last
-        active_players = dm.month_activities.where(active: true, payed: true)
+        # to get how many winners for this prize
+        active_players = dm.month_activities.where(active: true)
         championship_prize_pool = total_money*0.05
         return split_prizes(active_players, championship_prize_pool)
       end

@@ -9,7 +9,7 @@ module Api
       def self.create_activities(dispute_month)
         Team.where(active: true, season: Season.last).each do |team|
           activity = MonthActivity.find{|ma| ma.dispute_month.id == dispute_month.id && ma.team.id == team.id }
-          MonthActivity.create(team: team, dispute_month: dispute_month, active: true, payed: true) if activity.nil?
+          MonthActivity.create(team: team, dispute_month: dispute_month, active: true, payed: false) if activity.nil?
         end
       end
 
