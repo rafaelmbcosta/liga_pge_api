@@ -28,7 +28,6 @@ module Api
             winners.each do |winner|
               award["winners"] << format_winner(winner)
             end
-            award["winners"].reverse!
             dispute["awards"] << award
           end
           report << dispute
