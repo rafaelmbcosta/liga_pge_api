@@ -77,7 +77,7 @@ module Api
         league_prize = dispute.league_prize
         LeagueReport.perform
         winners = JSON.parse($redis.get("league")).select{|l| l["id"] == dispute.id}
-        winners = winners[0]["players"][0..league_prize-1]
+        winners = winners[0]["players"][0..league_prize.size-1]
         (0..league_prize.size-1).to_a.each do |i|
           x = Award.create(team_id: winners[i]["id"],
           season: dispute.season,
