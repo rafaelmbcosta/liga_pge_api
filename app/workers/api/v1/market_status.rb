@@ -61,7 +61,7 @@ module Api
               FinalCurrency.perform(previous_round)
               AwardWorker.perform(previous_round)
               previous_round.update_attributes(finished: true)
-              $redis.set('maintenance_round',  previous_round.id.to)
+              $redis.set('maintenance_round',  previous_round.id.to_s)
               $redis.set('maintenance_count', '3')
               if last_round(market_status)
                 season.finished = true
