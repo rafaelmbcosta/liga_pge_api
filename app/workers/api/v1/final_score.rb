@@ -15,7 +15,7 @@ module Api
                 player_name: team.player.name)
           else
             score.update_attributes(final_score: points.round(2))
-            to_verify << score_id: score.id if !score.final_score_previously_changed? and !maintenance
+            to_verify << score.id if !score.final_score_previously_changed? and !maintenance
             to_verify.delete(score.id) if maintenance and score.final_score_previously_changed? and to_verify.include?(score.id)
           end
         end
