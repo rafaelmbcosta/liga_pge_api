@@ -77,7 +77,7 @@ module Api
         league_prize = dispute.league_prize
         LeagueReport.perform
         winners = JSON.parse($redis.get("league")).select{|l| l["id"] == dispute.id}
-        winners = winners[0]["players"][0..league_prize-1]
+        winners = winners[0]["players"][0..league_prize.size-1]
         (0..league_prize.size-1).to_a.each do |i|
           x = Award.create(team_id: winners[i]["id"],
           season: dispute.season,
@@ -101,8 +101,8 @@ module Api
         second_id = currency_ranking.second[:team_id]
         prize = dispute.currency_prize
         players = dispute.active_players
-        prize = prize*0.6 if players >= 35
-        second_prize = prize * 0.4
+        second_prize = prize*0.4
+        prize = prize*0.6 if players.size >= 35
         Award.create(team_id: winner_id,
           season: dispute.season,
           award_type: 6,
@@ -112,7 +112,7 @@ module Api
           season: dispute.season,
           award_type: 6,
           dispute_month: dispute,
-          prize: second_prize) if players >= 35
+          prize: second_prize) if players.size >= 35
       end
 
       def self.perform(round)
