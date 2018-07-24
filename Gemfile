@@ -23,17 +23,18 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'knock'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-
+gem 'nokogiri', '1.8.3'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
-
+gem 'sinatra', '2.0.2'
 # manage env variable
 gem "figaro"
+gem 'sprockets', '3.7.2'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
-
+  gem 'gemsurance'
   # Rspec for rails 5
   gem 'rspec-rails', '~> 3.6'
 
