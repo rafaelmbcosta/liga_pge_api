@@ -3,8 +3,6 @@ module Api
     class Battle < ApplicationRecord
       belongs_to :round
 
-      
-
       def self.list_battles
         $redis.get("battles")
       end

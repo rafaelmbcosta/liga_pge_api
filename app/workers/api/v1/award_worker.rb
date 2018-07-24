@@ -89,6 +89,7 @@ module Api
       end
 
       def self.award_currency(dispute)
+        # this prize is only for the ones that haven`t won yet
         dispute_month_winners = Award.where(dispute_month_id: dispute.id, season: dispute.season).collect{|aw| aw.team_id }.uniq
         currency_ranking = dispute.currencies
           .select{|not_winner| !dispute_month_winners.include?(not_winner.team_id)}
@@ -132,6 +133,7 @@ module Api
           award_league(dispute)
           ## Patrimônio
           award_currency(dispute)
+          dispute.update_attributes(finished: true)
         end
       end
     end
