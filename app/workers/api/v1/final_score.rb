@@ -16,7 +16,7 @@ module Api
                 player_name: team.player.name)
           else
             score.update_attributes(final_score: points.round(2))
-            previous_points = Score.find{ |sc| sc.team_id == team.id and sc.round_id == previous_round.id }.final_score if maintenance and round.number > 1
+            previous_points = Score.find{ |sc| sc.team_id == team.id and sc.round_id == previous_round.id }.final_score if round.number > 1
             to_verify << score.id if score.final_score == previous_points
             to_verify.delete(score.id) if maintenance and score.final_score != previous_points and to_verify.include?(score.id)
           end
