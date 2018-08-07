@@ -3,7 +3,7 @@ module Api
     class FinalScore
       def self.perform(round, maintenance = false)
         to_verify = maintenance ? JSON.parse($redis.get("to_fix_#{round.id}")) : []
-        previous_round = Round.find{ |r| r.season == round.season and r.number == round.number - 1 } if maintenance and round.number > 1
+        previous_round = Round.find{ |r| r.season == round.season and r.number == round.number - 1 } if round.number > 1
         market_status = Connection.market_status
         teams = Team.where(season: round.season, active: true)
         teams.each do |team|
