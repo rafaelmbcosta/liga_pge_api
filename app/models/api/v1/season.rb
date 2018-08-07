@@ -16,7 +16,8 @@ module Api
         total = 0
         self.dispute_months.each do |dm|
           if dm.dispute_rounds.last >= 19
-            active_players = dm.month_activities.where(active: true, payed: true)
+            # to get how many winners for this prize
+            active_players = dm.month_activities.where(active: true)
             if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.first != 19)
               total+= active_players.size * dm.price*0.083 * 0.5
             else
@@ -32,8 +33,8 @@ module Api
         total = 0
         self.dispute_months.each do |dm|
           if dm.dispute_rounds.first <= 19
-            puts "DM = #{dm.name}"
-            active_players = dm.month_activities.where(active: true, payed: true)
+            # to get how many winners for this prize
+            active_players = dm.month_activities.where(active: true)
             if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.last != 19)
               total+= active_players.size * dm.price*0.083 * 0.5
             else
@@ -49,9 +50,26 @@ module Api
         # pool is about 5 % of the total money
         # 50 % 30 % 20 for the first, second and third
         dm = self.dispute_months.last
-        active_players = dm.month_activities.where(active: true, payed: true)
+        # to get how many winners for this prize
+        active_players = dm.month_activities.where(active: true)
         championship_prize_pool = total_money*0.05
         return split_prizes(active_players, championship_prize_pool)
+      end
+
+      def cash
+        payed_values = self.dispute_months
+              .select("month_activities.payed_value")
+              .joins(:month_activities)
+              .where("month_activities.payed is true")
+        received = payed_values.collect{ |value| value.payed_value }.sum
+
+        prizes = self.dispute_months
+              .select("awards.prize")
+              .joins(:awards)
+              .where("awards.payed is true")
+
+        payed = prizes.collect{ |value| value.prize }.sum
+        return received - payed
       end
     end
   end

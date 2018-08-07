@@ -7,6 +7,7 @@ module Api
       has_many :battles, through: :rounds
       has_many :month_activities
       has_many :currencies, through: :rounds
+      has_many :awards
       serialize :dispute_rounds
 
       def self.scores
@@ -15,7 +16,7 @@ module Api
 
       def prize_pool
         total = 0
-        active_players = self.month_activities.where(active: true, payed: true)
+        active_players = self.month_activities.where(active: true)
         return active_players.size * self.price
       end
 
@@ -28,19 +29,18 @@ module Api
       end
 
       def active_players
-        self.month_activities.where(active: true, payed: true)
+        self.month_activities.where(active: true)
       end
 
       def golden_prize
         # Total prize equals to 33.3 % of the total prize
         # divided by the ammount of golden rounds
-        golden_prize_pool = prize_pool/3.0/golden_count# unless self.golden_count == 0
+        golden_prize_pool = prize_pool/3.0/golden_count # unless self.golden_count == 0
         return split_prizes(self.active_players, golden_prize_pool)
       end
 
       def monthly_prize
         # Total prize equals to 33.3 % of the total prize
-        # divided by the ammount of golden rounds
         monthly_prize_pool = prize_pool/3.0
         # return monthly_prize_pool*0.5 , monthly_prize_pool*0.3, monthly_prize_pool*0.2
         return split_prizes(self.active_players, monthly_prize_pool)

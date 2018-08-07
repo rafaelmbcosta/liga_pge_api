@@ -10,21 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20170927181445) do
+ActiveRecord::Schema.define(version: 20180510021238) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "awards", force: :cascade do |t|
-    t.integer  "award_type",       null: false
+    t.integer  "award_type",                       null: false
     t.integer  "dispute_month_id"
-    t.integer  "team_id",          null: false
+    t.integer  "team_id",                          null: false
     t.integer  "position"
     t.integer  "season_id"
-    t.float    "prize",            null: false
+    t.float    "prize",                            null: false
     t.integer  "round_id"
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.datetime "created_at",                       null: false
+    t.datetime "updated_at",                       null: false
+    t.boolean  "payed",            default: false
     t.index ["dispute_month_id"], name: "index_awards_on_dispute_month_id", using: :btree
     t.index ["round_id"], name: "index_awards_on_round_id", using: :btree
     t.index ["season_id"], name: "index_awards_on_season_id", using: :btree
@@ -57,23 +58,25 @@ ActiveRecord::Schema.define(version: 20170927181445) do
   end
 
   create_table "dispute_months", force: :cascade do |t|
-    t.string   "name",                          null: false
+    t.string   "name",                           null: false
     t.integer  "season_id"
     t.string   "details"
     t.string   "dispute_rounds"
-    t.datetime "created_at",                    null: false
-    t.datetime "updated_at",                    null: false
-    t.float    "price",          default: 30.0, null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.float    "price",          default: 30.0,  null: false
+    t.boolean  "finished",       default: false
     t.index ["season_id"], name: "index_dispute_months_on_season_id", using: :btree
   end
 
   create_table "month_activities", force: :cascade do |t|
-    t.integer  "team_id",          null: false
-    t.integer  "dispute_month_id", null: false
-    t.boolean  "active",           null: false
-    t.boolean  "payed",            null: false
-    t.datetime "created_at",       null: false
-    t.datetime "updated_at",       null: false
+    t.integer  "team_id",                        null: false
+    t.integer  "dispute_month_id",               null: false
+    t.boolean  "active",                         null: false
+    t.boolean  "payed",                          null: false
+    t.datetime "created_at",                     null: false
+    t.datetime "updated_at",                     null: false
+    t.float    "payed_value",      default: 0.0
     t.index ["dispute_month_id"], name: "index_month_activities_on_dispute_month_id", using: :btree
     t.index ["team_id"], name: "index_month_activities_on_team_id", using: :btree
   end
@@ -130,7 +133,6 @@ ActiveRecord::Schema.define(version: 20170927181445) do
     t.integer  "player_id"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
-    t.integer  "start_round",    default: 1
     t.index ["player_id"], name: "index_teams_on_player_id", using: :btree
     t.index ["season_id"], name: "index_teams_on_season_id", using: :btree
   end

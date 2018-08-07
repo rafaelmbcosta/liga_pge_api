@@ -9,7 +9,7 @@ module Api
       def self.create_activities(dispute_month)
         Team.where(active: true, season: Season.last).each do |team|
           activity = MonthActivity.find{|ma| ma.dispute_month.id == dispute_month.id && ma.team.id == team.id }
-          MonthActivity.create(team: team, dispute_month: dispute_month, active: true, payed: true) if activity.nil?
+          MonthActivity.create(team: team, dispute_month: dispute_month, active: true, payed: false) if activity.nil?
         end
       end
 
@@ -50,23 +50,25 @@ module Api
           if market_status["status_mercado"] == 2 #Closed
             NewBattle.perform(round) if (round.battles.empty? && Time.now.day == fechamento["dia"] &&
               Time.now.month == fechamento["mes"] && Time.now.year == fechamento["ano"] )
-              puts "Round id: #{round.id} number: #{round.number}"
             PartialScore.perform(round)
           end
           if market_status["status_mercado"] == 1 || last_round(market_status)# Open
             # Check if the market is open
             round_number = last_round(market_status) ? round.number : round.number-1
             previous_round = Round.find{|r| r.number == round_number and r.finished == false and r.season == season}
-            unless previous_round.nil?
+            unless  previous_round.nil?
               FinalScore.perform(previous_round)
               FinalCurrency.perform(previous_round)
               AwardWorker.perform(previous_round)
               previous_round.update_attributes(finished: true)
+              $redis.set('maintenance_round',  previous_round.id.to_s)
+              $redis.set('maintenance_count', '3')
               if last_round(market_status)
                 season.finished = true
                 season.save
               end
             end
+            MaintenanceWorker.perform
           end
         end
       end
