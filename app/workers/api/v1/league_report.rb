@@ -58,7 +58,7 @@ module Api
             leagues << league
           end
         end
-        league.sort_by!{|l| l["id"]}.reverse!
+        leagues.sort_by!{|l| l["id"]}.reverse!
         $redis.set("league", leagues.to_json)
       end
     end
