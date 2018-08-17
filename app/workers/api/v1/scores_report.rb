@@ -35,7 +35,8 @@ module Api
             months << month
           end
         end
-        $redis.set("scores", months.reverse.to_json)
+        months.sort_by!{|m| m["id"]}.reverse!
+        $redis.set("scores", months.to_json)
       end
     end
   end
