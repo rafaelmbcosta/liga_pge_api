@@ -31,6 +31,7 @@ module Api
 
       def first_half_prize
         total = 0
+        active_players = nil
         self.dispute_months.each do |dm|
           if dm.dispute_rounds.first <= 19
             # to get how many winners for this prize
