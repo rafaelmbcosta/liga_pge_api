@@ -18,7 +18,8 @@ module Api
           if dm.dispute_rounds.last >= 19
             # to get how many winners for this prize
             active_players = dm.month_activities.where(active: true)
-            if (dm.dispute_rounds.include?(19) and dm.dispute_rounds.first != 19)
+            media = dm.dispute_months.length/2
+            if ( dm.dispute_rounds.include?(19) and dm.dispute_rounds.index(19) + 1 <= media )
               total+= active_players.size * dm.price*0.083 * 0.5
             else
               total+= active_players.size * dm.price*0.083
