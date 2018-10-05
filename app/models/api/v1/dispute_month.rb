@@ -56,6 +56,10 @@ module Api
       def self.battle_points
         $redis.get("league")
       end
+
+      def self.active
+        self.find_by(finished: false, season: Season.last).sort.first
+      end
     end
   end
 end
