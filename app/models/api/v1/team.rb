@@ -6,7 +6,7 @@ module Api
       has_many :currencies
       has_many :month_activities
 
-      validates :check_battles, only: [:disable]
+      validate :check_battles, only: [:disable]
 
       def disable
         dispute_month = DisputeMonth.active
