@@ -58,7 +58,7 @@ module Api
       end
 
       def self.active
-        self.find_by(finished: false, season: Season.last).sort.first
+        self.order('id asc').find_by(finished: false, season: Season.last)
       end
     end
   end

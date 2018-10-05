@@ -6,7 +6,7 @@ module Api
       has_many :currencies
       has_many :month_activities
 
-      validate :check_battles, only: [:disable]
+      validate :check_battles, on: [:disable]
 
       def disable
         dispute_month = DisputeMonth.active
@@ -17,7 +17,8 @@ module Api
   
       def check_battles
         dispute_month = DisputeMonth.active
-        battles = Battle.where("round_id in (:rounds) and (first_id = :team_id or second_id = :team_id)", { team_id: self.id, rounds: dispute_month.dispute_rounds } )
+        battles = Battle.where("round_id in (:rounds) and (first_id = :team_id or second_id = :team_id)",
+                              { team_id: self.id, rounds: dispute_month.dispute_rounds } )
         raise "Cannot disable because there is a battle with this team" if battles.present?
       end
     end
