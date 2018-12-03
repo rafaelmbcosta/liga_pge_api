@@ -14,6 +14,8 @@ module Api
 
       def second_half_prize
         total = 0
+        active_players = nil
+        
         dispute_months = self.dispute_months.order(:id)
         dispute_months.each do |dm|
           if dm.dispute_rounds.last >= 19
