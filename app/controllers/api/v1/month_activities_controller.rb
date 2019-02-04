@@ -1,6 +1,7 @@
 module Api
   module V1
     class MonthActivitiesController < ApplicationController
+      before_action :authenticate_user
       before_action :set_month_activity, only: [:show, :update, :destroy]
 
       # GET /month_activities
