@@ -12,6 +12,8 @@ gem 'resque'
 gem 'rails', '~> 5.0.1'
 # Use mysql as the database for Active Record
 gem 'pg'
+gem 'rack', '~> 2.0.6'
+gem "loofah", '>= 2.2.3'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -23,7 +25,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'knock'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem 'nokogiri', '1.8.3'
+gem 'nokogiri', '1.8.5'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 gem 'sinatra', '2.0.2'
