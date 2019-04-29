@@ -8,7 +8,31 @@ module Api
       has_many :battles
       has_many :month_activities
 
-      default_scope { order("number asc")}
+      validate :more_than_two_active
+      validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
+
+      default_scope { order('number asc')}
+
+      def more_than_two_active
+        errors.add(:more_than_two, 'Já exitem 2 ativos') if Season.active.active_rounds.count >= 2 &&
+                                                             self.new_record?
+      end
+
+      def self.exist_round?(season, round_number)
+        season.active_rounds.pluck(:number).include?(round_number)
+      end
+
+      def Round.new_round(number)
+
+      end
+      
+      def self.check_new_round
+        season = Season.active
+        current_api_round = Connection.current_round
+        raise 'Invalid current round' if current_api_round.class != Fixnum
+        round_exist = exist_round?(season, current_api_round)
+        return round_exist ? true : new_round(current_api_round)
+      end
 
       def self.check_golden(round_number)
         Season.last.golden_rounds.include?(round_number)

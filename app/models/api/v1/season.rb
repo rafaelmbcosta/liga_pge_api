@@ -7,7 +7,7 @@ module Api
 
       serialize :golden_rounds
 
-      scope :active, -> { where(finished: false) }
+      scope :active, -> { find_by(finished: false) }
 
       validates_presence_of :year
       validate :another_season_active?
@@ -16,19 +16,19 @@ module Api
       BEGINNING_OF_SECOND_HALF = 19.freeze
       END_OF_SECOND_HALF = 38.freeze
 
-      def total_money
-        total = 0
-        self.dispute_months.collect{|dm| dm.prize_pool}.sum
-      end
+      # def total_money
+      #   total = 0
+      #   self.dispute_months.collect{|dm| dm.prize_pool}.sum
+      # end
 
       def another_season_active?
-        errors.add(:already_exist, "Already have one season active") if Season.active.count > 0
+        errors.add(:already_exist, "Temporada já existe") if Season.active.present? &&
+                                                             self.new_record?
       end
 
-      def self.current
-        return active.last
+      def active_rounds
+        rounds.where(finished: false)
       end
-
       #
       # def second_half_prize
       #   total = 0

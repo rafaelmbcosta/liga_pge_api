@@ -4,9 +4,9 @@ require 'open-uri'
 module Api
   module V1
     class Connection
-      STATUS_URL = "https://api.cartolafc.globo.com/mercado/status"
-      URL_TEAM_SCORE = "https://api.cartolafc.globo.com/time/slug/"
-      ATHLETES_SCORES = "https://api.cartolafc.globo.com/atletas/pontuados"
+      STATUS_URL = 'https://api.cartolafc.globo.com/mercado/status'.freeze
+      URL_TEAM_SCORE = 'https://api.cartolafc.globo.com/time/slug/'.freeze
+      ATHLETES_SCORES = 'https://api.cartolafc.globo.com/atletas/pontuados'.freeze
 
       def self.connect(uri)
         # For proxy development change coment lines below
@@ -15,6 +15,10 @@ module Api
         # request = http.get_response(uri).body
         request = Net::HTTP.get(uri)
         return JSON.parse(request)
+      end
+
+      def self.current_round
+        market_status["rodada_atual"]
       end
 
       def self.team_score(slug, round=nil)
