@@ -13,6 +13,9 @@ development:
 
 test:
   <<: *default
+  username: postgres
+  password: postgres
+  host: localhost
   database: cartolapgeapi_test
 
 production:

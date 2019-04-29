@@ -1,0 +1,114 @@
+require: rubocop-performance
+
+# This is the configuration used to check the rubocop source code.
+
+require:
+  - rubocop/cop/internal_affairs
+  - rubocop-rspec
+
+AllCops:
+  Exclude:
+    - 'vendor/**/*'
+    - 'spec/fixtures/**/*'
+    - 'tmp/**/*'
+    - 'lib/**/*'
+    - 'db/**/*'
+
+  TargetRubyVersion: 2.5
+
+Naming/PredicateName:
+  # Method define macros for dynamically generated method.
+  MethodDefinitionMacros:
+    - define_method
+    - define_singleton_method
+    - def_node_matcher
+    - def_node_search
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: never
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Layout/IndentHeredoc:
+  EnforcedStyle: powerpack
+
+Lint/AmbiguousBlockAssociation:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Lint/InterpolationCheck:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Lint/UselessAccessModifier:
+  MethodCreatingMethods:
+    - 'def_matcher'
+    - 'def_node_matcher'
+
+Lint/BooleanSymbol:
+  Enabled: false
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Rakefile'
+    - '**/*.rake'
+    - spec/**/*.rb
+
+Metrics/ModuleLength:
+  Exclude:
+    - 'spec/**/*.rb'
+
+Performance/Caller:
+  Exclude:
+    - spec/rubocop/cop/performance/caller_spec.rb
+
+RSpec/PredicateMatcher:
+  Description: Prefer using predicate matcher over using predicate method directly.
+  Enabled: true
+  Strict: true
+  EnforcedStyle: inflected
+  SupportedStyles:
+  - inflected
+  - explicit
+  StyleGuide: http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/PredicateMatcher
+
+RSpec/InvalidPredicateMatcher:
+  Description: Checks invalid usage for predicate matcher.
+  Enabled: true
+  StyleGuide: http://www.rubydoc.info/gems/rubocop-rspec/RuboCop/Cop/RSpec/InvalidPredicateMatcher
+
+RSpec/NestedGroups:
+  Max: 7
+
+RSpec/ExampleLength:
+  Max: 8
+
+Metrics/LineLength:
+  Max: 120
+  Exclude:
+    - 'config/routes.rb'
+
+Metrics/MethodLength:
+  Max: 10
+  Exclude:
+    - 'app/models'
+
+Metrics/MethodLength:
+  Max: 15
+
+Metrics/BlockLength:
+  Max: 25
+  Exclude:
+    - 'spec/**/*.rb'
+    - 'config/routes.rb'
+
+Capybara/FeatureMethods:
+  Exclude:
+  - spec/features/**/*.rb
+
+Style/AsciiComments:
+  Enabled: false
+
+Style/EvalWithLocation:
+  Enabled: false

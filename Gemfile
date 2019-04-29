@@ -37,13 +37,13 @@ group :development, :test do
   gem 'gemsurance'
   # Rspec for rails 5
   gem 'rspec-rails', '~> 3.6'
-
+  gem 'rubocop-performance'
   # mocking objects and classes
   gem 'mocha'
 
   # Mock rails models
   gem 'factory_bot_rails'
-
+  gem 'rubocop-rspec', '1.27.0'
   # Fake attributes for factories
   gem 'faker'
 end
@@ -55,6 +55,8 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'guard'
   gem 'guard-rspec'
+  gem 'guard-rubocop'
+  
 end
 
 group :test do
