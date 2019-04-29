@@ -14,6 +14,10 @@ module Api
         $redis.get("scores")
       end
 
+      def middle_month?
+        (self.dispute_rounds.include?(19) and self.dispute_rounds.index(19) + 1) <= self.dispute_rounds.length/2
+      end
+
       def prize_pool
         total = 0
         active_players = self.month_activities.where(active: true)

@@ -1,7 +1,7 @@
 module Api
   module V1
     class SeasonsController < ApplicationController
-      before_action :authenticate_user, except: [ :index, :scores ]
+      before_action :authenticate_user, except: [:scores]
       before_action :set_season, only: [:show, :update, :destroy]
 
       # GET /seasons
@@ -13,7 +13,7 @@ module Api
 
       # GET /seasons/1
       def show
-        render json: @season
+        render json: @season.to_json(include: :dispute_months)
       end
 
       def scores
