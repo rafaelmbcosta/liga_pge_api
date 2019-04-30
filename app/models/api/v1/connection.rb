@@ -17,6 +17,14 @@ module Api
         return JSON.parse(request)
       end
 
+      def self.market_open?
+        market_status["status_mercado"] == 1
+      end
+
+      def self.market_closed?
+        market_status["status_mercado"] == 2
+      end
+
       def self.current_round
         market_status["rodada_atual"]
       end

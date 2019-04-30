@@ -12,6 +12,8 @@ gem 'resque'
 gem 'rails', '~> 5.0.1'
 # Use mysql as the database for Active Record
 gem 'pg'
+gem 'rack', '~> 2.0.6'
+gem "loofah", '>= 2.2.3'
 # Use Puma as the app server
 gem 'puma', '~> 3.0'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
@@ -23,7 +25,7 @@ gem 'bcrypt', '~> 3.1.7'
 gem 'knock'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem 'nokogiri', '1.8.3'
+gem 'nokogiri', '1.8.5'
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 gem 'sinatra', '2.0.2'
@@ -37,13 +39,13 @@ group :development, :test do
   gem 'gemsurance'
   # Rspec for rails 5
   gem 'rspec-rails', '~> 3.6'
-
+  gem 'rubocop-performance'
   # mocking objects and classes
   gem 'mocha'
 
   # Mock rails models
   gem 'factory_bot_rails'
-
+  gem 'rubocop-rspec', '1.27.0'
   # Fake attributes for factories
   gem 'faker'
 end
@@ -55,6 +57,8 @@ group :development do
   gem 'spring-watcher-listen', '~> 2.0.0'
   gem 'guard'
   gem 'guard-rspec'
+  gem 'guard-rubocop'
+  
 end
 
 group :test do

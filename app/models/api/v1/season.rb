@@ -22,13 +22,14 @@ module Api
       # end
 
       def another_season_active?
-        errors.add(:already_exist, "Temporada já existe") if Season.active.present? &&
+        errors.add(:already_exist, 'Temporada já existe') if Season.active.present? &&
                                                              self.new_record?
       end
 
       def active_rounds
         rounds.where(finished: false)
       end
+
       #
       # def second_half_prize
       #   total = 0
