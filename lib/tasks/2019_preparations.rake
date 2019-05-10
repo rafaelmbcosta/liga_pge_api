@@ -11,7 +11,7 @@ task :preparations_2019 => :environment do
                                     
   # 3) create teams
   def create_team(id, name, slug)
-    player = Api::V1::Team.find(id)
+    player = Api::V1::Player.find(id)
     team = Api::V1::Team.new(player: player, name: name, slug: slug, season: $season, active: true)
     if team.save
       puts "OK #{name}"
