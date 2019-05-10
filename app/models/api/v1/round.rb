@@ -8,6 +8,7 @@ module Api
       has_many :currencies
       has_many :battles
       has_many :month_activities
+      has_one  :round_control, class_name: 'control'
 
       validate :more_than_two_active
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
@@ -28,18 +29,23 @@ module Api
         dispute_months.to_a.find { |dm| dm.dispute_rounds.include?(number) }
       end
 
-      def self.new_round(season, number)
-        dispute_month = find_dispute_month(season, number)
-        round = Round.new(season: season, dispute_month: dispute_month, number: number)
-        round.save ? round : (raise 'Round já existe')
+      def self.new_round(season, ms)
+        dispute_month = find_dispute_month(season, ms['rodada_atual'])
+        market_close_date = DateTime.new(ms['fechamento']['ano'], ms['fechamento']['mes'], 
+                                         ms['fechamento']['dia'], ms['fechamento']['hora'], 
+                                         ms['fechamento']['minuto'])
+        round = Round.new(season: season, dispute_month: dispute_month, 
+                          number: ms['rodada_atual'], market_close: market_close_date)
+        round.save ? RoundControl.create(round: round) : (raise round.errors.messages.inspect)
+        true
       end
       
       def self.check_new_round
         season = Season.active
-        current_api_round = Connection.current_round
-        raise 'Invalid current round' if current_api_round.class != Fixnum
-        round_exist = exist_round?(season, current_api_round)
-        return round_exist ? true : new_round(season, current_api_round)
+        market_status = Connection.market_status
+        raise 'Erro: mercado invalido / fechado' if market_status.nil? || market_status['status_mercado'] != 1
+        round_exist = exist_round?(season, market_status['rodada_atual'])
+        return round_exist ? true : new_round(season, market_status)
       end
 
       def self.check_golden(round_number)

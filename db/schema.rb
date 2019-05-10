@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190423205140) do
+ActiveRecord::Schema.define(version: 20190510135325) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -81,11 +81,27 @@ ActiveRecord::Schema.define(version: 20190423205140) do
     t.index ["team_id"], name: "index_month_activities_on_team_id", using: :btree
   end
 
-  create_table "players", force: :cascade do |t|
-    t.string   "name",                      null: false
-    t.boolean  "active",     default: true, null: false
-    t.datetime "created_at",                null: false
-    t.datetime "updated_at",                null: false
+  create_table "round_controls", force: :cascade do |t|
+    t.boolean  "generating_battles",        default: false, null: false
+    t.boolean  "battles_generated",         default: false, null: false
+    t.datetime "battle_generated_date"
+    t.boolean  "updating_scores",           default: false, null: false
+    t.boolean  "scores_updated",            default: false, null: false
+    t.datetime "scores_updated_date"
+    t.integer  "round_id"
+    t.boolean  "market_closed",             default: false, null: false
+    t.boolean  "updating_league",           default: false, null: false
+    t.boolean  "league_updated",            default: false, null: false
+    t.datetime "league_updated_date"
+    t.boolean  "updating_battle_scores",    default: false, null: false
+    t.boolean  "battle_scores_updated",     default: false, null: false
+    t.datetime "battle_scores_update_date"
+    t.boolean  "generating_currencies",     default: false, null: false
+    t.boolean  "currencies_generated",      default: false, null: false
+    t.datetime "currencies_generated_date"
+    t.datetime "created_at",                                null: false
+    t.datetime "updated_at",                                null: false
+    t.index ["round_id"], name: "index_round_controls_on_round_id", using: :btree
   end
 
   create_table "rounds", force: :cascade do |t|
@@ -93,7 +109,7 @@ ActiveRecord::Schema.define(version: 20190423205140) do
     t.boolean  "golden",           default: false, null: false
     t.integer  "season_id"
     t.date     "market_open"
-    t.date     "market_close"
+    t.datetime "market_close"
     t.boolean  "finished",         default: false, null: false
     t.integer  "dispute_month_id"
     t.datetime "created_at",                       null: false
@@ -129,13 +145,10 @@ ActiveRecord::Schema.define(version: 20190423205140) do
     t.boolean  "active",         default: true, null: false
     t.string   "slug"
     t.string   "url_escudo_png"
-    t.integer  "season_id"
-    t.integer  "player_id"
     t.datetime "created_at",                    null: false
     t.datetime "updated_at",                    null: false
     t.string   "id_tag"
-    t.index ["player_id"], name: "index_teams_on_player_id", using: :btree
-    t.index ["season_id"], name: "index_teams_on_season_id", using: :btree
+    t.string   "player_name"
   end
 
   create_table "users", force: :cascade do |t|
@@ -155,10 +168,9 @@ ActiveRecord::Schema.define(version: 20190423205140) do
   add_foreign_key "currencies", "teams"
   add_foreign_key "month_activities", "dispute_months"
   add_foreign_key "month_activities", "teams"
+  add_foreign_key "round_controls", "rounds"
   add_foreign_key "rounds", "dispute_months"
   add_foreign_key "rounds", "seasons"
   add_foreign_key "scores", "rounds"
   add_foreign_key "scores", "teams"
-  add_foreign_key "teams", "players"
-  add_foreign_key "teams", "seasons"
 end
