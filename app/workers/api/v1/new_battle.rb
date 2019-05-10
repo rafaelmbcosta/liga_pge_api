@@ -10,7 +10,6 @@ module Api
             teams << nil
           end
 
-
           while (teams.size > 0) do
             team = teams[rand(teams.size)]
             # Comparo o player com todos os outros players
