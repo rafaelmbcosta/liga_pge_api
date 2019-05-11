@@ -5,7 +5,9 @@ module Api
       has_many :month_activities
 
       validate :check_battles, on: [:disable]
-
+      
+      scope :active, -> { where(active: true) }
+      
       def disable
         dispute_month = DisputeMonth.active
         month_activity = self.month_activities.find_by(dispute_month: dispute_month)

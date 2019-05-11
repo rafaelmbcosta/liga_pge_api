@@ -4,7 +4,7 @@ module Api
       def self.perform(round)
         unless round.finished?
           fantasma = false
-          teams = Team.where(active: true, season_id: round.season.id).collect{|t| t.id}
+          teams = Team.active.pluck(:id)
           if !(teams.size % 2 == 0)
             fantasma = true
             teams << nil

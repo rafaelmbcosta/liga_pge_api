@@ -8,7 +8,7 @@ module Api
           name = "Fantasma"
         else
           team = teams.find{|t| t.id == id}
-          name = "#{team.player.name} ( #{team.name} )"
+          name = "#{team.player_name} ( #{team.name} )"
         end
       end
 
@@ -23,7 +23,7 @@ module Api
 
       def self.perform
         season = Season.active
-        teams = Team.where(season: season)
+        teams = Team.all
         battles = Battle.where(round_id: season.rounds.pluck(:id)).group_by(&:round_id)
         full_list = []
         battles.each do |k,v|
