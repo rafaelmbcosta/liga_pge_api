@@ -15,6 +15,25 @@ module Api
 
       default_scope { order('number asc') }
 
+      def self.current
+        Season.active.rounds.max{ |round| round.number }
+      end
+
+      def self.active
+        Season.active.rounds.where(finished: false)
+      end
+
+      def self.close_market
+        begin
+          active.each do |round|
+            check_close_market_conditions(round)
+
+          end
+        rescue StandardError => error
+
+        end
+      end
+
       def more_than_two_active
         errors.add(:more_than_two, 'Já exitem 2 ativos') if Season.active.active_rounds.count >= 2 &&
                                                             self.new_record?
@@ -41,11 +60,16 @@ module Api
       end
       
       def self.check_new_round
-        season = Season.active
-        market_status = Connection.market_status
-        raise 'Erro: mercado invalido / fechado' if market_status.nil? || market_status['status_mercado'] != 1
-        round_exist = exist_round?(season, market_status['rodada_atual'])
-        return round_exist ? true : new_round(season, market_status)
+        begin
+          season = Season.active
+          market_status = Connection.market_status
+          raise 'Erro: mercado invalido / fechado' if market_status.nil? || market_status['status_mercado'] != 1
+          raise 'Rodada já existente' if exist_round?(season, market_status['rodada_atual'])
+          new_round(season, market_status)
+        rescue StandardError => error
+          byebug
+          FlowControl.create(message_type: :error, message: error)
+        end
       end
 
       def self.check_golden(round_number)
