@@ -38,10 +38,9 @@ group :development, :test do
   gem 'byebug', platform: :mri
   gem 'gemsurance'
   # Rspec for rails 5
-  gem 'rspec-rails', '~> 3.6'
+  gem 'rspec-rails', '3.8.2'
+  gem 'rspec-mocks', '3.8'
   gem 'rubocop-performance'
-  # mocking objects and classes
-  gem 'mocha'
 
   # Mock rails models
   gem 'factory_bot_rails'

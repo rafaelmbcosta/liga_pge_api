@@ -1,8 +1,8 @@
-#encoding:utf-8
 require 'net/http'
 require 'open-uri'
 module Api
   module V1
+    # This class manages all connections with the official API
     class Connection
       STATUS_URL = 'https://api.cartolafc.globo.com/mercado/status'.freeze
       URL_TEAM_SCORE = 'https://api.cartolafc.globo.com/time/slug/'.freeze
@@ -14,35 +14,47 @@ module Api
         #   ENV["proxy_user"], ENV["proxy_password"]) if Rails.env == "development"
         # request = http.get_response(uri).body
         request = Net::HTTP.get(uri)
-        return JSON.parse(request)
+        JSON.parse(request)
       end
 
-      def self.market_open?
-        market_status["status_mercado"] == 1
+      def self.market_open?(market = nil)
+        market = market_status if market.nil?
+        market['status_mercado'] == 1
       end
 
-      def self.market_closed?
-        market_status["status_mercado"] == 2
+      def self.market_closed?(market = nil)
+        market = market_status if market.nil?
+        market['status_mercado'] == 2
       end
 
-      def self.current_round
-        market_status["rodada_atual"]
+      def self.round_close_date(market = nil)
+        market = market_status if market.nil?
+        DateTime.new(market['fechamento']['ano'],
+                     market['fechamento']['mes'],
+                     market['fechamento']['dia'],
+                     market['fechamento']['hora'],
+                     market['fechamento']['minuto'])
       end
 
-      def self.team_score(slug, round=nil)
-        uri = URI(URL_TEAM_SCORE + "#{slug}")
+      def self.current_round(market = nil)
+        market = market_status if market.nil?
+        market['rodada_atual']
+      end
+
+      def self.team_score(slug, round = nil)
+        uri = URI(URL_TEAM_SCORE + slug.to_s)
         uri = URI(URL_TEAM_SCORE + "#{slug}/#{round}") unless round.nil?
-        return connect(uri)
+        connect(uri)
       end
 
       def self.market_status
         uri = URI(STATUS_URL)
-        return connect(uri)
+        connect(uri)
       end
 
       def self.athletes_scores
         uri = URI(ATHLETES_SCORES)
-        return connect(uri)
+        connect(uri)
       end
     end
   end
