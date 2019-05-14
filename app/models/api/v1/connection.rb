@@ -17,28 +17,24 @@ module Api
         JSON.parse(request)
       end
 
-      def self.market_open?(market = nil)
-        market = market_status if market.nil?
-        market['status_mercado'] == 1
+      def self.market_open?(market_status)
+        market_status['status_mercado'] == 1
       end
 
-      def self.market_closed?(market = nil)
-        market = market_status if market.nil?
-        market['status_mercado'] == 2
+      def self.market_closed?(market_status)
+        market_status['status_mercado'] == 2
       end
 
-      def self.round_close_date(market = nil)
-        market = market_status if market.nil?
-        DateTime.new(market['fechamento']['ano'],
-                     market['fechamento']['mes'],
-                     market['fechamento']['dia'],
-                     market['fechamento']['hora'],
-                     market['fechamento']['minuto'])
+      def self.close_date(market_status)
+        DateTime.new(market_status['fechamento']['ano'],
+                     market_status['fechamento']['mes'],
+                     market_status['fechamento']['dia'],
+                     market_status['fechamento']['hora'],
+                     market_status['fechamento']['minuto'])
       end
 
-      def self.current_round(market = nil)
-        market = market_status if market.nil?
-        market['rodada_atual']
+      def self.current_round
+        market_status['rodada_atual']
       end
 
       def self.team_score(slug, round = nil)
@@ -49,7 +45,11 @@ module Api
 
       def self.market_status
         uri = URI(STATUS_URL)
-        connect(uri)
+        market = connect(uri)
+        market['market_open'] = market_open?(market)
+        market['market_closed'] = market_closed?(market)
+        market['close_date'] = close_date(market)
+        market
       end
 
       def self.athletes_scores

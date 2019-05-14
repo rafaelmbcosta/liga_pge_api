@@ -85,7 +85,7 @@ module Api
 
       describe 'new_round' do
         let(:market_status) { data }
-        let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 16) }
+        let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 16, finished: false) }
 
         it 'return newly created round  if allowed' do
           season.dispute_months.push(dispute_month)
@@ -99,29 +99,64 @@ module Api
         end
       end
 
-      describe 'check_close_market_conditions' do
+      describe 'update_market_status' do
         let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 11) }
+        let(:round_control) { RoundControl.create(round: round, market_closed: false) }
 
-        it 'return array of rounds avaliable to close market' do
-          expect(check_close_market_conditions(round).size).to eq(2)
+        it 'returns true' do
+          round.round_control = round_control
+          expect(Round.update_market_status([round])).to eq(true)
         end
 
-        it 'return empty array if no rounds meet conditions' do
-          expect(check_close_market_conditions(round)).to be([])
+        it 'changes round control market closed' do
+          round.round_control = round_control
+          Round.update_market_status([round])
+          expect(round_control.market_closed).to be true
+        end
+      end
+
+      describe 'rounds_allowed_to_generate_battles' do
+        let(:round) do
+          return  FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, 
+                                    number: 14, market_close: DateTime.new(2019,1,1,0,0,0))
+        end
+        let(:round_control) { RoundControl.create(round: round, market_closed: false) }
+        let(:data_close) do
+          return {
+            'fechamento' => {
+              'ano' => 2019, 'mes' => 1,
+              'dia' => 1, 'hora' => 14, 'minuto' => 0
+            },
+            'rodada_atual' => 14,
+            'status_mercado' => 2,
+            'market_closed' => true,
+          }
+        end
+
+        it 'return array of allowed rounds' do
+          round.round_control = round_control
+          allow(Connection).to receive(:market_status).and_return(data_close)
+          travel_to (round.market_close + 1.day)
+          raise "now: #{DateTime.now} round: #{round.market_close}".inspect
+          expect(Round.rounds_allowed_to_generate_battles.first).to eq(round)
+          travel_back
+        end
+
+        it 'return empty if no rounds meet the conditions' do
+          market_status = data
+          market_status['status_mercado'] = 4
+          allow(Connection).to receive(:market_status).and_return(market_status)
+          expect(Round.rounds_allowed_to_generate_battles).to eq([])
         end
       end
 
       describe 'close_market' do
-        it 'return nil if no round with conditions are met' do
-          expect(Round.close_market).to eq(nil)
-        end
-
-        it 'raise error if it finds matching round but invalid date' do
-          expect(Round.close_market.message).to eq('Data finalizada antes da data prevista')
-        end
-
-        it 'return true if market is succefully closed' do
+        it 'return true if success' do
           expect(Round.close_market).to be true
+        end
+
+        it 'return error message if it fails' do
+          expect(Round.close_market.message).to eq('Data finalizada antes da data prevista')
         end
       end
     end

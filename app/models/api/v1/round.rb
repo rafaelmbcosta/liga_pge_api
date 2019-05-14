@@ -8,12 +8,15 @@ module Api
       has_many :currencies
       has_many :battles
       has_many :month_activities
-      has_one  :round_control, class_name: 'control'
+      has_one  :round_control
 
       validate :more_than_two_active
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
       default_scope { order('number asc') }
+      scope :valid_close_date, -> (date)  {
+        where('market_close >= ?', date)
+      }
 
       def self.current
         Season.active.rounds.max(&:number)
@@ -28,16 +31,15 @@ module Api
       # round must not be finished
       # round close date must be higher than api data
       # round must not be already closed
-      def self.rounds_to_close_market
+      def self.rounds_allowed_to_generate_battles
         market_status = Connection.market_status
-        return [] unless Connection.market_closed?(market_status)
-
-        active.joins(:round_control)
-              .where(number: Connection.current_round(market_status), market_closed: false)
-              .where('market_close > ?', Connection.round_close_date(market_status))
+        return [] unless market_status['market_closed']
+        api_number = market_status['rodada_atual']
+        rounds = active.where(number: api_number).valid_close_date(DateTime.now)
+        rounds.select{ |round| !round.round_control.market_closed }
       end
 
-      def self.close_markets(rounds)
+      def self.update_market_status(rounds)
         rounds.each do |round|
           round.round_control.update_attributes(market_closed: true)
         end
@@ -45,7 +47,7 @@ module Api
       end
 
       def self.close_market
-        close_markets(rounds_to_close_market)
+        update_market_status(rounds_allowed_to_generate_battles)
       rescue StandardError => e
         FlowControl.create(message_type: :error, message: e)
       end
@@ -66,9 +68,8 @@ module Api
 
       def self.new_round(season, market)
         dispute_month = find_dispute_month(season, market['rodada_atual'])
-        market_close_date = Connection.round_close_date(market)
         round = Round.new(season: season, dispute_month: dispute_month,
-                          number: market['rodada_atual'], market_close: market_close_date)
+                          number: market['rodada_atual'], market_close: market['close_date'])
         round.save ? RoundControl.create(round: round) : (raise round.errors.messages.inspect)
         round
       end
