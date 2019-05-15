@@ -1,3 +1,4 @@
+
 Rails.application.routes.draw do
   post 'user_token' => 'user_token#create'
 
@@ -13,6 +14,7 @@ Rails.application.routes.draw do
       resources :currencies
       resources :awards
       resources :month_activities
+      resources :flow_control
       get 'league' => 'dispute_months#league_points'
       get 'partials' => 'rounds#partials'
       get 'partials/:id' => 'rounds#partial'
