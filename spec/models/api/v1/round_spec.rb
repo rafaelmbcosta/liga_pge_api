@@ -85,7 +85,10 @@ module Api
 
       describe 'new_round' do
         let(:market_status) { data }
-        let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 16, finished: false) }
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month,
+                                              number: 16, finished: false)
+        end
 
         it 'return newly created round  if allowed' do
           season.dispute_months.push(dispute_month)
@@ -100,7 +103,10 @@ module Api
       end
 
       describe 'update_market_status' do
-        let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 11) }
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month)
+        end
         let(:round_control) { RoundControl.create(round: round, market_closed: false) }
 
         it 'returns true' do
@@ -117,8 +123,9 @@ module Api
 
       describe 'rounds_allowed_to_generate_battles' do
         let(:round) do
-          return  FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, 
-                                    number: 14, market_close: DateTime.new(2019,1,1,0,0,0))
+          return FactoryBot.create(:v1_round, season: season, number: 14,
+                                              dispute_month: dispute_month,
+                                              market_close: DateTime.new(2019, 1, 1, 0, 0, 0))
         end
         let(:round_control) { RoundControl.create(round: round, market_closed: false) }
         let(:data_close) do
@@ -129,15 +136,14 @@ module Api
             },
             'rodada_atual' => 14,
             'status_mercado' => 2,
-            'market_closed' => true,
+            'market_closed' => true
           }
         end
 
         it 'return array of allowed rounds' do
           round.round_control = round_control
           allow(Connection).to receive(:market_status).and_return(data_close)
-          travel_to (round.market_close + 1.day)
-          raise "now: #{DateTime.now} round: #{round.market_close}".inspect
+          travel_to(round.market_close + 1.day)
           expect(Round.rounds_allowed_to_generate_battles.first).to eq(round)
           travel_back
         end
@@ -153,10 +159,6 @@ module Api
       describe 'close_market' do
         it 'return true if success' do
           expect(Round.close_market).to be true
-        end
-
-        it 'return error message if it fails' do
-          expect(Round.close_market.message).to eq('Data finalizada antes da data prevista')
         end
       end
     end

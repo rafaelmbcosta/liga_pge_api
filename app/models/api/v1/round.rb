@@ -14,8 +14,9 @@ module Api
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
       default_scope { order('number asc') }
-      scope :valid_close_date, -> (date)  {
-        where('market_close >= ?', date)
+
+      scope :valid_close_date, ->(date) {
+        where('? >= market_close', date)
       }
 
       def self.current
@@ -34,9 +35,10 @@ module Api
       def self.rounds_allowed_to_generate_battles
         market_status = Connection.market_status
         return [] unless market_status['market_closed']
+
         api_number = market_status['rodada_atual']
         rounds = active.where(number: api_number).valid_close_date(DateTime.now)
-        rounds.select{ |round| !round.round_control.market_closed }
+        rounds.reject { |round| round.round_control.market_closed }
       end
 
       def self.update_market_status(rounds)
