@@ -2,27 +2,23 @@ require 'rails_helper'
 module Api
   module V1
     RSpec.describe RoundWorker do
-      before do
-        RoundWorker.stubs(:check_new_round).returns(true)
-        Round.stubs(:check_new_round).returns(true)
-      end
+      describe 'self.close_market' do
+        it 'return true if market is just closed' do
+          allow(Round).to receive(:close_market).and_return(true)
+          expect(RoundWorker.close_market).to be true
+        end
 
-      describe 'self.perform' do
-        it 'return check_new_round return' do
-          expect(RoundWorker.perform).to be true
+        it 'return false if market is not closed' do
+          allow(Round).to receive(:close_market).and_return(false)
+          expect(RoundWorker.close_market).to be false
         end
       end
 
       describe 'self.check_new_round' do
-        it 'returns whatever Round.checkround returns' do
-          RoundWorker.unstub(:check_new_round)
-          expect(RoundWorker.check_new_round).to eq(true)
+        it 'return whathever Round.check_new_round gets' do
+          allow(Round).to receive(:check_new_round).and_return(false)
+          expect(RoundWorker.check_new_round).to be false
         end
-      end
-
-      after do
-        RoundWorker.unstub(:check_new_round)
-        Round.unstub(:check_new_round)
       end
     end
   end

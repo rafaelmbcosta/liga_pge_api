@@ -36,13 +36,15 @@ RSpec.configure do |config|
   # setting up shoulda-matchers
   config.include(Shoulda::Matchers::ActiveRecord, type: :model)
   config.include(Shoulda::Matchers::ActiveModel, type: :model)
+  
+  config.include ActiveSupport::Testing::TimeHelpers
+
   # setting up mocking
-  config.mock_with :mocha
   # If you're not using ActiveRecord, or you'd prefer not to run each of your
   # examples within a transaction, remove the following line or assign false
   # instead of true.
   config.use_transactional_fixtures = true
-
+  config.mock_with :rspec
   # RSpec Rails can automatically mix in different behaviours to your tests
   # based on their file location, for example enabling you to call `get` and
   # `post` in specs under `spec/controllers`.

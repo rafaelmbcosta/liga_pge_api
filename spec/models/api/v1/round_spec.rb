@@ -6,10 +6,25 @@ module Api
       before do
         DatabaseCleaner.start
         DatabaseCleaner.clean
+        allow(Round).to receive(:find_dispute_month).and_return(dispute_month)
       end
 
       let(:season) { FactoryBot.create(:v1_season, year: 2019) }
-      let(:dispute_month) { FactoryBot.create(:v1_dispute_month, season: season, dispute_rounds: (10..20).to_a) }
+
+      let(:dispute_month) do
+        return FactoryBot.create(:v1_dispute_month, season: season,
+                                                    dispute_rounds: (10..20).to_a)
+      end
+      let(:data) do
+        return {
+          'fechamento' => {
+            'ano' => 2019, 'mes' => 1,
+            'dia' => 1, 'hora' => 14, 'minuto' => 0
+          },
+          'rodada_atual' => 14,
+          'status_mercado' => 1
+        }
+      end
 
       describe 'Relationship' do
         it { is_expected.to belong_to :season }
@@ -48,35 +63,102 @@ module Api
       end
 
       describe 'check_new_round' do
-        it 'raise error unless current round is a number' do
-          Season.stubs(:active).returns(season)
-          Connection.stubs(:current_round).returns(nil)
-          Round.stubs(:exist_round?).returns(true)
-          expect { Round.check_new_round }.to raise_error(RuntimeError)
+        it 'raise error if market status is invalid' do
+          allow(Connection).to receive(:market_status).and_return(nil)
+          expect(Round.check_new_round.message).to eq('Erro: mercado invalido / fechado')
         end
 
-        it 'return true round already exist' do
-          Round.stubs(:exist_round?).returns(13)
-          expect(Round.check_new_round).to be true
+        it 'return error if round already exist' do
+          allow(Round).to receive(:new_round).and_return(data)
+          allow(Round).to receive(:exist_round?).and_return(true)
+          expect(Round.check_new_round.message).to eq('Rodada já existente')
         end
 
         it 'return the newly created round' do
-          Round.unstub(:exist_round?)
-          Season.unstub(:active)
-          Connection.unstub(:current_round)
+          round = FactoryBot.create(:v1_round, finished: false, season: season,
+                                               dispute_month: dispute_month, number: 16)
+          allow(Connection).to receive(:market_status).and_return(data)
+          allow(Round).to receive(:new_round).and_return(round)
+          expect(Round.check_new_round).to eq(round)
         end
       end
 
       describe 'new_round' do
-        it 'return the newly created round if allowed' do
+        let(:market_status) { data }
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month,
+                                              number: 16, finished: false)
+        end
+
+        it 'return newly created round  if allowed' do
           season.dispute_months.push(dispute_month)
-          expect(Round.new_round(season, 14).number).to be(14)
+          expect(Round.new_round(season, market_status).number).to eq(14)
         end
 
         it 'raise error if round is invalid' do
           season.dispute_months.push(dispute_month)
-          Round.new_round(season, 19).number
+          Round.new_round(season, market_status)
           expect { Round.new_round(season, 19) }.to raise_error
+        end
+      end
+
+      describe 'update_market_status' do
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month)
+        end
+        let(:round_control) { RoundControl.create(round: round, market_closed: false) }
+
+        it 'returns true' do
+          round.round_control = round_control
+          expect(Round.update_market_status([round])).to eq(true)
+        end
+
+        it 'changes round control market closed' do
+          round.round_control = round_control
+          Round.update_market_status([round])
+          expect(round_control.market_closed).to be true
+        end
+      end
+
+      describe 'rounds_allowed_to_generate_battles' do
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, number: 14,
+                                              dispute_month: dispute_month,
+                                              market_close: DateTime.new(2019, 1, 1, 0, 0, 0))
+        end
+        let(:round_control) { RoundControl.create(round: round, market_closed: false) }
+        let(:data_close) do
+          return {
+            'fechamento' => {
+              'ano' => 2019, 'mes' => 1,
+              'dia' => 1, 'hora' => 14, 'minuto' => 0
+            },
+            'rodada_atual' => 14,
+            'status_mercado' => 2,
+            'market_closed' => true
+          }
+        end
+
+        it 'return array of allowed rounds' do
+          round.round_control = round_control
+          allow(Connection).to receive(:market_status).and_return(data_close)
+          travel_to(round.market_close + 1.day)
+          expect(Round.rounds_allowed_to_generate_battles.first).to eq(round)
+          travel_back
+        end
+
+        it 'return empty if no rounds meet the conditions' do
+          market_status = data
+          market_status['status_mercado'] = 4
+          allow(Connection).to receive(:market_status).and_return(market_status)
+          expect(Round.rounds_allowed_to_generate_battles).to eq([])
+        end
+      end
+
+      describe 'close_market' do
+        it 'return true if success' do
+          expect(Round.close_market).to be true
         end
       end
     end
