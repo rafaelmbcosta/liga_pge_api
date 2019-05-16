@@ -3,6 +3,7 @@ module Api
     class NewBattle
       def self.perform(round)
         unless round.finished?
+          # bloco só para saber se teremos ou nao fantasma
           fantasma = false
           teams = Team.active.pluck(:id)
           if !(teams.size % 2 == 0)
