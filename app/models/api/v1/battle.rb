@@ -59,6 +59,7 @@ module Api
           rival, teams = sort_rival(battle_history, less, teams)
           create_battle(chosen_team, rival, round)
         end
+        teams
       end
 
       def self.generate_battles(round)
