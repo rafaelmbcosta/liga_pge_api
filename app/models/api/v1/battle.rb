@@ -3,12 +3,14 @@ module Api
     class Battle < ApplicationRecord
       belongs_to :round
 
-      scope :find_battle, ->(round_id, team, other_team){
+      scope :find_battle, lambda { |round_id, team, other_team|
         where(round: round_id).where('first_id = ? and second_id = ?', team, other_team)
       }
 
+      # ghost is represented by nil
+      # ghost battle is the one with first or second nil id
       def self.find_ghost_battle(round_id)
-        Battle.where(round_id: round_id).select { |battle| battle.first_id.nil? || battle.second_id.nil? }
+        Battle.where(round_id: round_id).find { |battle| battle.first_id.nil? || battle.second_id.nil? }
       end
 
       def self.rounds_avaliable_for_battles
@@ -16,7 +18,7 @@ module Api
       end
 
       def self.check_encounters(team, teams, battle_history, round)
-        battle_history = Hash.new
+        battle_history = {}
         teams.each do |rival|
           home = Battle.find_battle(round, team, rival)
           visiting = Battle.find_battle(round, rival, team)
@@ -35,7 +37,7 @@ module Api
 
       def self.sort_rival(battle_history, less, teams)
         rivals = battle_history.select { |_rival, number| number == less } 
-                               .collect { |rival, _number| rival}
+                               .collect { |rival, _number| rival }
         rival = rivals[rand(rivals.size)]
         teams.delete(rival)
         return rival, teams
@@ -52,7 +54,7 @@ module Api
       end
 
       def self.sort_battle(teams, round)
-        while (teams.size > 0) do
+        while !teams.empty?
           chosen_team, teams = pick_team(teams)
           battle_history = check_encounters(chosen_team, teams, battle_history, round)
           less_battle_number = less_battle_number(battle_history)
@@ -64,13 +66,14 @@ module Api
 
       def self.generate_battles(round)
         teams = Team.new_battle_teams
-        sort_battle(team, round)
+        sort_battle(teams, round)
       end
 
       def self.create_battles
         rounds_avaliable_for_battles.each do |round|
           generate_battles(round)
         end
+        true
       rescue StandardError => e
 
       end
