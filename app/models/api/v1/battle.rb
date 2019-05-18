@@ -4,8 +4,8 @@ module Api
     class Battle < ApplicationRecord
       belongs_to :round
 
-      scope :find_battle, lambda { |round_id, team, other_team|
-        where(round: round_id).where('first_id = ? and second_id = ?', team, other_team)
+      scope :find_battle, lambda { |round, team, other_team|
+        where(round: round).where('first_id = ? and second_id = ?', team, other_team)
       }
 
       # ghost is represented by nil
@@ -47,7 +47,9 @@ module Api
       end
 
       def self.create_battle(team, rival, round)
-        Battle.create(first_id: team.id, second_id: rival.id, round: round)
+        team_id = team.id unless team.nil?
+        rival_id = rival.id unless rival.nil?
+        Battle.create(first_id: team_id, second_id: rival_id, round: round)
       end
 
       def self.pick_team(teams)
@@ -73,7 +75,7 @@ module Api
         
         round.round_control.update_attributes(generating_battles: true)
         remaining_teams = sort_battle(teams, round)
-        round.round_control.update_attributes(battles_generated: true)
+        round.round_control.update_attributes(battles_generated: true, battle_generated_date: Time.now)
         remaining_teams
       end
 
