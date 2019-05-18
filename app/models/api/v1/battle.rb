@@ -47,7 +47,7 @@ module Api
       end
 
       def self.create_battle(team, rival, round)
-        Battle.create(first_id: team, second_id: rival, round: round)
+        Battle.create(first_id: team.id, second_id: rival.id, round: round)
       end
 
       def self.pick_team(teams)
