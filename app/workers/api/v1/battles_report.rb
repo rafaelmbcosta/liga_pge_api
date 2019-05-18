@@ -18,7 +18,7 @@ module Api
           team = teams.find{|t| t.id == id}
           symbol = team.url_escudo_png
         end
-        return symbol
+        symbol
       end
 
       def self.perform

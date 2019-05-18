@@ -15,6 +15,12 @@ module Api
 
       default_scope { order('number asc') }
 
+      scope :avaliable_for_battles, -> {
+        joins(:round_control).where('round_controls.market_closed' => true, finished: false,
+                                    'round_controls.generating_battles' => false, 
+                                    'round_controls.battles_generated' => false)
+      }
+
       scope :valid_close_date, ->(date) {
         where('? >= market_close', date)
       }

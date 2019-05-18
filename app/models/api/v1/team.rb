@@ -21,6 +21,16 @@ module Api
                               { team_id: self.id, rounds: dispute_month.dispute_rounds } )
         raise "Cannot disable because there is a battle with this team" if battles.present?
       end
+
+      def self.ghost_needed?
+        active.size.odd?
+      end
+
+      def self.new_battle_teams
+        teams = active
+        teams << nil if ghost_needed?
+        teams
+      end
     end
   end
 end
