@@ -1,5 +1,6 @@
 module Api
   module V1
+    # Generate team battles every round
     class Battle < ApplicationRecord
       belongs_to :round
 
@@ -17,7 +18,8 @@ module Api
         Round.avaliable_for_battles
       end
 
-      def self.check_encounters(team, teams, battle_history, round)
+      # find and count all previous againts other teams
+      def self.check_encounters(team, teams, round)
         battle_history = {}
         teams.each do |rival|
           home = Battle.find_battle(round, team, rival)
@@ -27,38 +29,39 @@ module Api
         battle_history
       end
 
-      def self.less_battle_number(battle_history)
-        less = 38
+      def self.lower_battle_number(battle_history)
+        lower = 38
         battle_history.each do |_rival, number|
-          less = number if number < less
+          lower = number if number < lower
         end
-        less
+        lower
       end
 
-      def self.sort_rival(battle_history, less, teams)
-        rivals = battle_history.select { |_rival, number| number == less } 
+      # pick a team among the ones with lower history
+      def self.sort_rival(battle_history, lower, teams)
+        rivals = battle_history.select { |_rival, number| number == lower }
                                .collect { |rival, _number| rival }
         rival = rivals[rand(rivals.size)]
         teams.delete(rival)
-        return rival, teams
+        [rival, teams]
       end
 
-      def create_battle(team, rival, round)
+      def self.create_battle(team, rival, round)
         Battle.create(first_id: team, second_id: rival, round: round)
       end
 
-      def pick_team(teams)
+      def self.pick_team(teams)
         team = teams[rand(teams.size)]
         teams.delete(team)
-        return team, teams
+        [team, teams]
       end
 
       def self.sort_battle(teams, round)
-        while !teams.empty?
+        until teams.empty?
           chosen_team, teams = pick_team(teams)
-          battle_history = check_encounters(chosen_team, teams, battle_history, round)
-          less_battle_number = less_battle_number(battle_history)
-          rival, teams = sort_rival(battle_history, less, teams)
+          battle_history = check_encounters(chosen_team, teams, round)
+          lower_battle_number = lower_battle_number(battle_history)
+          rival, teams = sort_rival(battle_history, lower_battle_number, teams)
           create_battle(chosen_team, rival, round)
         end
         teams
@@ -66,6 +69,8 @@ module Api
 
       def self.generate_battles(round)
         teams = Team.new_battle_teams
+        raise 'cannot generate battle with ODD teams' if teams.size.odd?
+
         sort_battle(teams, round)
       end
 
@@ -75,7 +80,7 @@ module Api
         end
         true
       rescue StandardError => e
-
+        FlowControl.create(message_type: :error, message: e)
       end
 
       def self.list_battles
