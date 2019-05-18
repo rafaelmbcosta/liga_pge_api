@@ -6,7 +6,7 @@ module Api
         Battle.create_battles
       end
 
-      def update_generated_battles
+      def self.update_generated_battles
         BattlesReport.perform
       rescue StandardError => e
         FlowControl.create(message_type: :error, message: e)
