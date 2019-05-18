@@ -91,6 +91,10 @@ module Api
 
       describe 'generate_battles' do
         it 'returns empty array if success' do
+          round_control = RoundControl.create(round: round, market_closed: true,
+            generating_battles: false,
+            battles_generated: false)
+            
           allow(Battle).to receive(:sort_battle).and_return([])
           expect(Battle.generate_battles(round)).to eq([])
         end
