@@ -23,7 +23,7 @@ module Api
       end
 
       def self.ghost_needed?
-        active.size % 2 != 0
+        active.size.odd?
       end
 
       def self.new_battle_teams
