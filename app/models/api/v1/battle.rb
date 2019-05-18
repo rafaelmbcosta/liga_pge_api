@@ -47,7 +47,7 @@ module Api
       end
 
       def self.create_battle(team, rival, round)
-        team_id = team.id unless rival.nil?
+        team_id = team.id unless team.nil?
         rival_id = rival.id unless rival.nil?
         Battle.create(first_id: team_id, second_id: rival_id, round: round)
       end
