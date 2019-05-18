@@ -70,8 +70,10 @@ module Api
       def self.generate_battles(round)
         teams = Team.new_battle_teams
         raise 'cannot generate battle with ODD teams' if teams.size.odd?
-
+        
+        round.round_control.update_attributes(:geneating_battles: true)
         sort_battle(teams, round)
+        round.round_control.update_attributes(:battles_generated: true)
       end
 
       def self.create_battles
