@@ -27,7 +27,7 @@ module Api
       end
 
       def self.new_battle_teams
-        teams = active
+        teams = active.to_a
         teams << nil if ghost_needed?
         teams
       end
