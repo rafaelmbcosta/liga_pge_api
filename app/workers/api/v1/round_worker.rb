@@ -9,9 +9,14 @@ module Api
         Round.close_market
       end
 
+      def self.finish_round
+        Round.finish_round
+      end
+
       def self.perform
         check_new_round
         close_market
+        finish_round
       end
     end
   end

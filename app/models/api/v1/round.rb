@@ -15,13 +15,28 @@ module Api
 
       default_scope { order('number asc') }
 
-      scope :avaliable_for_battles, -> {
+      scope :avaliable_for_battles, lambda {
         joins(:round_control).where('round_controls.market_closed' => true, finished: false,
-                                    'round_controls.generating_battles' => false, 
+                                    'round_controls.generating_battles' => false,
                                     'round_controls.battles_generated' => false)
       }
 
-      scope :valid_close_date, ->(date) {
+      scope :avaliable_for_score_generation, lambda {
+        joins(:round_control).where(finished: false,
+                                    'round_controls.market_closed' => true,
+                                    'round_controls.creating_scores' => false,
+                                    'round_controls.scores_created' => false)
+      }
+
+      scope :avaliable_to_be_finished, lambda {
+        joins(:round_control).where(finished: false,
+                                    'round_controls.market_closed' => true,
+                                    'round_controls.battles_generated' => true,
+                                    'round_controls.scores_created' => true)
+      }
+
+
+      scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
       }
 
@@ -122,6 +137,20 @@ module Api
         score = partial ? 'partial_score' : 'final_score'
         total_scores = scores.select { |s| s.team.active == true } .count - 1
         (sum_scores(score) - ghost_buster_score(score)) / total_scores
+      end
+
+      # Rules:
+      # API market is open
+      # battles are generated
+      # scores are created
+      # finished is false
+      def self.finish_round
+        avaliable_to_be_finished.to_a.each do |round|
+          round.update_attributes(finished: true) if Connection.market_status['market_open']
+        end
+        true
+      # rescue StandardError => e
+      #   FlowControl.create(message_type: :error, message: e)
       end
     end
   end

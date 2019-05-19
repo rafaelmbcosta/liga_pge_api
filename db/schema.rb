@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190511191202) do
+ActiveRecord::Schema.define(version: 20190519012150) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -109,6 +109,8 @@ ActiveRecord::Schema.define(version: 20190511191202) do
     t.datetime "currencies_generated_date"
     t.datetime "created_at",                                null: false
     t.datetime "updated_at",                                null: false
+    t.boolean  "scores_created",            default: false, null: false
+    t.boolean  "creating_scores",           default: false, null: false
     t.index ["round_id"], name: "index_round_controls_on_round_id", using: :btree
   end
 
