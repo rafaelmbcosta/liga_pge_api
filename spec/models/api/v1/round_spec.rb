@@ -181,6 +181,7 @@ module Api
         end
 
         it 'update round to finished' do
+          allow(Round).to receive(:avaliable_to_be_finished).and_return([round_to_finish])
           Round.finish_round
           expect(round_to_finish.finished).to be true
         end

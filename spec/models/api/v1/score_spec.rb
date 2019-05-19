@@ -40,7 +40,14 @@ module Api
 
       describe 'create_scores' do
         it 'returns true if no error is caught' do
+          allow(Score).to receive(:create_scores_rounds).and_return([round])
           expect(Score.create_scores).to be true
+        end
+
+        it 'return flow control in case of error' do
+          invalid_round = Round.new
+          allow(Score).to receive(:create_scores_rounds).and_return([invalid_round])
+          expect(Score.create_scores).to be_instance_of(FlowControl)
         end
       end
 
