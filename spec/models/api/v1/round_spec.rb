@@ -71,7 +71,7 @@ module Api
         it 'return error if round already exist' do
           allow(Round).to receive(:new_round).and_return(data)
           allow(Round).to receive(:exist_round?).and_return(true)
-          expect(Round.check_new_round.message).to eq('Rodada já existente')
+          expect(Round.check_new_round).to be_instance_of(FlowControl)
         end
 
         it 'return the newly created round' do
@@ -159,6 +159,35 @@ module Api
       describe 'close_market' do
         it 'return true if success' do
           expect(Round.close_market).to be true
+        end
+      end
+
+      describe 'finish_round' do
+        let(:round_to_finish) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: false)
+        end
+
+        let(:round_control) do
+          return RoundControl.create(market_closed: true, round: round_to_finish,
+                                     battles_generated: true,
+                                     scores_created: true)
+        end
+
+        before do
+          round_to_finish.round_control = round_control
+          allow(Connection).to receive(:market_status).and_return('market_open' => true)
+        end
+
+        it 'update round to finished' do
+          allow(Round).to receive(:avaliable_to_be_finished).and_return([round_to_finish])
+          Round.finish_round
+          expect(round_to_finish.finished).to be true
+        end
+
+        it 'return true' do
+          expect(Round.finish_round).to be true
         end
       end
     end
