@@ -66,6 +66,74 @@ module Api
           expect(Score.create_scores_round(round)).to be true
         end
       end
+
+      describe 'update_scores' do
+        it 'returns flow control if something goes wrong' do
+          invalid_round = Round.new
+          allow(Score).to receive(:rounds_with_scores_to_update).and_return([invalid_round])
+          expect(Score.update_scores).to be_instance_of(FlowControl)
+        end
+
+        let(:valid_round) do
+          FactoryBot.create(:v1_round, finished: true, number: 15,
+                                       dispute_month: dispute_month,
+                                       season: season)
+        end
+        let(:round_control) do
+          round_control = RoundControl.create(round: valid_round,
+                                              scores_created: true,
+                                              scores_updated: false,
+                                              updating_scores: false)
+        end
+
+        before do
+          valid_round.round_control = round_control
+          allow(Score).to receive(:rounds_with_scores_to_update).and_return([valid_round])
+          allow(Connection).to receive(:team_score).and_return({ 'pontos' => 20 })
+          Score.create(team: team, round: valid_round)
+        end
+
+        it 'update round control updated_scores to true' do
+          Score.update_scores
+          expect(valid_round.round_control.scores_updated).to be true
+        end
+
+        it 'returns true if success' do
+          expect(Score.update_scores).to be true
+        end
+      end
+
+      describe 'rounds_with_scores_to_update' do
+        let(:round_with_scores_to_update) do 
+          FactoryBot.create(:v1_round, finished: true, number: 15,
+                                       dispute_month: dispute_month,
+                                       season: season)
+        end
+
+        it 'bring rounds with conditions' do
+          round_control = RoundControl.create(round: round_with_scores_to_update,
+                                              scores_created: true,
+                                              scores_updated: false,
+                                              updating_scores: false)
+          round_with_scores_to_update.round_control = round_control
+          expect(Score.rounds_with_scores_to_update).to eq([round_with_scores_to_update])
+        end
+
+        it 'return empty array if no round meets condition' do
+          expect(Score.rounds_with_scores_to_update).to be_empty
+        end
+      end
+
+      describe 'show_scores' do
+        let()
+        it 'return hash with the results grouped by dispute_month' do
+
+        end
+      end
+
+      describe 'player_details' do
+        let(:scores) { }
+      end
     end
   end
 end
