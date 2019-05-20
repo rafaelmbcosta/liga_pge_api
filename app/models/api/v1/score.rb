@@ -68,11 +68,11 @@ module Api
         FlowControl.create(message_type: :error, message: e)
       end
 
-      def self.player_details(team, scores)
+      def self.team_details(team, scores)
         details = []
-        team_scores = scores.where(team: team).order(:round)
+        team_scores = scores.where(team: team).order(:round_id)
         team_scores.each do |ts|
-          details << { 'round'=> ts.round, 'points' => ts.final_score }
+          details << { round: ts.round.number, points: ts.final_score }
         end
         details
       end
@@ -80,12 +80,17 @@ module Api
       def self.dispute_months_players(scores, teams)
         players = []
         teams.each do |team|
-          player = { 'name' => team.player_name, 'team' => team.name,
-                     'team_symbol' => team.url_escudo_png }
-          player['details'] = player_details(team, scores)
-          player['points'] = player['details'].pluck('points').sum
+          player = { name: team.player_name, team: team.name,
+                     team_symbol: team.url_escudo_png }
+          player[:details] = team_details(team, scores)
+          player[:points] = player[:details].pluck(:points).sum
+          players << player
         end
         players
+      end
+
+      def self.order_dispute_months(array)
+        array.sort_by{ |hash| hash[:id] }.reverse!
       end
 
       # Builds a hash with all team scores with details

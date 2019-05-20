@@ -15,9 +15,29 @@ module Api
                                             dispute_month: dispute_month)
       end
 
+      let(:round_2) do
+        return FactoryBot.create(:v1_round, number: 12, season: season,
+                                            dispute_month: dispute_month)
+      end
+
       let(:round_control) { RoundControl.create(round: round) }
 
       let(:team) { Team.create(slug: 'time-fc', name: 'Time-FC', active: true) }
+
+      let(:player_array_expectation) do
+        [
+          { 
+            name: nil,
+            points: 15.0,
+            team: team.name,
+            team_symbol: nil,
+            details: [
+              { points: 10.0, round: 11 },
+              { points: 5.0, round: 12 }
+            ]
+          }
+        ]
+      end
 
       before do
         allow(Team).to receive(:active).and_return([team])
@@ -125,14 +145,57 @@ module Api
       end
 
       describe 'show_scores' do
-        let()
+        # let()
         it 'return hash with the results grouped by dispute_month' do
 
         end
       end
 
-      describe 'player_details' do
-        let(:scores) { }
+      describe 'order_dispute_months' do
+        let(:original_array) { [{ id: '1' }, { id: '3' }, { id: '2' }] }
+        let(:expected_array) { [{ id: '3' }, { id: '2' }, { id: '1' }] }
+
+        it 'return the same hash ordered by id' do
+          expect(Score.order_dispute_months(original_array)).to eq(expected_array)
+        end
+      end
+
+      describe 'team_details' do
+        let(:scores) do
+          return [
+            Score.create(round: round, final_score: 10, team: team),
+            Score.create(round: round_2, final_score: 5, team: team)
+          ] 
+        end
+
+        it 'list team scores for each round' do
+          expectation = [{ round: 11, points: 10 },
+                         { round: 12, points: 5 }]
+          dispute_month.scores = scores
+          expect(Score.team_details(team, dispute_month.scores)).to eq(expectation)
+        end
+      end
+
+      describe 'dispute_months_players' do
+        let(:scores) do
+          return [
+            Score.create(round: round, final_score: 10, team: team),
+            Score.create(round: round_2, final_score: 5, team: team)
+          ] 
+        end
+
+        it 'return list of teams with their scores' do
+          dispute_month.scores = scores
+          expect(Score.dispute_months_players(dispute_month.scores, [team])).to eq(player_array_expectation)
+        end
+      end
+
+      describe 'show_scores' do
+        it 'return a json with the data' do
+          allow(Team).to receive(:active).and_return([team])
+          expectation = 
+          expect(Score.show_scores).to eq([])
+        end
       end
     end
   end
