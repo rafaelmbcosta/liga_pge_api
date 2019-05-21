@@ -219,6 +219,15 @@ module Api
           expect(Score.show_scores).to eq(expectation)
         end
       end
+
+      describe 'order_players' do
+        let(:unordered_players) { [{ points: 3 }, { points: 7 }, { points: 5 }] }
+        let(:ordered_players) { [{ points: 7 }, { points: 5 }, { points: 3 }] }
+
+        it 'return array ordered by points' do
+          expect(Score.order_players(unordered_players)).to eq(ordered_players)
+        end
+      end
     end
   end
 end

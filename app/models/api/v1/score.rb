@@ -87,7 +87,7 @@ module Api
           player[:points] = player[:details].pluck(:points).sum
           players << player
         end
-        players
+        order_players(players)
       end
 
       def self.order_dispute_months(array)
@@ -107,6 +107,10 @@ module Api
         result = order_dispute_months(months)
         $redis.set('scores', result.to_json)
         result
+      end
+
+      def self.order_players(players)
+        players.sort_by { |hash| hash[:points] }.reverse!
       end
     end
   end
