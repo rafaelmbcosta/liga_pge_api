@@ -35,6 +35,13 @@ module Api
                                     'round_controls.scores_created' => true)
       }
 
+      scope :rounds_with_scores_to_update, lambda {
+        joins(:round_control).where(finished: true,
+                                    'round_controls.scores_created' => true,
+                                    'round_controls.scores_updated' => false,
+                                    'round_controls.updating_scores' => false)
+      }
+
 
       scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
@@ -149,8 +156,8 @@ module Api
           round.update_attributes(finished: true) if Connection.market_status['market_open']
         end
         true
-      # rescue StandardError => e
-      #   FlowControl.create(message_type: :error, message: e)
+      rescue StandardError => e
+        FlowControl.create(message_type: :error, message: e)
       end
     end
   end
