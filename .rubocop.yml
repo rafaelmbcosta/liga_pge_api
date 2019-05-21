@@ -112,3 +112,7 @@ Style/AsciiComments:
 
 Style/EvalWithLocation:
   Enabled: false
+
+GlobalVars:
+  AllowedVariables:
+    - redis

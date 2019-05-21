@@ -1,5 +1,6 @@
 module Api
   module V1
+    # Manages team scores
     class Score < ApplicationRecord
       belongs_to :team
       belongs_to :round
@@ -52,7 +53,7 @@ module Api
       def self.update_team_scores(round, team)
         api_scores = Connection.team_score(team.slug, round.number)
         raise 'Invalid API Scores' if api_scores.nil? || !api_scores.include?('pontos')
-        
+
         score = Score.find_by(round: round, team: team)
         raise 'Score não encontrado' if score.nil?
 
@@ -90,7 +91,7 @@ module Api
       end
 
       def self.order_dispute_months(array)
-        array.sort_by{ |hash| hash[:id] }.reverse!
+        array.sort_by { |hash| hash[:id] }.reverse!
       end
 
       # Builds a hash with all team scores with details
@@ -99,12 +100,13 @@ module Api
         teams = Team.active
         months = []
         Season.active.dispute_months.each do |dm|
-          dispute_month = { 'name' => dm.name, 'id' => dm.id }
-          dispute_month['players'] = dispute_months_players(dm.scores, teams)
+          dispute_month = { name: dm.name, id: dm.id }
+          dispute_month[:players] = dispute_months_players(dm.scores, teams)
           months << dispute_month
         end
         result = order_dispute_months(months)
         $redis.set('scores', result.to_json)
+        result
       end
     end
   end

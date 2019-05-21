@@ -26,7 +26,7 @@ module Api
 
       let(:player_array_expectation) do
         [
-          { 
+          {
             name: nil,
             points: 15.0,
             team: team.name,
@@ -88,28 +88,29 @@ module Api
       end
 
       describe 'update_scores' do
+        let(:valid_round) do
+          FactoryBot.create(:v1_round, finished: true, number: 15,
+                                       dispute_month: dispute_month,
+                                       season: season)
+        end
+
+        let(:round_control) do
+          return RoundControl.create(round: valid_round,
+                                     scores_created: true,
+                                     scores_updated: false,
+                                     updating_scores: false)
+        end
+
         it 'returns flow control if something goes wrong' do
           invalid_round = Round.new
           allow(Score).to receive(:rounds_with_scores_to_update).and_return([invalid_round])
           expect(Score.update_scores).to be_instance_of(FlowControl)
         end
 
-        let(:valid_round) do
-          FactoryBot.create(:v1_round, finished: true, number: 15,
-                                       dispute_month: dispute_month,
-                                       season: season)
-        end
-        let(:round_control) do
-          round_control = RoundControl.create(round: valid_round,
-                                              scores_created: true,
-                                              scores_updated: false,
-                                              updating_scores: false)
-        end
-
         before do
           valid_round.round_control = round_control
           allow(Score).to receive(:rounds_with_scores_to_update).and_return([valid_round])
-          allow(Connection).to receive(:team_score).and_return({ 'pontos' => 20 })
+          allow(Connection).to receive(:team_score).and_return('pontos' => 20)
           Score.create(team: team, round: valid_round)
         end
 
@@ -124,7 +125,7 @@ module Api
       end
 
       describe 'rounds_with_scores_to_update' do
-        let(:round_with_scores_to_update) do 
+        let(:round_with_scores_to_update) do
           FactoryBot.create(:v1_round, finished: true, number: 15,
                                        dispute_month: dispute_month,
                                        season: season)
@@ -144,13 +145,6 @@ module Api
         end
       end
 
-      describe 'show_scores' do
-        # let()
-        it 'return hash with the results grouped by dispute_month' do
-
-        end
-      end
-
       describe 'order_dispute_months' do
         let(:original_array) { [{ id: '1' }, { id: '3' }, { id: '2' }] }
         let(:expected_array) { [{ id: '3' }, { id: '2' }, { id: '1' }] }
@@ -165,7 +159,7 @@ module Api
           return [
             Score.create(round: round, final_score: 10, team: team),
             Score.create(round: round_2, final_score: 5, team: team)
-          ] 
+          ]
         end
 
         it 'list team scores for each round' do
@@ -181,7 +175,7 @@ module Api
           return [
             Score.create(round: round, final_score: 10, team: team),
             Score.create(round: round_2, final_score: 5, team: team)
-          ] 
+          ]
         end
 
         it 'return list of teams with their scores' do
@@ -191,10 +185,38 @@ module Api
       end
 
       describe 'show_scores' do
+        let(:scores) do
+          return [
+            Score.create(round: round, final_score: 10, team: team),
+            Score.create(round: round_2, final_score: 5, team: team)
+          ]
+        end
+
+        let(:expectation) do
+          return [
+            {
+              name: dispute_month.name,
+              id: dispute_month.id,
+              players: [
+                {
+                  name: nil,
+                  team: team.name,
+                  team_symbol: nil,
+                  points: 15.0,
+                  details: [
+                    { round: 11, points: 10.0 },
+                    { round: 12, points: 5.0 }
+                  ]
+                }
+              ]
+            }
+          ]
+        end
+
         it 'return a json with the data' do
           allow(Team).to receive(:active).and_return([team])
-          expectation = 
-          expect(Score.show_scores).to eq([])
+          dispute_month.scores = scores
+          expect(Score.show_scores).to eq(expectation)
         end
       end
     end

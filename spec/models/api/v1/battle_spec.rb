@@ -91,10 +91,9 @@ module Api
 
       describe 'generate_battles' do
         it 'returns empty array if success' do
-          round_control = RoundControl.create(round: round, market_closed: true,
-            generating_battles: false,
-            battles_generated: false)
-            
+          RoundControl.create(round: round, market_closed: true,
+                              generating_battles: false,
+                              battles_generated: false)
           allow(Battle).to receive(:sort_battle).and_return([])
           expect(Battle.generate_battles(round)).to eq([])
         end
@@ -111,7 +110,8 @@ module Api
         let(:teams) { %w[p1 p2 p3 p4] }
 
         it 'pop a rival from the list of teams' do
-          expect(%w[p3 p4]).to include(Battle.sort_rival(history, 3, teams)[0])
+          expectation = %w[p3 p4].include?(Battle.sort_rival(history, 3, teams)[0])
+          expect(expectation).to be true
         end
 
         it 'returns the list of teams without the picked one' do
