@@ -42,7 +42,6 @@ module Api
                                     'round_controls.updating_scores' => false)
       }
 
-
       scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
       }

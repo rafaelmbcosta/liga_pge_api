@@ -88,6 +88,48 @@ module Api
         FlowControl.create(message_type: :error, message: e)
       end
 
+
+
+      def self.show_battles
+        season = Season.active
+        teams = Team.all
+        battles = Battle.where(round_id: season.rounds.pluck(:id)).group_by(&:round_id)
+        full_list = []
+        battles.each do |k,v|
+          list = Hash.new
+          round = Round.find(k)
+          list["round"] = round.number
+          list["battles"] = Array.new
+          v.each do |battle|
+            list_battle = battle.attributes
+            list_battle["first_name"] = team_name(battle.first_id, teams)
+            list_battle["second_name"] = team_name(battle.second_id, teams)
+            list_battle["first_team_symbol"] = team_symbol(battle.first_id, teams)
+            list_battle["second_team_symbol"] = team_symbol(battle.second_id, teams)
+            list["battles"] << list_battle
+          end
+          full_list << list
+        end
+        $redis.set("battles", full_list.sort_by{|list| list["round"]}.reverse.to_json)
+      end
+
+      def self.battle_team_details(team_id, teams)
+        return ['Fantasma', ''] if team_id.nil?
+        
+        team = teams.find { |t| t.id == team_id }
+        byebug
+        name = "#{team.player_name} ( #{team.name} )"
+        symbol = team.url_escudo_png
+        [name, symbol]
+      end
+
+      def self.show_battle_data(battle, teams)
+       # first_name, first_symbol = battle_team_details(battle.first_id, teams)
+        second_name, second_symbol = battle_team_details(battle.second_id, teams)
+        { first_name: first_name, second_name: second_name, 
+          first_team_symbol: first_symbol, second_team_symbol: second_symbol }
+      end
+
       def self.list_battles
         $redis.get('battles')
       end

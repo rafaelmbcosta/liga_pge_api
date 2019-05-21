@@ -142,6 +142,25 @@ module Api
           expect(Battle.sort_battle(teams, round)).to eq([])
         end
       end
+
+      describe 'show_battle_data' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:rival) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
+        let(:expectation) do
+          return { 
+            first_name: team.name,
+            second_name: rival.name,
+            first_team_symbol: team.url_escudo_png,
+            second_team_symbol: rival.url_escudo_png
+          }
+        end
+
+        it 'returns a hash with battle data' do
+          # não ta achando o rival
+          expect(Battle.show_battle_data(battle, [team])).to eq(expectation)
+        end
+      end
     end
   end
 end
