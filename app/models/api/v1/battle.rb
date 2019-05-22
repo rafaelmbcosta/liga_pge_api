@@ -37,6 +37,11 @@ module Api
         lower
       end
 
+      def self.battles_to_be_shown
+        Battle.where(round_id: Season.active.rounds.pluck(:id))
+              .group_by(&:round_id)
+      end
+
       # pick a team among the ones with lower history
       def self.sort_rival(battle_history, lower, teams)
         rivals = battle_history.select { |_rival, number| number == lower }
@@ -88,45 +93,51 @@ module Api
         FlowControl.create(message_type: :error, message: e)
       end
 
-
-
-      def self.show_battles
-        season = Season.active
-        teams = Team.all
-        battles = Battle.where(round_id: season.rounds.pluck(:id)).group_by(&:round_id)
-        full_list = []
-        battles.each do |k,v|
-          list = Hash.new
-          round = Round.find(k)
-          list["round"] = round.number
-          list["battles"] = Array.new
-          v.each do |battle|
-            list_battle = battle.attributes
-            list_battle["first_name"] = team_name(battle.first_id, teams)
-            list_battle["second_name"] = team_name(battle.second_id, teams)
-            list_battle["first_team_symbol"] = team_symbol(battle.first_id, teams)
-            list_battle["second_team_symbol"] = team_symbol(battle.second_id, teams)
-            list["battles"] << list_battle
-          end
-          full_list << list
+      def self.battle_report(battle_group, teams)
+        report = []
+        battle_group.each do |round_id, battles|
+          list = {}
+          round = Round.find(round_id)
+          list['round'] = round.number
+          list['battles'] = show_list_battles(team_id, teams, battles)
+          report << list
         end
-        $redis.set("battles", full_list.sort_by{|list| list["round"]}.reverse.to_json)
+        report
+      end
+
+      def self.order_battle_report(battle_report)
+        battle_report.sort_by { |list| list['round'] }.reverse
+      end
+      
+      def self.show_battles
+        teams = Team.all
+        battle_group = battles_to_be_shown
+        battle_report = battle_report(battle_group, teams)
+        
+        $redis.set('battles', order_battle_report(battle_report).to_json)
+      end
+
+      def self.show_list_battles(team_id, teams, battles)
+        data = []
+        battles.each do |battle|
+          data << show_battle_data(battle, teams)
+        end
+        data
       end
 
       def self.battle_team_details(team_id, teams)
         return ['Fantasma', ''] if team_id.nil?
         
         team = teams.find { |t| t.id == team_id }
-        byebug
         name = "#{team.player_name} ( #{team.name} )"
         symbol = team.url_escudo_png
         [name, symbol]
       end
 
       def self.show_battle_data(battle, teams)
-       # first_name, first_symbol = battle_team_details(battle.first_id, teams)
+        first_name, first_symbol = battle_team_details(battle.first_id, teams)
         second_name, second_symbol = battle_team_details(battle.second_id, teams)
-        { first_name: first_name, second_name: second_name, 
+        { first_name: first_name, second_name: second_name,
           first_team_symbol: first_symbol, second_team_symbol: second_symbol }
       end
 

@@ -14,37 +14,42 @@ module Api
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
       default_scope { order('number asc') }
-
-      scope :avaliable_for_battles, lambda {
-        joins(:round_control).where('round_controls.market_closed' => true, finished: false,
-                                    'round_controls.generating_battles' => false,
-                                    'round_controls.battles_generated' => false)
-      }
-
-      scope :avaliable_for_score_generation, lambda {
-        joins(:round_control).where(finished: false,
-                                    'round_controls.market_closed' => true,
-                                    'round_controls.creating_scores' => false,
-                                    'round_controls.scores_created' => false)
-      }
-
-      scope :avaliable_to_be_finished, lambda {
-        joins(:round_control).where(finished: false,
-                                    'round_controls.market_closed' => true,
-                                    'round_controls.battles_generated' => true,
-                                    'round_controls.scores_created' => true)
-      }
-
-      scope :rounds_with_scores_to_update, lambda {
-        joins(:round_control).where(finished: true,
-                                    'round_controls.scores_created' => true,
-                                    'round_controls.scores_updated' => false,
-                                    'round_controls.updating_scores' => false)
-      }
-
+      
       scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
       }
+
+      scope :market_closed, lambda { |value|
+        joins(:round_control).where('round_controls.market_closed' => value)
+      }
+      scope :generating_battles, lambda { |value|
+        joins(:round_control).where('round_controls.generating_battles' => value)
+      }
+      scope :battles_generated, lambda { |value|
+        joins(:round_control).where('round_controls.battles_generated' => value)
+      }
+      scope :creating_scores, lambda { |value|
+        joins(:round_control).where('round_controls.creating_scores' => value)
+      }
+      scope :scores_created, lambda { |value|
+        joins(:round_control).where('round_controls.battles_generated' => value)
+      }
+
+      def self.avaliable_for_battles
+        where(finished: false).market_closed(true).battles_generated(false).generating_battles(false)
+      end
+
+      def self.avaliable_for_score_generation
+        where(finished: false).market_closed(true).creating_scores(false).scores_created(false)
+      end
+
+      def self.avaliable_to_be_finished
+        where(finished: false).market_closed(true).battles_generated(true).scores_created(true)
+      end
+
+      def self.rounds_with_scores_to_update
+        where(finished: true).scores_created(true).scores_updated(false).updating_scores(false)
+      end
 
       def self.current
         Season.active.rounds.max(&:number)

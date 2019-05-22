@@ -29,8 +29,16 @@ module Api
       end
 
       describe 'create_battles' do
+        let(:team) { FactoryBot.create(:v1_team) }
+
         it 'return true if battles succefully generated' do
           expect(Battle.create_battles).to be true
+        end
+
+        it 'returns a flow control if battles are odd' do
+          allow(Team).to receive(:new_battle_teams).and_return([team])
+          allow(Battle).to receive(:rounds_avaliable_for_battles).and_return([round])
+          expect(Battle.create_battles).to be_instance_of(FlowControl)
         end
       end
 
@@ -148,17 +156,48 @@ module Api
         let(:rival) { FactoryBot.create(:v1_team) }
         let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
         let(:expectation) do
-          return { 
-            first_name: team.name,
-            second_name: rival.name,
+          return {
+            first_name: "#{team.player_name} ( #{team.name} )",
+            second_name: "#{rival.player_name} ( #{rival.name} )",
             first_team_symbol: team.url_escudo_png,
             second_team_symbol: rival.url_escudo_png
           }
         end
 
         it 'returns a hash with battle data' do
-          # não ta achando o rival
-          expect(Battle.show_battle_data(battle, [team])).to eq(expectation)
+          expect(Battle.show_battle_data(battle, [team, rival])).to eq(expectation)
+        end
+      end
+
+      describe 'show_list_battles' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:rival) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
+        let(:expectation) do
+          return [{
+            first_name: "#{team.player_name} ( #{team.name} )",
+            second_name: "#{rival.player_name} ( #{rival.name} )",
+            first_team_symbol: team.url_escudo_png,
+            second_team_symbol: rival.url_escudo_png
+          }]
+        end
+
+        it 'return array of battle data' do
+          expect(Battle.show_list_battles(team.id, [team, rival], [battle])).to eq(expectation)
+        end
+      end
+
+      describe 'battles_to_be_shown' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:rival) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
+
+        before do
+          allow(Battle).to receive(:where).and_return([battle])
+        end
+
+        it 'returns all battles where season is active' do
+          expect(Battle.battles_to_be_shown).to eq({ round.id => [battle] })
         end
       end
     end
