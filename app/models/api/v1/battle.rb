@@ -145,6 +145,47 @@ module Api
       def self.list_battles
         $redis.get('battles')
       end
+
+      def self.team_score(team_id, scores, round)
+        return round.ghost_score if team_id.nil?
+        score = scores.find { |s| s.team_id == team_id and s.round_id == round.id }
+        score.final_score
+      end
+
+      # check for scores to update battle results
+      def self.update_battle_scores
+        Round.rounds_with_scores_to_update.each do |round|
+          
+        end
+
+          
+
+
+
+        scores = rounds.scores
+        battles = Battle.where(round_id: round.id)
+
+        battles.each do |battle|
+          first_score = team_score(battle.first_id, scores, round)
+          second_score = team_score(battle.second_id, scores, round)
+          difference = (first_score - second_score).abs
+          (difference > 5) ? draw = false : draw = true
+          first_win = false
+          second_win = false
+          first_points = 0
+          second_points = 0
+          if !draw
+            if first_score > second_score
+              first_points = first_score - second_score
+              first_win = true
+            else
+              second_points = second_score - first_score if first_score < second_score
+              second_win = true
+            end
+          end
+          battle.update_attributes(draw: draw, first_points: first_points, second_points: second_points, first_win: first_win, second_win: second_win)
+        end
+      end
     end
   end
 end

@@ -7,7 +7,7 @@ module Api
       end
 
       def self.show_battles
-        
+        Battle.show_battles
       end
 
       def self.show_league_scores
@@ -15,7 +15,7 @@ module Api
       end
 
       def self.update_generated_battles
-        Battle.update_battles
+        Battle.update_battle_scores
       end
 
       def self.closed_market_tasks
