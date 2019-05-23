@@ -77,7 +77,7 @@ module Api
       def self.generate_battles(round)
         teams = Team.new_battle_teams
         raise 'cannot generate battle with ODD teams' if teams.size.odd?
-        
+
         round.round_control.update_attributes(generating_battles: true)
         remaining_teams = sort_battle(teams, round)
         round.round_control.update_attributes(battles_generated: true, battle_generated_date: Time.now)
@@ -98,26 +98,27 @@ module Api
         battle_group.each do |round_id, battles|
           list = {}
           round = Round.find(round_id)
-          list['round'] = round.number
-          list['battles'] = show_list_battles(team_id, teams, battles)
+          list[:round] = round.number
+          list[:battles] = show_list_battles(teams, battles)
           report << list
         end
         report
       end
 
       def self.order_battle_report(battle_report)
-        battle_report.sort_by { |list| list['round'] }.reverse
+        battle_report.sort_by { |list| list[:round] }.reverse
       end
-      
+
       def self.show_battles
         teams = Team.all
         battle_group = battles_to_be_shown
         battle_report = battle_report(battle_group, teams)
-        
+        battle_report = order_battle_report(battle_report)
         $redis.set('battles', order_battle_report(battle_report).to_json)
+        battle_report
       end
 
-      def self.show_list_battles(team_id, teams, battles)
+      def self.show_list_battles(teams, battles)
         data = []
         battles.each do |battle|
           data << show_battle_data(battle, teams)
@@ -127,7 +128,7 @@ module Api
 
       def self.battle_team_details(team_id, teams)
         return ['Fantasma', ''] if team_id.nil?
-        
+
         team = teams.find { |t| t.id == team_id }
         name = "#{team.player_name} ( #{team.name} )"
         symbol = team.url_escudo_png

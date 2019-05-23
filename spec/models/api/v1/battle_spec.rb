@@ -183,7 +183,7 @@ module Api
         end
 
         it 'return array of battle data' do
-          expect(Battle.show_list_battles(team.id, [team, rival], [battle])).to eq(expectation)
+          expect(Battle.show_list_battles([team, rival], [battle])).to eq(expectation)
         end
       end
 
@@ -197,7 +197,65 @@ module Api
         end
 
         it 'returns all battles where season is active' do
-          expect(Battle.battles_to_be_shown).to eq({ round.id => [battle] })
+          expect(Battle.battles_to_be_shown).to eq(round.id => [battle])
+        end
+      end
+
+      describe 'order_battle_report' do
+        let(:original) do
+          return [
+            { round: 1, battles: [] },
+            { round: 3, battles: [] },
+            { round: 2, battles: [] }
+          ]
+        end
+
+        let(:expectation) do
+          return [
+            { round: 3, battles: [] },
+            { round: 2, battles: [] },
+            { round: 1, battles: [] }
+          ]
+        end
+
+        it 'returns array ordered by the round reverse' do
+          expect(Battle.order_battle_report(original)).to eq(expectation)
+        end
+      end
+
+      describe 'battle_report' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:rival) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
+        let(:expectation) do
+          return [
+            { battles: [], round: 11 }
+          ]
+        end
+
+        it 'return a list of battle groups' do
+          allow(Battle).to receive(:show_list_battles).and_return([])
+          expect(Battle.battle_report({ round.id => [battle] }, [team, rival])).to eq(expectation)
+        end
+      end
+
+      describe 'show_battles' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:rival) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
+
+        it 'builds the battle service' do
+          allow(Battle).to receive(:battles_to_be_shown).and_return([battle])
+          allow(Team).to receive(:all).and_return([team, rival])
+          allow(Battle).to receive(:battle_report).and_return([])
+          allow(Battle).to receive(:order_battle_report).and_return([])
+          expect(Battle.show_battles).to be_empty
+        end
+      end
+
+      describe 'list_battles' do
+        it 'returns whatever redis have' do
+          expect(Battle.list_battles).to eq('[]')
         end
       end
     end
