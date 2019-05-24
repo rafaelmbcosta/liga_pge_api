@@ -34,6 +34,31 @@ module Api
       scope :scores_created, lambda { |value|
         joins(:round_control).where('round_controls.battles_generated' => value)
       }
+      scope :scores_updated, lambda { |value|
+        joins(:round_control).where('round_controls.scores_updated' => value)
+      }
+      scope :updating_scores, lambda { |value|
+        joins(:round_control).where('round_controls.updating_scores' => value)
+      }
+      scope :updating_battle_scores, lambda { |value|
+        joins(:round_control).where('round_controls.updating_battle_scores' => value)
+      }
+      scope :battle_scores_updated, lambda { |value|
+        joins(:round_control).where('round_controls.battle_scores_updated' => value)
+      }
+
+      FILTERS = ['market_closed', 'generating_battles', 'battles_generated',
+                 'creating_scores', 'scores_created', 'scores_updated', 'updating_scores',
+                 'updating_battle_scores', 'battle_scores_updated'].freeze
+      
+      def method_missing(method, *args)
+        if method.in?(FILTERS)
+          raise args.inspect
+          return joins(:round_control).where('round_controls.battle_scores_updated' => value)
+        else
+          super
+        end
+      end
 
       def self.avaliable_for_battles
         where(finished: false).market_closed(true).battles_generated(false).generating_battles(false)
@@ -49,6 +74,11 @@ module Api
 
       def self.rounds_with_scores_to_update
         where(finished: true).scores_created(true).scores_updated(false).updating_scores(false)
+      end
+
+      def self.rounds_with_battles_to_update
+        where(finished: true).battles_generated(true).scores_updated(true)
+                             .updating_battle_scores(false).battle_scores_updated(false)
       end
 
       def self.current

@@ -146,45 +146,49 @@ module Api
         $redis.get('battles')
       end
 
-      def self.team_score(team_id, scores, round)
-        return round.ghost_score if team_id.nil?
-        score = scores.find { |s| s.team_id == team_id and s.round_id == round.id }
+      def team_score(team_id, scores)
+        return self.round.ghost_score if team_id.nil?
+        score = scores.find { |s| s.team_id == team_id and s.round_id == self.round.id }
         score.final_score
       end
 
-      # check for scores to update battle results
-      def self.update_battle_scores
-        Round.rounds_with_scores_to_update.each do |round|
-          
-        end
+      def draw?(first_score, second_score)
+        difference = (first_score - second_score).abs
+        return (difference > 5) ? false : true
+      end
 
-          
+      def self.check_winner(first_score, second_score)
+        return [false, 0] if self.draw
+        return [(first_score > second_score), true ]
+      end
 
+      # Update battle attributes
+      def battle_results(scores)
+        first_score = team_score(first_id, scores)
+        second_score = team_score(second_id, scores)
+        self.draw = draw?(first_score, second_score)
+        self.first_win, self.first_points = check_winner(first_score, second_score)
+        self.second_win, self.second_points = check_winner(second_score, first_score)
+        self.save
+      end
 
-
+      # check team scores and update winners / losers / draws
+      def self.update_battle_scores_round(round)
         scores = rounds.scores
-        battles = Battle.where(round_id: round.id)
-
-        battles.each do |battle|
-          first_score = team_score(battle.first_id, scores, round)
-          second_score = team_score(battle.second_id, scores, round)
-          difference = (first_score - second_score).abs
-          (difference > 5) ? draw = false : draw = true
-          first_win = false
-          second_win = false
-          first_points = 0
-          second_points = 0
-          if !draw
-            if first_score > second_score
-              first_points = first_score - second_score
-              first_win = true
-            else
-              second_points = second_score - first_score if first_score < second_score
-              second_win = true
-            end
-          end
-          battle.update_attributes(draw: draw, first_points: first_points, second_points: second_points, first_win: first_win, second_win: second_win)
+        round.battles.each do |battle|
+          battle.battle_results(scores, round)
         end
+      end
+
+      # Gotta iterate through rounds so i can flag them
+      def self.update_battle_scores
+        Round.rounds_with_battles_to_update.each do |round|
+          round.round_control.update_attributes(updating_battle_scores: true)
+          update_battle_scores_round(round)
+          round.round_control.update_attributes(battle_scores_updated: true)
+        end
+      rescue StandardError => e
+
       end
     end
   end
