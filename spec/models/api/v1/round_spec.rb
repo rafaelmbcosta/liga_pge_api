@@ -190,6 +190,50 @@ module Api
           expect(Round.finish_round).to be true
         end
       end
+
+      describe 'avaliable_for_score_generation' do
+        let(:round_to_generate_scores) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: false)
+        end
+
+        let(:round_control) do
+          return RoundControl.create(market_closed: true, round: round_to_generate_scores,
+                                                          creating_scores: false,
+                                                          scores_created: false)
+        end
+
+        before do
+          round_to_generate_scores.round_control = round_control
+        end
+
+        it 'returns all avaliable rounds' do
+          expect(Round.avaliable_for_score_generation).to eq([round_to_generate_scores])
+        end
+      end
+
+      describe 'avaliable_for_battles' do
+        let(:round_to_generate_battles) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: false)
+        end
+
+        let(:round_control) do
+          return RoundControl.create(market_closed: true, round: round_to_generate_battles,
+                                                          generating_battles: false,
+                                                          battles_generated: false)
+        end
+
+        before do
+          round_to_generate_battles.round_control = round_control
+        end
+
+        it 'returns all avaliable rounds' do
+          expect(Round.avaliable_for_battles).to eq([round_to_generate_battles])
+        end
+      end
     end
   end
 end

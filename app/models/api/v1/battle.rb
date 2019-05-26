@@ -8,12 +8,6 @@ module Api
         where(round: round).where('first_id = ? and second_id = ?', team, other_team)
       }
 
-      # ghost is represented by nil
-      # ghost battle is the one with first or second nil id
-      def self.find_ghost_battle(round_id)
-        Battle.where(round_id: round_id).find { |battle| battle.first_id.nil? || battle.second_id.nil? }
-      end
-
       def self.rounds_avaliable_for_battles
         Round.avaliable_for_battles
       end
@@ -146,38 +140,34 @@ module Api
         $redis.get('battles')
       end
 
-      def team_score(team_id, scores)
-        return self.round.ghost_score if team_id.nil?
-        score = scores.find { |s| s.team_id == team_id and s.round_id == self.round.id }
-        score.final_score
-      end
-
-      def draw?(first_score, second_score)
+      def self.draw?(first_score, second_score)
         difference = (first_score - second_score).abs
         return (difference > 5) ? false : true
       end
 
-      def self.check_winner(first_score, second_score)
-        return [false, 0] if self.draw
-        return [(first_score > second_score), true ]
+      def check_winner(first_score, second_score)
+        return [false, 0] if self.draw || second_score > first_score
+        [true, first_score - second_score]
       end
 
       # Update battle attributes
-      def battle_results(scores)
-        first_score = team_score(first_id, scores)
-        second_score = team_score(second_id, scores)
-        self.draw = draw?(first_score, second_score)
+      def battle_results(scores, round)
+        # cade os rounds ?
+        first_score = round.team_score(first_id, scores)
+        second_score = round.team_score(second_id, scores)
+        self.draw = Battle.draw?(first_score, second_score)
         self.first_win, self.first_points = check_winner(first_score, second_score)
         self.second_win, self.second_points = check_winner(second_score, first_score)
-        self.save
+        self.save!
       end
 
       # check team scores and update winners / losers / draws
       def self.update_battle_scores_round(round)
-        scores = rounds.scores
+        scores = round.scores
         round.battles.each do |battle|
           battle.battle_results(scores, round)
         end
+        true
       end
 
       # Gotta iterate through rounds so i can flag them
@@ -187,8 +177,9 @@ module Api
           update_battle_scores_round(round)
           round.round_control.update_attributes(battle_scores_updated: true)
         end
+        true
       rescue StandardError => e
-
+        FlowControl.create(message_type: :error, message: e)
       end
     end
   end

@@ -52,15 +52,6 @@ module Api
         end
       end
 
-      describe 'find_ghost_battle' do
-        let(:team) { FactoryBot.create(:v1_team) }
-
-        it 'returns battle with nil value' do
-          battle = Battle.create(round: round, first_id: team.id, second_id: nil)
-          expect(Battle.find_ghost_battle(round.id)).to eq(battle)
-        end
-      end
-
       describe 'less_battle_number' do
         it 'returns the lower number' do
           history = { 'p1' => 4, 'p2' => 4, 'p3' => 3, 'p4' => 3 }
@@ -256,6 +247,96 @@ module Api
       describe 'list_battles' do
         it 'returns whatever redis have' do
           expect(Battle.list_battles).to eq('[]')
+        end
+      end
+
+      describe 'team_score' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:scores) do 
+          return FactoryBot.create(:v1_score, final_score: 25, round: round,
+                                              team: team)
+        end
+
+        it 'return its final score' do
+          expect(round.team_score(team.id, [scores])).to eq(25)
+        end
+      end
+
+      describe 'draw?' do
+        it 'returns true if difference <= 5' do
+          expect(Battle.draw?(2, 4)).to be true
+        end
+
+        it 'returns false if difference > 5' do
+          expect(Battle.draw?(2, 8)).to be false
+        end
+      end
+
+      describe 'check_winner' do
+        let(:battle) { Battle.new }
+
+        it 'returns [false, 0] if its a draw' do
+          allow(battle).to receive(:draw).and_return(true)
+          expect(battle.check_winner(5, 5)).to eq([false, 0])
+        end     
+        
+        it 'returns [false, 0] if its a loss' do
+          allow(battle).to receive(:draw).and_return(false)
+          expect(battle.check_winner(5, 8)).to eq([false, 0])
+        end
+
+        it 'returns [true, 10] if tis a win' do
+          allow(battle).to receive(:draw).and_return(false)
+          expect(battle.check_winner(15, 5)).to eq([true, 10])
+        end
+      end
+
+      describe 'battle_results' do
+        let(:battle) { Battle.new(round: round) }
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:scores) { [FactoryBot.create(:v1_score, round: round, team: team)] }
+
+        it 'returns true if saved properly' do
+          allow(round).to receive(:team_score).and_return(20)
+          expect(battle.battle_results(scores, round)).to be true
+        end
+
+        it 'raise error if save dont work' do
+          expect { battle.battle_results(scores, round) }.to raise_error
+        end
+      end
+
+      describe 'update_battle_scores_round' do
+        let(:battle) { Battle.new }
+        let(:score) { Score.new }
+
+        it 'returns true in case of success' do
+          allow(round).to receive(:scores).and_return([score])
+          allow(round).to receive(:battles).and_return([battle])
+          allow(battle).to receive(:battle_results).and_return(true)
+          expect(Battle.update_battle_scores_round(round)).to be true
+        end
+      end
+
+      describe 'update_battle_scores' do
+        let(:round_control) { RoundControl.create(round: round) }
+        
+        it 'returns true if success' do
+          allow(Round).to receive(:rounds_with_battles_to_update).and_return([])
+          expect(Battle.update_battle_scores).to be true
+        end
+
+        it 'changes battle_scores_updated to true' do
+          round.round_control = round_control
+          allow(Round).to receive(:rounds_with_battles_to_update).and_return([round])
+          allow(Battle).to receive(:update_battle_scores_round).and_return(true)
+          Battle.update_battle_scores
+          expect(round.round_control.battle_scores_updated).to be true
+        end
+
+        it 'returns flow control if it fails' do
+          allow(Round).to receive(:rounds_with_battles_to_update).and_return([round])
+          expect(Battle.update_battle_scores).to be_instance_of(FlowControl)
         end
       end
     end

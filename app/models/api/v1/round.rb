@@ -47,19 +47,6 @@ module Api
         joins(:round_control).where('round_controls.battle_scores_updated' => value)
       }
 
-      FILTERS = ['market_closed', 'generating_battles', 'battles_generated',
-                 'creating_scores', 'scores_created', 'scores_updated', 'updating_scores',
-                 'updating_battle_scores', 'battle_scores_updated'].freeze
-      
-      def method_missing(method, *args)
-        if method.in?(FILTERS)
-          raise args.inspect
-          return joins(:round_control).where('round_controls.battle_scores_updated' => value)
-        else
-          super
-        end
-      end
-
       def self.avaliable_for_battles
         where(finished: false).market_closed(true).battles_generated(false).generating_battles(false)
       end
@@ -138,6 +125,12 @@ module Api
         round
       end
 
+      def team_score(team_id, scores)
+        return ghost_score(scores) if team_id.nil?
+        score = scores.find { |score| score.team_id ==  team_id }
+        score.final_score
+      end
+
       def self.check_new_round
         season = Season.active
         market_status = Connection.market_status
@@ -161,23 +154,30 @@ module Api
       def self.partial(team)
         $redis.get("partial_#{team}")
       end
+      
+      # ghost is represented by nil
+      # ghost battle is the one with first or second nil id
 
-      def ghost_buster_score(score)
-        ghost_battle = Battle.find_ghost_battle(id)
+      def find_ghost_battle
+        self.battles.find { |battle| battle.first_id.nil? || battle.second_id.nil? }
+      end
+
+      def ghost_buster_score(score_type, scores)
+        ghost_battle = find_ghost_battle
         ghost_buster_id = ghost_battle.first_id.nil? ? ghost_battle.second_id : ghost_battle.first_id
         ghost_buster_team = Team.find(ghost_buster_id)
         ghost_buster_score = scores.find_by(team_id: ghost_buster_team.id)
-        score == 'partial_score' ? ghost_buster_score.partial_score : ghost_buster_score.final_score
+        score_type == 'partial_score' ? ghost_buster_score.partial_score : ghost_buster_score.final_score
       end
 
-      def sum_scores(score)
-        scores.pluck(score.to_sym).joins(:team).where(active: true).sum
+      def sum_scores(score_type, scores)
+        scores.pluck(score_type.to_sym).sum
       end
 
-      def ghost_score(partial = false)
+      def ghost_score(scores, partial = false)
         score = partial ? 'partial_score' : 'final_score'
-        total_scores = scores.select { |s| s.team.active == true } .count - 1
-        (sum_scores(score) - ghost_buster_score(score)) / total_scores
+        total_scores = scores.count - 1
+        (sum_scores(score, scores) - ghost_buster_score(score, scores)) / total_scores
       end
 
       # Rules:
@@ -193,6 +193,7 @@ module Api
       rescue StandardError => e
         FlowControl.create(message_type: :error, message: e)
       end
+
     end
   end
 end

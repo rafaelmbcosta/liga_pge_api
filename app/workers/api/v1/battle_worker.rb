@@ -30,7 +30,7 @@ module Api
 
       def self.perform(task)
         closed_market_tasks if task == "closed_market"
-        round_finished_tasks if task == "round_finished"
+        round_finished_tasks if task == "finished_round"
       end
     end
   end
