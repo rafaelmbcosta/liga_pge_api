@@ -22,7 +22,7 @@ module Api
             teams.each do |team|
               if team.active
                 player = Hash.new
-                player["name"] = team.player.name
+                player["name"] = team.player_name
                 player["team"] = team.name
                 player["id"] = team.id
                 player["team_symbol"] = team.url_escudo_png
