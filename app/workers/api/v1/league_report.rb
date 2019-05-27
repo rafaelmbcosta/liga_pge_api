@@ -9,8 +9,8 @@ module Api
       end
 
       def self.perform
-        dispute_months = DisputeMonth.where(season: Season.last)
-        teams = Team.where(season: Season.last)
+        dispute_months = DisputeMonth.where(season: Season.active)
+        teams = Team.all
         leagues = []
         dispute_months.each do |dm|
           battles = dm.battles
