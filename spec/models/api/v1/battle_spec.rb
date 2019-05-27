@@ -252,7 +252,7 @@ module Api
 
       describe 'team_score' do
         let(:team) { FactoryBot.create(:v1_team) }
-        let(:scores) do 
+        let(:scores) do
           return FactoryBot.create(:v1_score, final_score: 25, round: round,
                                               team: team)
         end
@@ -278,8 +278,8 @@ module Api
         it 'returns [false, 0] if its a draw' do
           allow(battle).to receive(:draw).and_return(true)
           expect(battle.check_winner(5, 5)).to eq([false, 0])
-        end     
-        
+        end
+
         it 'returns [false, 0] if its a loss' do
           allow(battle).to receive(:draw).and_return(false)
           expect(battle.check_winner(5, 8)).to eq([false, 0])
@@ -320,7 +320,7 @@ module Api
 
       describe 'update_battle_scores' do
         let(:round_control) { RoundControl.create(round: round) }
-        
+
         it 'returns true if success' do
           allow(Round).to receive(:rounds_with_battles_to_update).and_return([])
           expect(Battle.update_battle_scores).to be true

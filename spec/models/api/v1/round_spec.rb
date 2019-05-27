@@ -333,8 +333,56 @@ module Api
                                               finished: true)
         end
 
+        before do
+          round.scores << score
+          allow(round).to receive(:find_ghost_battle).and_return(battle)
+        end
+
         it 'returns the score if everthing goes right' do
-          expect(round.ghost_buster_score('final_score', [score])).to eq(8)
+          expect(round.ghost_buster_score('final_score', round.scores)).to eq(8)
+        end
+      end
+
+      describe 'team_score' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.new(first_id: team.id, second_id: nil) }
+        let(:score) { Score.create(round: round, team: team, final_score: 8) }
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: true)
+        end
+
+        before do
+          round.scores << score
+          allow(round).to receive(:ghost_score).and_return(5)
+        end
+
+        it 'returns ghost score if team_id is nil' do
+          expect(round.team_score(nil, round.scores)).to be(5)
+        end
+
+        it 'returns the final score of the team' do
+          expect(round.team_score(team.id, round.scores)).to eq(8.0)
+        end
+      end
+
+      describe 'find ghost battle' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.new(first_id: team.id, second_id: nil) }
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: true)
+        end
+
+        it 'returns nil if no battle is find' do
+          expect(round.find_ghost_battle).to be_nil
+        end
+
+        it 'returns the battle' do
+          round.battles << battle
+          expect(round.find_ghost_battle).to eq(battle)
         end
       end
     end
