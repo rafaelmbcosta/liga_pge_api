@@ -14,38 +14,59 @@ module Api
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
       default_scope { order('number asc') }
-
-      scope :avaliable_for_battles, lambda {
-        joins(:round_control).where('round_controls.market_closed' => true, finished: false,
-                                    'round_controls.generating_battles' => false,
-                                    'round_controls.battles_generated' => false)
-      }
-
-      scope :avaliable_for_score_generation, lambda {
-        joins(:round_control).where(finished: false,
-                                    'round_controls.market_closed' => true,
-                                    'round_controls.creating_scores' => false,
-                                    'round_controls.scores_created' => false)
-      }
-
-      scope :avaliable_to_be_finished, lambda {
-        joins(:round_control).where(finished: false,
-                                    'round_controls.market_closed' => true,
-                                    'round_controls.battles_generated' => true,
-                                    'round_controls.scores_created' => true)
-      }
-
-      scope :rounds_with_scores_to_update, lambda {
-        joins(:round_control).where(finished: true,
-                                    'round_controls.scores_created' => true,
-                                    'round_controls.scores_updated' => false,
-                                    'round_controls.updating_scores' => false)
-      }
-
-
+      
       scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
       }
+
+      scope :market_closed, lambda { |value|
+        joins(:round_control).where('round_controls.market_closed' => value)
+      }
+      scope :generating_battles, lambda { |value|
+        joins(:round_control).where('round_controls.generating_battles' => value)
+      }
+      scope :battles_generated, lambda { |value|
+        joins(:round_control).where('round_controls.battles_generated' => value)
+      }
+      scope :creating_scores, lambda { |value|
+        joins(:round_control).where('round_controls.creating_scores' => value)
+      }
+      scope :scores_created, lambda { |value|
+        joins(:round_control).where('round_controls.scores_created' => value)
+      }
+      scope :scores_updated, lambda { |value|
+        joins(:round_control).where('round_controls.scores_updated' => value)
+      }
+      scope :updating_scores, lambda { |value|
+        joins(:round_control).where('round_controls.updating_scores' => value)
+      }
+      scope :updating_battle_scores, lambda { |value|
+        joins(:round_control).where('round_controls.updating_battle_scores' => value)
+      }
+      scope :battle_scores_updated, lambda { |value|
+        joins(:round_control).where('round_controls.battle_scores_updated' => value)
+      }
+
+      def self.avaliable_for_battles
+        where(finished: false).market_closed(true).battles_generated(false).generating_battles(false)
+      end
+
+      def self.avaliable_for_score_generation
+        where(finished: false).market_closed(true).creating_scores(false).scores_created(false)
+      end
+
+      def self.avaliable_to_be_finished
+        where(finished: false).market_closed(true).battles_generated(true).scores_created(true)
+      end
+
+      def self.rounds_with_scores_to_update
+        where(finished: true).scores_created(true).scores_updated(false).updating_scores(false)
+      end
+
+      def self.rounds_with_battles_to_update
+        where(finished: true).battles_generated(true).scores_updated(true)
+                             .updating_battle_scores(false).battle_scores_updated(false)
+      end
 
       def self.current
         Season.active.rounds.max(&:number)
@@ -104,6 +125,12 @@ module Api
         round
       end
 
+      def team_score(team_id, scores)
+        return ghost_score(scores) if team_id.nil?
+        score = scores.find { |score| score.team_id ==  team_id }
+        score.final_score
+      end
+
       def self.check_new_round
         season = Season.active
         market_status = Connection.market_status
@@ -127,23 +154,31 @@ module Api
       def self.partial(team)
         $redis.get("partial_#{team}")
       end
+      
+      # ghost is represented by nil
+      # ghost battle is the one with first or second nil id
 
-      def ghost_buster_score(score)
-        ghost_battle = Battle.find_ghost_battle(id)
+      def find_ghost_battle
+        self.battles.find { |battle| battle.first_id.nil? || battle.second_id.nil? }
+      end
+
+      # returns the score of the one facing the ghost
+      def ghost_buster_score(score_type, scores)
+        ghost_battle = find_ghost_battle
         ghost_buster_id = ghost_battle.first_id.nil? ? ghost_battle.second_id : ghost_battle.first_id
         ghost_buster_team = Team.find(ghost_buster_id)
         ghost_buster_score = scores.find_by(team_id: ghost_buster_team.id)
-        score == 'partial_score' ? ghost_buster_score.partial_score : ghost_buster_score.final_score
+        score_type == 'partial_score' ? ghost_buster_score.partial_score : ghost_buster_score.final_score
       end
 
-      def sum_scores(score)
-        scores.pluck(score.to_sym).joins(:team).where(active: true).sum
+      def sum_scores(score_type, scores)
+        scores.pluck(score_type.to_sym).sum
       end
 
-      def ghost_score(partial = false)
+      def ghost_score(scores, partial = false)
         score = partial ? 'partial_score' : 'final_score'
-        total_scores = scores.select { |s| s.team.active == true } .count - 1
-        (sum_scores(score) - ghost_buster_score(score)) / total_scores
+        total_scores = scores.count - 1
+        (sum_scores(score, scores) - ghost_buster_score(score, scores)) / total_scores
       end
 
       # Rules:
@@ -159,6 +194,7 @@ module Api
       rescue StandardError => e
         FlowControl.create(message_type: :error, message: e)
       end
+
     end
   end
 end
