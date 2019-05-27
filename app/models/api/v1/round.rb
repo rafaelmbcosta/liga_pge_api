@@ -32,7 +32,7 @@ module Api
         joins(:round_control).where('round_controls.creating_scores' => value)
       }
       scope :scores_created, lambda { |value|
-        joins(:round_control).where('round_controls.battles_generated' => value)
+        joins(:round_control).where('round_controls.scores_created' => value)
       }
       scope :scores_updated, lambda { |value|
         joins(:round_control).where('round_controls.scores_updated' => value)
@@ -162,6 +162,7 @@ module Api
         self.battles.find { |battle| battle.first_id.nil? || battle.second_id.nil? }
       end
 
+      # returns the score of the one facing the ghost
       def ghost_buster_score(score_type, scores)
         ghost_battle = find_ghost_battle
         ghost_buster_id = ghost_battle.first_id.nil? ? ghost_battle.second_id : ghost_battle.first_id

@@ -6,7 +6,7 @@ module Api
       before do
         DatabaseCleaner.start
         DatabaseCleaner.clean
-        allow(Round).to receive(:find_dispute_month).and_return(dispute_month)
+        # allow(Round).to receive(:find_dispute_month).and_return(dispute_month)
       end
 
       let(:season) { FactoryBot.create(:v1_season, year: 2019) }
@@ -90,6 +90,10 @@ module Api
                                               number: 16, finished: false)
         end
 
+        before do
+          allow(Round).to receive(:find_dispute_month).and_return(dispute_month)
+        end
+
         it 'return newly created round  if allowed' do
           season.dispute_months.push(dispute_month)
           expect(Round.new_round(season, market_status).number).to eq(14)
@@ -157,8 +161,17 @@ module Api
       end
 
       describe 'close_market' do
+        before do
+          allow(Round).to receive(:find_dispute_month).and_return(dispute_month)
+        end
+
         it 'return true if success' do
           expect(Round.close_market).to be true
+        end
+
+        it 'returns flow control if it fails' do
+          allow(Round).to receive(:rounds_allowed_to_generate_battles).and_return(nil)
+          expect(Round.close_market).to be_instance_of(FlowControl)
         end
       end
 
@@ -200,8 +213,7 @@ module Api
 
         let(:round_control) do
           return RoundControl.create(market_closed: true, round: round_to_generate_scores,
-                                                          creating_scores: false,
-                                                          scores_created: false)
+                                     creating_scores: false, scores_created: false)
         end
 
         before do
@@ -222,8 +234,7 @@ module Api
 
         let(:round_control) do
           return RoundControl.create(market_closed: true, round: round_to_generate_battles,
-                                                          generating_battles: false,
-                                                          battles_generated: false)
+                                     generating_battles: false, battles_generated: false)
         end
 
         before do
@@ -232,6 +243,98 @@ module Api
 
         it 'returns all avaliable rounds' do
           expect(Round.avaliable_for_battles).to eq([round_to_generate_battles])
+        end
+      end
+
+      describe 'rounds_with_scores_to_update' do
+        let(:round_with_scores) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: true)
+        end
+
+        let(:round_control) do
+          return RoundControl.create(round: round_with_scores,
+                                     scores_created: true, scores_updated: false,
+                                     updating_scores: false)
+        end
+
+        before do
+          round_with_scores.round_control = round_control
+        end
+
+        it 'returns all avaliable rounds' do
+          expect(Round.rounds_with_scores_to_update).to eq([round_with_scores])
+        end
+      end
+
+      describe 'rounds_with_battles_to_update' do
+        let(:round_to_update) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: true)
+        end
+
+        let(:round_control) do
+          return RoundControl.create(round: round_to_update,
+                                     battles_generated: true, scores_updated: true,
+                                     updating_battle_scores: false,
+                                     battle_scores_updated: false)
+        end
+
+        before do
+          round_to_update.round_control = round_control
+        end
+
+        it 'returns all avaliable rounds' do
+          expect(Round.rounds_with_battles_to_update).to eq([round_to_update])
+        end
+      end
+
+      describe 'find_dispute_month' do
+        it 'return a dispute month if it finds any' do
+          allow(season).to receive(:dispute_months).and_return([dispute_month]) # 10 e 20
+          expect(Round.find_dispute_month(season, 11)).to be_instance_of(DisputeMonth)
+        end
+
+        it 'returns nil otherwise' do
+          allow(season).to receive(:dispute_months).and_return([])
+          expect(Round.find_dispute_month(season, 120)).to be_nil
+        end
+      end
+
+      describe 'ghost_scores' do
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: true)
+        end
+
+        let(:scores) do
+          return [
+            Score.new(final_score: 6, round: round),
+            Score.new(final_score: 2, round: round)
+          ]
+        end
+
+        it 'return the average excluding ghost buster score' do
+          allow(round).to receive(:ghost_buster_score).and_return(2)
+          expect(round.ghost_score(scores, false)).to eq(6)
+        end
+      end
+
+      describe 'ghost_buster_score' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:battle) { Battle.new(first_id: team.id, second_id: nil) }
+        let(:score) { Score.create(round: round, team: team, final_score: 8) }
+        let(:round) do
+          return FactoryBot.create(:v1_round, season: season, number: 11,
+                                              dispute_month: dispute_month,
+                                              finished: true)
+        end
+
+        it 'returns the score if everthing goes right' do
+          expect(round.ghost_buster_score('final_score', [score])).to eq(8)
         end
       end
     end
