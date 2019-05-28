@@ -194,7 +194,6 @@ module Api
       rescue StandardError => e
         FlowControl.create(message_type: :error, message: e)
       end
-
     end
   end
 end
