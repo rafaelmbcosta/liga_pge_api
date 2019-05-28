@@ -11,7 +11,7 @@ module Api
       end
 
       def self.show_league_scores
-
+        LeagueReport.perform
       end
 
       def self.update_generated_battles
