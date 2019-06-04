@@ -13,73 +13,39 @@
 
 module Api
   module V1
-
-    def self.slug(name)
-      I18n.transliterate(name).downcase.gsub(". ", "-").gsub(".","-").gsub(" ","-")
-    end
-
-    player_data = [
-      {name: "Marcelo Almeida", team:	"Camisa10daGavea"},
-      {name: "José Carlos", team:	"Boa Viagem E. Clube"},
-      {name: "Bruno Dias", team:	"Valério Central F. C"},
-      {name: "Alberto Perdigão", team:	"PerdiCartola F.C"},
-      {name: "Fabio Gurgel", team:	"FaBayern FC"},
-      {name: "Cleber Ramos", team:	"47 DO SEGUNDO TEMPO FC"},
-      {name: "Felipe Phelype", team:	"IslandOfCatsFootball"},
-      {name: "Rennan Batista", team:	"Chico e Gunha FC"},
-      {name: "Lucas Batista", team:	"vovo S.C"},
-      {name: "Cayo Luiz", team:	"C.Luiz"},
-      {name: "Ronilson Costa", team:	"Phode Chorarr FC"},
-      {name: "Caio Batista", team:	"Batista S.C"},
-      {name: "Rafael Costa", team:	"Ferrim Saint-Germain"},
-      {name: "Márcio Ayres", team:	"Down Futball United"},
-      {name: "Daniel Oliveira", team:	"PIEDADE FCF"},
-      {name: "Victor Gomes", team:	"Victor Gomes CSC"},
-      {name: "Vanduy Sales", team:	"Vanduka FC"},
-      {name: "Victor Santiago", team:	"VBSantiago FC"},
-      {name: "Leonardo Brandão", team:	"Guerreiros do Vila"},
-      {name: "Marcelo Faustino", team:	"Palestra Cangaceiro"},
-      {name: "Vanderson Cabral", team:	"FC Cara Seca"},
-      {name: "Vladimir Gomes", team:	"Emilly Acsa FC"},
-      {name: "Danielson Filho", team:	"Raimundões FC"},
-      {name: "Marciano Araújo", team:	"Cearabarça FC"},
-      {name: "Reginaldo Ramos", team:	"Hr Premoldados"},
-      {name: "Emival Queiroz", team:	"Emival SCCP"},
-      {name: "Matheus Batista", team:	"orlof F.C"},
-      {name: "Felipe Martins", team:	"Cearamor Messejana"},
-      {name: "Felipe Batista", team:	"Cachagol FC"},
-      {name: "Renan Benevides", team:	"simple man"},
-      {name: "JORGE PEREIRA", team:	"CARAI DEMAIS"},
-      # {name: " Daniel Djimis", team: ""}
+    teams_hash = [
+      {
+        "id": 1,
+        "name": "Ferrimbahçe",
+        "player_name": "Rafael Fera",
+        "active": true,
+        "url_escudo_png": "https://s2.glbimg.com/_PR4nkr2W4gsrtRk3lKHIUnVLeY=/https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/cartola_svg_112/escudo/e6/09/39/001d366c29-9e34-4201-958b-34aa246edfe620180414140939"
+      },
+      {
+        "id": 2,
+        "name": "Ferrim Saint-germain",
+        "player_name": "Rafael Fera",
+        "active": false,
+        "url_escudo_png": "https://s2.glbimg.com/_PR4nkr2W4gsrtRk3lKHIUnVLeY=/https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/cartola_svg_112/escudo/e6/09/39/001d366c29-9e34-4201-958b-34aa246edfe620180414140939"
+      },
+      {
+        "id": 3,
+        "name": "Down Futball United",
+        "player_name": "Marcio Down",
+        "active": true,
+        "url_escudo_png": "https://s2.glbimg.com/4mh8qoPb38V76c9kk3t6OXvBY3s=/https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/cartola_svg_133/escudo/f6/33/49/00151931e3-86f4-49ed-b201-bd9416a02af620190402153349"
+      },
+      {
+        "id": 4,
+        "name": "Fabayern FC",
+        "player_name": "Fabio Teimoso da Silva",
+        "active": true,
+        "url_escudo_png": "https://s2.glbimg.com/qusjYptboVNjNOslNc55fZEAyJQ=/https://s3.glbimg.com/v1/AUTH_58d78b787ec34892b5aaa0c7a146155f/cartola_svg_108/escudo/62/39/50/0067cbf8fd-a20c-499e-bef5-f0f5c0ce5b6220180411153950"
+      }
     ]
 
-    season = Season.last
-    season = Season.create(year: Time.now.year, golden_rounds: [1,5,9,14,17,24,27,32,38]) if season.nil?
-    DisputeMonth.create(name: "Maio/Junho", season: season, dispute_rounds: (1..10).to_a )
-    DisputeMonth.create(name: "Julho", season: season, dispute_rounds: (11..17).to_a )
-    DisputeMonth.create(name: "Agosto", season: season, dispute_rounds: (18..22).to_a )
-    DisputeMonth.create(name: "Setembro", season: season, dispute_rounds: (23..26).to_a )
-    DisputeMonth.create(name: "Outubro", season: season, dispute_rounds: (27..31).to_a )
-    DisputeMonth.create(name: "Novembro", season: season, dispute_rounds: (32..38).to_a )
-
-    player_data.each do |data|
-      p = Player.new(name: data[:name])
-      p.teams << Team.new(name: data[:team], season: season, slug: slug(data[:team]))
-      p.save
+    teams_hash.each do |team|
+      Team.create(team.reject { |t| t['id'] })
     end
-
-    # Filling rounds
-
-    # season = Api::V1::Season.last
-    # (1..26).to_a.each do |number|
-    #   round = Api::V1::Round.find{|r| r.season.id == season.id and r.number == number}
-    #   if round.nil?
-    #     ## verify if its golden (on seasons)
-    #     golden = season.golden_rounds.include?(number)
-    #     ## verify dispute month (if configured )
-    #     dispute = Api::V1::DisputeMonth.find{|d| d.season_id == season.id and d.dispute_rounds.include?(number)}
-    #     round = Api::V1::Round.create(number: number, season: season, dispute_month: dispute, golden: golden, finished: false)
-    #   end
-    # end
   end
 end

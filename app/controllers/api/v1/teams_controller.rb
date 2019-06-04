@@ -8,7 +8,7 @@ module Api
       def index
         @teams = Team.all
 
-        render json: @teams, include: [:season, :player]
+        render json: @teams
       end
 
       # GET /teams/1
