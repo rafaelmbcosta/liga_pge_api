@@ -20,6 +20,7 @@ module Api
           variation = check_variation(team_score)
           Currency.create(round: round, team: team, difference: variation)
         end
+        true
       end
 
       def self.difference_details(currencies)

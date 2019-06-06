@@ -23,6 +23,7 @@ gem 'puma', '~> 3.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
 gem 'knock'
+gem 'travis'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
 gem 'nokogiri', '1.8.5'
