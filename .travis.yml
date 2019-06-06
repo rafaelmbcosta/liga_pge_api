@@ -4,6 +4,8 @@ env:
 language: ruby
 rvm:
  - 2.5.1
+services:
+ - redis-server
 before_script:
  - RAILS_ENV=test bundle exec rake db:create
  - RAILS_ENV=test bundle exec rake db:migrate
