@@ -5,7 +5,7 @@ module Api
     RSpec.describe Currency, type: :model do
       let(:season) { FactoryBot.create(:v1_season) }
       let(:dispute_month) { FactoryBot.create(:v1_dispute_month, season: season) }
-      let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month) }
+      let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 1) }
 
       describe 'rounds_avaliable_to_save_currencies' do
         before do
@@ -40,10 +40,70 @@ module Api
           allow(Currency).to receive(:check_variation).and_return(3)
           allow(Team).to receive(:active).and_return([team])
         end
-        
+
         it 'creates currency' do
           Currency.save_currencies_round(round)
           expect(Currency.find { |c| c.round_id == round.id && c.team_id == team.id } .difference).to eq(3)
+        end
+      end
+
+      describe 'difference_details' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:currency) { Currency.create(difference: 6, round: round, team: team) }
+        let(:expectation) { [{ value: 12, difference: 6, round: round.number }] }
+
+        before do
+          allow(currency).to receive(:value).and_return(12)
+        end
+
+        it 'returns a hash with details' do
+          expect(Currency.difference_details([currency])).to eq(expectation)
+        end
+      end
+
+      describe 'value' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:dispute_month_2) { FactoryBot.create(:v1_dispute_month, season: season) }
+        let(:dispute_month_3) { FactoryBot.create(:v1_dispute_month, season: season) }
+        let(:round_2) do
+          return FactoryBot.create(:v1_round, season: season, finished: true,
+                                              dispute_month: dispute_month_2, number: 2)
+        end
+        let(:round_3) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month_3, number: 3) }
+        let(:currency)  { Currency.create(difference: 35, round: round, team: team) }
+        let(:currency_2)  { Currency.create(difference: 8, round: round_2, team: team) }
+        let(:currency_3)  { Currency.create(difference: 4, round: round_3, team: team) }
+
+        it 'returns the currency a team had at a specific round' do
+          expect([currency.value, currency_2.value, currency_3.value]).to eq([135, 143, 147])
+        end
+      end
+
+      describe 'order_team_details' do
+        let(:params) do
+          return [
+            { name: '1', difference: 4 },
+            { name: '2', difference: 8 },
+            { name: '3', difference: 3 }
+          ]
+        end
+
+        let(:expectation) do
+          return [
+            { name: '2', difference: 8 },
+            { name: '1', difference: 4 },
+            { name: '3', difference: 3 }
+          ]
+        end
+
+        it 'returns teams sorted by difference' do
+          expect(Currency.order_team_details(params)).to eq(expectation)
+        end
+      end
+
+      describe 'dispute_month_team_details' do
+        it 'returns an array of hashes with the details' do
+          
         end
       end
     end

@@ -1,17 +1,28 @@
 module Api
   module V1
+    # Manages how much currency the player gets each round
+    # there is a specific prize for that during a dispute month
     class Currency < ApplicationRecord
       belongs_to :team
       belongs_to :round
-      
+
       delegate :number, to: :round, allow_nil: false
+
+      def value
+        previous_currencies = Currency.joins(:round)
+                                      .where('rounds.number <= ?', round.number)
+                                      .where(team_id: team_id)
+                                      .where('rounds.season_id = ?', Season.active.id)
+        total_difference = previous_currencies.pluck(:difference).sum
+        total_difference + 100
+      end
 
       def self.rounds_avaliable_to_save_currencies
         Round.rounds_avaliable_to_save_currencies
       end
 
       def self.check_variation(team_score)
-        team_score["atletas"].pluck('variacao_num').sum
+        team_score['atletas'].pluck('variacao_num').sum
       end
 
       def self.save_currencies_round(round)
@@ -27,7 +38,7 @@ module Api
         details = []
         currencies.each do |currency|
           details << { value: currency.value, difference: currency.difference,
-                      round: currency.round_number }
+                       round: currency.round.number }
         end
         details
       end
@@ -56,7 +67,7 @@ module Api
       end
 
       def self.order_currency_report(dispute_months)
-        dispute_month.sort_by! { |dm| dm[:id] }.reverse
+        dispute_months.sort_by! { |dm| dm[:id] }.reverse
       end
 
       def self.show_currencies
