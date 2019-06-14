@@ -102,8 +102,46 @@ module Api
       end
 
       describe 'dispute_month_team_details' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:currency) { Currency.create(difference: 35, round: round, team: team) }
+        let(:expectation) do
+          [
+            {
+              name: team.name,
+              player: team.player_name,
+              difference: 35,
+              team_symbol: team.url_escudo_png,
+              details: []
+            }
+          ]
+        end
+
+        before do
+          round.currencies << currency
+          allow(Currency).to receive(:difference_details).and_return([])
+        end
+
         it 'returns an array of hashes with the details' do
-          
+          expect(Currency.dispute_month_team_details(dispute_month, [team])).to eq(expectation)
+        end
+      end
+
+      describe 'dispute_month_information' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        let(:expectation) do
+          {
+            name: dispute_month.name,
+            id: dispute_month.id,
+            teams: []
+          }
+        end
+
+        before do
+          allow(Currency).to receive(:dispute_month_team_details).and_return([])
+        end
+
+        it 'return a hash with dispute_month details' do
+          expect(Currency.dispute_month_information(dispute_month, [team])).to eq(expectation)
         end
       end
     end

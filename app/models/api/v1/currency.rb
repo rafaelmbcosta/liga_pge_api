@@ -50,7 +50,7 @@ module Api
       def self.dispute_month_team_details(dispute_month, teams)
         team_details = []
         teams.each do |team|
-          currencies = dispute_month.currencies.where(team: team).order('round desc')
+          currencies = dispute_month.currencies.where(team: team).order('round_id desc')
           difference = currencies.pluck(:difference).sum
           team_details << { name: team.name, player: team.player_name,
                             difference: difference,
@@ -77,7 +77,7 @@ module Api
         season.dispute_months.reverse.each do |dm|
           dispute_months << dispute_month_information(dm, teams)
         end
-        $redis.set("currencies", order_currency_report(dispute_months).to_json)
+        $redis.set('currencies', order_currency_report(dispute_months).to_json)
       rescue StandardError => e
         FlowControl.create(message_type: :error, message: e)
       end
