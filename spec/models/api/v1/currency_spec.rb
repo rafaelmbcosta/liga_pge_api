@@ -144,6 +144,27 @@ module Api
           expect(Currency.dispute_month_information(dispute_month, [team])).to eq(expectation)
         end
       end
+
+      describe 'show_currencies' do
+        let(:team) { FactoryBot.create(:v1_team) }
+
+        before do
+          season.dispute_months << dispute_month
+          allow(Season).to receive(:active).and_return(season)
+          allow(Team).to receive(:active).and_return([team])
+          allow(Currency).to receive(:dispute_month_information).and_return(nome: 'Abril/Maio')
+        end
+
+        it 'redis save hash if success' do
+          Currency.show_currencies
+          expect($redis.get('currencies')).to eq([{ nome: 'Abril/Maio' }].to_json)
+        end
+
+        it 'returns flowcontrol if it fails' do
+          allow(Season).to receive(:active).and_return(nil)
+          expect(Currency.show_currencies).to be_instance_of(FlowControl)
+        end
+      end
     end
   end
 end
