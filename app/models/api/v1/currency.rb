@@ -27,7 +27,7 @@ module Api
 
       def self.save_currencies_round(round)
         Team.active.each do |team|
-          team_score = Connection.team_score(team.slug, round.number)
+          team_score = Connection.team_score(team.id_tag, round.number)
           variation = check_variation(team_score)
           Currency.create(round: round, team: team, difference: variation)
         end

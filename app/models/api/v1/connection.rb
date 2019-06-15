@@ -5,7 +5,8 @@ module Api
     # This class manages all connections with the official API
     class Connection
       STATUS_URL = 'https://api.cartolafc.globo.com/mercado/status'.freeze
-      URL_TEAM_SCORE = 'https://api.cartolafc.globo.com/time/slug/'.freeze
+      URL_TEAM_SCORE = 'https://api.cartolafc.globo.com/time/id/'.freeze
+      TEAM_DATA = 'https://api.cartolafc.globo.com/times?q='.freeze
       ATHLETES_SCORES = 'https://api.cartolafc.globo.com/atletas/pontuados'.freeze
 
       def self.connect(uri)
@@ -37,10 +38,15 @@ module Api
         market_status['rodada_atual']
       end
 
-      def self.team_score(slug, round = nil)
-        uri = URI(URL_TEAM_SCORE + slug.to_s)
-        uri = URI(URL_TEAM_SCORE + "#{slug}/#{round}") unless round.nil?
+      def self.team_score(id, round = nil)
+        uri = URI(URL_TEAM_SCORE + id.to_s)
+        uri = URI(URL_TEAM_SCORE + "#{id}/#{round}") unless round.nil?
         connect(uri)
+      end
+
+      def self.team_data(team)
+        teams = connect(URI(TEAM_DATA+team.slug))
+        teams.find { |t| t['slug'] == team.slug }
       end
 
       def self.market_status
