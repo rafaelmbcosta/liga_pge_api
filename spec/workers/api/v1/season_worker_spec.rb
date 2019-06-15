@@ -3,7 +3,7 @@ module Api
   module V1
     RSpec.describe SeasonWorker do
       before do
-        Connection.stubs(:market_status).returns('temporada' => Time.now.year, 'status_mercado' => 1)
+        allow(Connection).to receive(:market_status).and_return('temporada' => Time.now.year, 'status_mercado' => 1)
       end
 
       let(:connection) { Connection.market_status }
@@ -12,10 +12,6 @@ module Api
         it 'returns current year' do
           expect(SeasonWorker.season_year(connection)).to eq(Time.now.year)
         end
-      end
-
-      after do
-        Connection.unstub(:market_status)
       end
     end
   end

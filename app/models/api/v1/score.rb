@@ -51,7 +51,7 @@ module Api
       end
 
       def self.update_team_scores(round, team)
-        api_scores = Connection.team_score(team.slug, round.number)
+        api_scores = Connection.team_score(team.id_tag, round.number)
         raise 'Invalid API Scores' if api_scores.nil? || !api_scores.include?('pontos')
 
         score = Score.find_by(round: round, team: team)
