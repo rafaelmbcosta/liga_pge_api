@@ -188,6 +188,26 @@ module Api
           expect(Currency.save_currencies).to be_instance_of(FlowControl)
         end
       end
+
+      describe 'find_and_update_currencies' do
+        let(:currency) { FactoryBot.create(:v1_currency, round: round, team: team) }
+        let(:team) { FactoryBot.create(:v1_team) }
+
+        before do
+          allow(Connection).to receive(:team_score).and_return([])
+          allow(Currency).to receive(:check_variation).and_return(10)
+        end
+
+        it 'updates the difference' do
+          #pending
+          raise 'pending'
+        end
+
+        it 'returns true' do
+          #pending
+          raise 'pending'
+        end
+      end
     end
   end
 end

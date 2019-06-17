@@ -82,6 +82,26 @@ module Api
         FlowControl.create(message_type: :error, message: e)
       end
 
+      def self.find_and_update_currencies(round)
+        Team.active.each do |team|
+          team_score = Connection.team_score(team.id_tag, round.number)
+          variation = check_variation(team_score)
+          currency = Currency.find_by(round: round, team: team)
+          currency.update_attributes(difference: variation)
+        end
+        true
+      end
+
+      def self.rerun_currencies
+        season = Season.active
+        season.rounds.each do |round|
+          find_and_update_currencies(round)
+        end
+        true
+      rescue StandardError => _e
+          FlowControl.create(message_type: :error, message: 'Erro ao rodar novamente patrimonio')
+      end
+
       def self.save_currencies
         rounds_avaliable_to_save_currencies.each do |round|
           round.round_control.update_attributes(generating_currencies: true)
