@@ -37,7 +37,7 @@ module Api
       def self.difference_details(currencies)
         details = []
         currencies.each do |currency|
-          details << { value: currency.value, difference: currency.difference,
+          details << { value: currency.value, difference: currency.difference.round(2),
                        round: currency.round.number }
         end
         details
@@ -53,7 +53,7 @@ module Api
           currencies = dispute_month.currencies.where(team: team).order('round_id desc')
           difference = currencies.pluck(:difference).sum
           team_details << { name: team.name, player: team.player_name,
-                            difference: difference,
+                            difference: difference.round(2),
                             team_symbol: team.url_escudo_png,
                             details: difference_details(currencies) }
         end
@@ -88,6 +88,7 @@ module Api
           save_currencies_round(round)
           round.round_control.update_attributes(currencies_generated: true)
         end
+        true
       rescue StandardError => e
         FlowControl.create(message_type: :error, message: e)
       end

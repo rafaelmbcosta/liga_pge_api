@@ -165,6 +165,29 @@ module Api
           expect(Currency.show_currencies).to be_instance_of(FlowControl)
         end
       end
+
+      describe 'save_currencies' do
+        let(:round_control) { FactoryBot.create(:v1_round_control, round: round) }
+
+        before do
+          round.round_control = round_control
+          allow(Currency).to receive(:rounds_avaliable_to_save_currencies).and_return([round])
+        end
+
+        it 'return true if currencies are saved' do
+          expect(Currency.save_currencies).to be true
+        end
+
+        it 'updates round_control currencies_generated' do
+          Currency.save_currencies
+          expect(round.round_control.currencies_generated).to be true
+        end
+
+        it 'returns FlowControl if it fails' do
+          allow(Currency).to receive(:rounds_avaliable_to_save_currencies).and_return([nil])
+          expect(Currency.save_currencies).to be_instance_of(FlowControl)
+        end
+      end
     end
   end
 end
