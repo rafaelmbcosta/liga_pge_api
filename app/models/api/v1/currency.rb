@@ -37,7 +37,7 @@ module Api
       def self.difference_details(currencies)
         details = []
         currencies.each do |currency|
-          details << { value: currency.value, difference: currency.difference.round(2),
+          details << { value: currency.value.round(2), difference: currency.difference.round(2),
                        round: currency.round.number }
         end
         details
