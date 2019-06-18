@@ -98,8 +98,8 @@ module Api
           find_and_update_currencies(round)
         end
         true
-      rescue StandardError => _e
-          FlowControl.create(message_type: :error, message: 'Erro ao rodar novamente patrimonio')
+      rescue StandardError
+        FlowControl.create(message_type: :error, message: 'Erro ao rodar novamente patrimonio')
       end
 
       def self.save_currencies

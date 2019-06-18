@@ -190,22 +190,43 @@ module Api
       end
 
       describe 'find_and_update_currencies' do
-        let(:currency) { FactoryBot.create(:v1_currency, round: round, team: team) }
+        let(:currency) do
+          FactoryBot.create(:v1_currency, round: round, team: team,
+                                          difference: 5)
+        end
         let(:team) { FactoryBot.create(:v1_team) }
 
         before do
           allow(Connection).to receive(:team_score).and_return([])
           allow(Currency).to receive(:check_variation).and_return(10)
+          allow(Currency).to receive(:find_by).and_return(currency)
+          allow(Team).to receive(:active).and_return([team])
         end
 
         it 'updates the difference' do
-          #pending
-          raise 'pending'
+          Currency.find_and_update_currencies(round)
+          expect(currency.difference).to eq(10)
         end
 
         it 'returns true' do
-          #pending
-          raise 'pending'
+          expect(Currency.find_and_update_currencies(round)).to be true
+        end
+      end
+
+      describe 'rerun_currencies' do
+        before do
+          allow(Season).to receive(:active).and_return(season)
+          season.rounds << round
+        end
+
+        it 'returns true' do
+          allow(Currency).to receive(:find_and_update_currencies).and_return(true)
+          expect(Currency.rerun_currencies).to be true
+        end
+
+        it 'returns flow control if it fails' do
+          allow(Season).to receive(:active).and_return(nil)
+          expect(Currency.rerun_currencies).to be_instance_of(FlowControl)
         end
       end
     end
