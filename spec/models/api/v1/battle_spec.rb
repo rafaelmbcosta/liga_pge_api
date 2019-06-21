@@ -3,6 +3,8 @@ require 'rails_helper'
 module Api
   module V1
     RSpec.describe Battle, type: :model do
+      it_behaves_like 'show_league'
+
       let(:season) { FactoryBot.create(:v1_season, year: 2019) }
 
       let(:dispute_month) do

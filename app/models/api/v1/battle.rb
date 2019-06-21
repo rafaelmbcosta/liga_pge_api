@@ -2,6 +2,8 @@ module Api
   module V1
     # Generate team battles every round
     class Battle < ApplicationRecord
+      include Concerns::Battle::ShowLeague
+      
       belongs_to :round
 
       scope :find_battle, lambda { |round, team, other_team|
