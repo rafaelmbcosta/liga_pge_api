@@ -7,6 +7,13 @@ module Api
       validate :check_battles, on: [:disable]
       
       scope :active, -> { where(active: true) }
+
+      def self.activation(params)
+        team = find(params[:id])
+        { success: true } if team.update_attributes(active: params[:active])
+      rescue StandardError => e
+        { success: false, message: 'Erro ao atualizar time' }
+      end
       
       def disable
         dispute_month = DisputeMonth.active
