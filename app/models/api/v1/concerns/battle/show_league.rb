@@ -7,12 +7,14 @@ module Api
           extend ActiveSupport::Concern
 
           included do
+            # returns the league report for each dispute month
             def self.dispute_month_league_report(dm, teams)
               league = { name: dm.name, id: dm.id, players: [] }
               league[:players] = league_report_teams(teams, dm.battles) if dm.battles.any?
               league
             end
 
+            # find the opponent name or return 'ghost'
             def self.opponent(battle, team, teams)
               opponent_id = battle.first_id == team.id ? battle.second_id : battle.first_id
               return opponent_id.nil? ? 'Fantasma' : "#{teams.find(opponent_id).name}"
@@ -47,7 +49,7 @@ module Api
                 data = { name: team.player_name, team: team.name, id: id,
                          team_symbol: team.url_escudo_png, details: team_details,
                          points: team_details.pluck(:points).sum,
-                        diff_points: team_details.pluck(:diff_points).sum }
+                         diff_points: team_details.pluck(:diff_points).sum }
                 report_teams << data
               end
               report_teams
