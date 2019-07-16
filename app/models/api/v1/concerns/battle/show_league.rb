@@ -37,7 +37,7 @@ module Api
                 details[:points], details[:diff_points] = league_battle_result(battle, team)
                 team_details << details
               end
-              details
+              team_details
             end
 
             def self.league_report_teams(battles, teams)
