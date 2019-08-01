@@ -17,18 +17,29 @@ module Api
             # find the opponent name or return 'ghost'
             def self.opponent(battle, team, teams)
               opponent_id = battle.first_id == team.id ? battle.second_id : battle.first_id
-              opponent_id.nil? ? 'Fantasma' : teams.find(opponent_id).name.to_s
+              return 'Fantasma' if opponent_id.nil?
+
+              teams.find(opponent_id).name.to_s
+            end
+
+            def self.check_victory(battle, team)
+              if battle.first_win && battle.first_id == team.id
+                return [true, [3, battle.first_points - battle.second_points]]
+              end
+
+              if battle.second_win && battle.second_id == team.id
+                return [true, [3,  battle.second_points - battle.first_points]]
+              end
+
+              [false, []]
             end
 
             def self.league_battle_result(battle, team)
               return [1, 0] if battle.draw
 
-              first_diff = battle.first_points - battle.second_points
-              return [3, first_diff] if battle.first_win && battle.first_id == team.id
+              victory, point_array = check_victory(battle, team)
+              return point_array if victory
 
-              second_diff = battle.second_points - battle.first_points
-              return [3, second_diff] if battle.second_win && battle.second_id == team.id
-              
               [0, 0]
             end
 
@@ -43,17 +54,21 @@ module Api
               team_details
             end
 
+            def self.league_report_data(team, team_details)
+              { name: team.player_name, team: team.name, id: team.id,
+                team_symbol: team.url_escudo_png, details: team_details,
+                points: team_details.pluck(:points).sum,
+                diff_points: team_details.pluck(:diff_points).sum }
+            end
+
             def self.league_report_teams(battles, teams)
               report_teams = []
               teams.active.each do |team|
-                team_battles = battles.select { |battle| battle.first_id == team.id || 
-                                                         battle.second_id == team.id }
+                team_battles = battles.select do |battle|
+                  battle.first_id == team.id || battle.second_id == team.id
+                end
                 team_details = team_details(teams, team, team_battles)
-                data = { name: team.player_name, team: team.name, id: team.id,
-                         team_symbol: team.url_escudo_png, details: team_details,
-                         points: team_details.pluck(:points).sum,
-                         diff_points: team_details.pluck(:diff_points).sum }
-                report_teams << data
+                report_teams << league_report_data(team, team_details)
               end
               report_teams
             end
