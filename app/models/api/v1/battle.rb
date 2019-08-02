@@ -14,6 +14,22 @@ module Api
         Round.avaliable_for_battles
       end
 
+      def team_victory(team)
+        if first_id == team.id
+          return true if first_win
+        end
+
+        if self.second_id == team.id
+          return true if second_win
+        end
+
+        false
+      end
+
+      def team_difference_points
+        (first_points - second_points).abs
+      end
+
       # find and count all previous againts other teams
       def self.check_encounters(team, teams, round)
         battle_history = {}
@@ -144,11 +160,12 @@ module Api
 
       def self.draw?(first_score, second_score)
         difference = (first_score - second_score).abs
-        return (difference > 5) ? false : true
+        !(difference > 5)
       end
 
       def check_winner(first_score, second_score)
-        return [false, 0] if self.draw || second_score > first_score
+        return [false, 0] if draw || second_score > first_score
+
         [true, first_score - second_score]
       end
 
@@ -160,7 +177,7 @@ module Api
         self.draw = Battle.draw?(first_score, second_score)
         self.first_win, self.first_points = check_winner(first_score, second_score)
         self.second_win, self.second_points = check_winner(second_score, first_score)
-        self.save!
+        save!
       end
 
       # check team scores and update winners / losers / draws

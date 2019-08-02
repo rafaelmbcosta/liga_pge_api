@@ -23,13 +23,9 @@ module Api
             end
 
             def self.check_victory(battle, team)
-              if battle.first_win && battle.first_id == team.id
-                return [true, [3, battle.first_points - battle.second_points]]
-              end
-
-              if battle.second_win && battle.second_id == team.id
-                return [true, [3,  battle.second_points - battle.first_points]]
-              end
+              victory = battle.team_victory(team)
+              difference_points = battle.team_difference_points
+              return [true, [3, difference_points]] if victory
 
               [false, []]
             end
