@@ -1,8 +1,9 @@
 module Api
-    module V1
+  module V1
+    # Team management
     class TeamsController < ApplicationController
       before_action :authenticate_user
-      before_action :set_team, only: [:show, :update, :destroy]
+      before_action :set_team, only: %i[show update destroy]
 
       # GET /teams
       def index
@@ -13,7 +14,7 @@ module Api
 
       # GET /teams/1
       def show
-        render json: @team, include: [:season, :player]
+        render json: @team, include: %i[season player]
       end
 
       # POST /teams
@@ -41,16 +42,26 @@ module Api
         @team.destroy
       end
 
-      private
-        # Use callbacks to share common setup or constraints between actions.
-        def set_team
-          @team = Team.find(params[:id])
+      def activation
+        team = Team.activation(team_params)
+        if team[:success]
+          render json: team, status: :ok
+        else
+          render json: team, status: :unprocessable_entity
         end
+      end
 
-        # Only allow a trusted parameter "white list" through.
-        def team_params
-          params.require(:team).permit(:name, :season_id, :player_id)
-        end
+      private
+
+      # Use callbacks to share common setup or constraints between actions.
+      def set_team
+        @team = Team.find(params[:id])
+      end
+
+      # Only allow a trusted parameter "white list" through.
+      def team_params
+        params.require(:team).permit(:name, :season_id, :id, :active)
+      end
     end
   end
 end

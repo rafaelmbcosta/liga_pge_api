@@ -8,7 +8,11 @@ Rails.application.routes.draw do
       resources :battles
       resources :dispute_months
       resources :rounds
-      resources :teams
+      resources :teams do
+        collection do
+          post 'activation'
+        end
+      end
       resources :players
       resources :seasons
       resources :currencies

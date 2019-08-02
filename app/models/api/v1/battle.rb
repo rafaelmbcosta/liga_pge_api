@@ -2,6 +2,8 @@ module Api
   module V1
     # Generate team battles every round
     class Battle < ApplicationRecord
+      include Concerns::Battle::ShowLeague
+      
       belongs_to :round
 
       scope :find_battle, lambda { |round, team, other_team|
@@ -10,6 +12,22 @@ module Api
 
       def self.rounds_avaliable_for_battles
         Round.avaliable_for_battles
+      end
+
+      def first_victory(team_id)
+        first_id == team_id && first_win
+      end
+
+      def second_victory(team_id)
+        second_id == team_id && second_win
+      end
+
+      def team_victory(team)
+        first_victory(team.id) || second_victory(team.id)
+      end
+
+      def team_difference_points
+        (first_points - second_points).abs
       end
 
       # find and count all previous againts other teams
@@ -142,11 +160,12 @@ module Api
 
       def self.draw?(first_score, second_score)
         difference = (first_score - second_score).abs
-        return (difference > 5) ? false : true
+        !(difference > 5)
       end
 
       def check_winner(first_score, second_score)
-        return [false, 0] if self.draw || second_score > first_score
+        return [false, 0] if draw || second_score > first_score
+
         [true, first_score - second_score]
       end
 
@@ -158,7 +177,7 @@ module Api
         self.draw = Battle.draw?(first_score, second_score)
         self.first_win, self.first_points = check_winner(first_score, second_score)
         self.second_win, self.second_points = check_winner(second_score, first_score)
-        self.save!
+        save!
       end
 
       # check team scores and update winners / losers / draws
