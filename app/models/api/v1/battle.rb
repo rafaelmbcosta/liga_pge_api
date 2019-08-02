@@ -14,16 +14,16 @@ module Api
         Round.avaliable_for_battles
       end
 
+      def first_victory(team_id)
+        first_id == team_id && first_win
+      end
+
+      def second_victory(team_id)
+        second_id == team_id && second_win
+      end
+
       def team_victory(team)
-        if first_id == team.id
-          return true if first_win
-        end
-
-        if self.second_id == team.id
-          return true if second_win
-        end
-
-        false
+        first_victory(team.id) || second_victory(team.id)
       end
 
       def team_difference_points
