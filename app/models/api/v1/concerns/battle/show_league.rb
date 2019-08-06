@@ -59,7 +59,8 @@ module Api
 
             def self.league_report_teams(battles, teams)
               report_teams = []
-              teams.active.each do |team|
+              active_teams = teams.to_a.select(&:active)
+              active_teams.each do |team|
                 team_battles = battles.select do |battle|
                   battle.first_id == team.id || battle.second_id == team.id
                 end
