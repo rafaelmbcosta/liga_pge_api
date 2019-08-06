@@ -10,7 +10,7 @@ module Api
             # returns the league report for each dispute month
             def self.dispute_month_league_report(dispute, teams)
               league = { name: dispute.name, id: dispute.id, players: [] }
-              league[:players] = league_report_teams(teams, dispute.battles) if dispute.battles.any?
+              league[:players] = league_report_teams(dispute.battles, teams) if dispute.battles.any?
               league
             end
 
@@ -59,8 +59,7 @@ module Api
 
             def self.league_report_teams(battles, teams)
               report_teams = []
-              active_teams = teams.to_a.select(&:active)
-              active_teams.each do |team|
+              teams.select(&:active).each do |team|
                 team_battles = battles.select do |battle|
                   battle.first_id == team.id || battle.second_id == team.id
                 end
