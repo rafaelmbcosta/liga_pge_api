@@ -44,9 +44,8 @@ module Api
         connect(uri)
       end
 
-      def self.team_data(team)
-        teams = connect(URI(TEAM_DATA+team.slug))
-        teams.find { |t| t['slug'] == team.slug }
+      def self.team_data(query)
+        connect(URI(TEAM_DATA+query))
       end
 
       def self.market_status

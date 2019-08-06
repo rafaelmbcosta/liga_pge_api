@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       resources :teams do
         collection do
           post 'activation'
+          get 'find_team'
         end
       end
       resources :players

@@ -26,6 +26,7 @@ module Api
 
         before do
           allow(model).to receive(:league_report_teams).and_return([])
+          allow(model).to receive(:sort_league_report).and_return([])
         end
 
         it 'Returns the hash with all players' do
@@ -119,6 +120,58 @@ module Api
 
         it 'returns array of details if it succeeds' do
           expect(model.team_details([team, second_team], team, [battle])).to eq(expectation)
+        end
+      end
+
+      describe 'sort_league_report' do
+        let(:original_report) do
+          [
+            {
+              name: 'second', team: 'second name', id: 2,
+              team_symbol: '', details: [],
+              points: 12,
+              diff_points: 88
+            },
+            {
+              name: 'first', team: 'first name', id: 1,
+              team_symbol: '', details: [],
+              points: 12,
+              diff_points: 99
+            },
+            {
+              name: 'third', team: 'third name', id: 3,
+              team_symbol: '', details: [],
+              points: 9,
+              diff_points: 22
+            }
+          ]
+        end
+
+        let(:expectation) do
+          [
+            {
+              name: 'first', team: 'first name', id: 1,
+              team_symbol: '', details: [],
+              points: 12,
+              diff_points: 99
+            },
+            {
+              name: 'second', team: 'second name', id: 2,
+              team_symbol: '', details: [],
+              points: 12,
+              diff_points: 88
+            },
+            {
+              name: 'third', team: 'third name', id: 3,
+              team_symbol: '', details: [],
+              points: 9,
+              diff_points: 22
+            }
+          ]
+        end
+
+        it 'returns the ordered array' do
+          expect(model.sort_league_report(original_report)).to eq(expectation)
         end
       end
 

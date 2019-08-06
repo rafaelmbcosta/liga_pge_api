@@ -10,7 +10,8 @@ module Api
             # returns the league report for each dispute month
             def self.dispute_month_league_report(dispute, teams)
               league = { name: dispute.name, id: dispute.id, players: [] }
-              league[:players] = league_report_teams(dispute.battles, teams) if dispute.battles.any?
+              report = league_report_teams(dispute.battles, teams) if dispute.battles.any?
+              league[:players] = sort_league_report(report)
               league
             end
 
@@ -53,8 +54,12 @@ module Api
             def self.league_report_data(team, team_details)
               { name: team.player_name, team: team.name, id: team.id,
                 team_symbol: team.url_escudo_png, details: team_details,
-                points: team_details.pluck(:points).sum,
-                diff_points: team_details.pluck(:diff_points).sum }
+                points: team_details.pluck(:points).sum.round(2),
+                diff_points: team_details.pluck(:diff_points).sum.round(2) }
+            end
+
+            def self.sort_league_report(report)
+              report.sort_by { |player| [player[:points], player[:diff_points]] }.reverse
             end
 
             def self.league_report_teams(battles, teams)
@@ -76,7 +81,7 @@ module Api
               teams = Team.all
               # find dispute_months
               league_report = []
-              season.dispute_months.each do |dispute_month|
+              season.dispute_months.reverse.each do |dispute_month|
                 league_report << dispute_month_league_report(dispute_month, teams)
               end
               # go through league dispute_month
