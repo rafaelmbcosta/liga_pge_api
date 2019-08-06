@@ -150,7 +150,7 @@ module Api
         end
 
         it 'returns the team details' do
-          expect(model.league_report_teams([battle], team)).to eq(expectation)
+          expect(model.league_report_teams([battle], [team])).to eq(expectation)
         end
       end
     end
