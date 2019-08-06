@@ -51,6 +51,11 @@ module Api
         end
       end
 
+      def find_team
+        query = Connection.team_data(search_params[:q])
+        render json: query, status: :ok
+      end
+
       private
 
       # Use callbacks to share common setup or constraints between actions.
@@ -62,6 +67,10 @@ module Api
       def team_params
         params.require(:team).permit(:name, :season_id, :id, :active, :slug,
                                      :url_escudo_png, :player_name, :id_tag)
+      end
+
+      def search_params
+        params.require(:search).permit(:q)
       end
     end
   end
