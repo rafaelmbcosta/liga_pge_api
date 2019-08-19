@@ -77,8 +77,8 @@ module Api
             # pending: order league result / test
             def self.show_league
               # find season
-              season = Season.active
-              teams = Team.all
+              season = Api::V1::Season.active
+              teams = Api::V1::Team.all
               # find dispute_months
               league_report = []
               season.dispute_months.reverse.each do |dispute_month|

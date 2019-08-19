@@ -1,6 +1,8 @@
 module Api
   module V1
     class Season < ApplicationRecord
+      include Concerns::Season::TurnsAndChampionship
+
       has_many :dispute_months, -> { order(:id) }
       has_many :rounds
       has_many :scores, through: :rounds
