@@ -35,13 +35,13 @@ module Api
               score_array = []
               team_points = scores.group_by(&:team_id)
               team_points.each do |team_id, team_scores|
-                team = teams.find(team_id)
+                team = teams.find { |t| t.id == team_id }
                 score_array << {
                   team_id: team_id, team_name: team.name, player_name: team.player_name,
                   season_score: team_scores.sum(&:final_score), team_symbol: team.url_escudo_png
                 }
               end
-              score_array.sort_by(&:season_score).reverse!
+              score_array.sort_by { |hash| hash[:season_score] } .reverse!
             end
           end
         end

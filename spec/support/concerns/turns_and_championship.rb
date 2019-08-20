@@ -5,7 +5,7 @@ module Api
     shared_examples 'turns_and_championship' do
       let(:model) { described_class }
       let(:season) { FactoryBot.build(:v1_season) }
-      let(:team) { FactoryBot.build(:v1_team) }
+      let(:team) { FactoryBot.create(:v1_team) }
 
       describe 'turns_and_championship' do
         before do
@@ -35,6 +35,27 @@ module Api
           allow(score).to receive(:select).and_return([score])
           allow(model).to receive(:team_score_data).and_return(team_id: 1, team_name: 'hello')
           expect(model.range_scores(data, [team], [score])).to eq(score_expectation)
+        end
+      end
+
+      describe 'team_score_data' do
+        let(:score) { FactoryBot.build(:v1_score, team: team) }
+        let(:scores) { [score] }
+        let(:expectation) do
+          [
+            {
+              team_id: team.id, team_name: team.name, player_name: team.player_name,
+              season_score: score.final_score, team_symbol: team.url_escudo_png
+            }
+          ]
+        end
+
+        before do
+          score.team = team
+        end
+
+        it 'returns a list of scores' do
+          expect(model.team_score_data([score], [team])).to eq(expectation)
         end
       end
     end

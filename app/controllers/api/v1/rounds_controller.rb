@@ -1,19 +1,11 @@
 module Api
   module V1
     class RoundsController < ApplicationController
-      before_action :authenticate_user, except: [ :index, :partials, :partial ]
-      before_action :set_round, only: [:show, :update, :destroy]
-
-      # GET /rounds
-      def index
-        @rounds = Round.all
-
-        render json: @rounds
-      end
+      before_action :authenticate_user, except: %i[partials partial]
+      before_action :set_round, only: %i[partial]
 
       def partials
         @partials = Round.partials
-
         render json: @partials
       end
 
@@ -22,46 +14,17 @@ module Api
         render json: @partial
       end
 
-      # GET /rounds/1
-      def show
-        render json: @round
+      # GET close_market_routines
+      def closed_market_routines
+        Round.closed_market_routines
+        render json: { message: 'OK' }, status: :ok
       end
 
-      # POST /rounds
-      def create
-        @round = Round.new(round_params)
-
-        if @round.save
-          render json: @round, status: :created, location: @round
-        else
-          render json: @round.errors, status: :unprocessable_entity
-        end
+      # GET round_finished_routines
+      def round_finished_routines
+        Round.round_finished_routines
+        render json: { message: 'OK' }, status: :ok
       end
-
-      # PATCH/PUT /rounds/1
-      def update
-        if @round.update(round_params)
-          render json: @round
-        else
-          render json: @round.errors, status: :unprocessable_entity
-        end
-      end
-
-      # DELETE /rounds/1
-      def destroy
-        @round.destroy
-      end
-
-      private
-        # Use callbacks to share common setup or constraints between actions.
-        def set_round
-          @round = Round.find(params[:id])
-        end
-
-        # Only allow a trusted parameter "white list" through.
-        def round_params
-          params.require(:round).permit(:number, :golden, :season_id, :market_open, :market_close)
-        end
     end
   end
 end

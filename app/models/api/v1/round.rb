@@ -134,6 +134,18 @@ module Api
         (sum_scores(score, scores) - ghost_buster_score(score, scores)) / total_scores
       end
 
+      def self.closed_market_routines
+        BattleWorker.perform("closed_market")
+        ScoresWorker.perform("closed_market")
+      end
+
+      def self.round_finished_routines
+        ScoresWorker.perform('finished_round')
+        BattleWorker.perform('finished_round')
+        CurrencyWorker.perform
+        SeasonWorker.perform("finished_round")
+      end
+
       # Rules:
       # API market is open
       # battles are generated
