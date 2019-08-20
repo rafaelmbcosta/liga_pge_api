@@ -26,7 +26,7 @@ gem 'knock'
 gem 'travis'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem 'nokogiri', '1.8.5'
+gem "nokogiri", ">= 1.10.4"
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 gem 'sinatra', '2.0.2'
