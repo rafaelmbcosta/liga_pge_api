@@ -3,6 +3,7 @@ require "rails_helper"
 module Api
   module V1
     RSpec.describe Season, :type => :model do
+      it_behaves_like 'turns_and_championship'
 
       before do
         DatabaseCleaner.start
