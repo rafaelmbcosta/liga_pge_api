@@ -2,6 +2,8 @@ module Api
   module V1
     # Gerencia tudo o que é relacionado as rodadas
     class Round < ApplicationRecord
+      include Concerns::Round::RoundFinders
+
       belongs_to :season
       belongs_to :dispute_month
       has_many :scores
@@ -13,63 +15,11 @@ module Api
       validate :more_than_two_active
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
-      ALLOWED_FIELDS = %i[ market_closed generating_battles battles_generated
-                           creating_scores scores_created scores_updated updating_scores
-                           updating_battle_scores battle_scores_updated generating_currencies
-                           currencies_generated
-                         ].freeze
-
       default_scope { order('number asc') }
       
       scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
       }
-
-      def self.field_value(field, value)
-        raise 'Invalid Field' if !field.in?(ALLOWED_FIELDS)
-
-        joins(:round_control).where("round_controls.#{field.to_s}" => value)
-      end
-
-      def self.avaliable_for_battles
-        where(finished: false).field_value(:market_closed, true)
-                              .field_value(:battles_generated, false)
-                              .field_value(:generating_battles, false)
-      end
-
-      def self.avaliable_for_score_generation
-        where(finished: false).field_value(:market_closed, true)
-                              .field_value(:creating_scores, false)
-                              .field_value(:scores_created, false)
-
-      end
-
-      def self.avaliable_to_be_finished
-        where(finished: false).field_value(:market_closed, true)
-                              .field_value(:battles_generated, true)
-                              .field_value(:scores_created, true)
-      end
-
-      def self.rounds_with_scores_to_update
-        where(finished: true).field_value(:scores_created, true)
-                             .field_value(:scores_updated, false)
-                             .field_value(:updating_scores, false)
-      end
-
-      def self.rounds_with_battles_to_update
-        where(finished: true).field_value(:battles_generated, true)
-                             .field_value(:scores_updated, true)
-                             .field_value(:updating_battle_scores, false)
-                             .field_value(:battle_scores_updated, false)
-
-      end
-
-      def self.rounds_avaliable_to_save_currencies
-        where(finished: true).field_value(:battles_generated, true)
-                             .field_value(:scores_updated, true)
-                             .field_value(:generating_currencies, false)
-                             .field_value(:currencies_generated, false)
-      end
 
       def self.current
         Season.active.rounds.max(&:number)
@@ -182,6 +132,18 @@ module Api
         score = partial ? 'partial_score' : 'final_score'
         total_scores = scores.count - 1
         (sum_scores(score, scores) - ghost_buster_score(score, scores)) / total_scores
+      end
+
+      def self.closed_market_routines
+        BattleWorker.perform("closed_market")
+        ScoresWorker.perform("closed_market")
+      end
+
+      def self.round_finished_routines
+        ScoresWorker.perform('finished_round')
+        BattleWorker.perform('finished_round')
+        CurrencyWorker.perform
+        SeasonWorker.perform("finished_round")
       end
 
       # Rules:

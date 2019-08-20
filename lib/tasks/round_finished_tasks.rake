@@ -1,6 +1,6 @@
 desc "This task is called by the Heroku scheduler add-on"
 task :round_finished_tasks => :environment do
-  Api::V1::ScoresWorker.perform('finished_round')
-  Api::V1::BattleWorker.perform('finished_round')
-  Api::V1::CurrencyWorker.perform
+  puts "Running round finished tasks..."
+  Api::V1::Round.round_finished_routines
+  puts "... done"
 end

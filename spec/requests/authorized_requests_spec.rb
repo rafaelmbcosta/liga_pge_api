@@ -2,26 +2,48 @@ require 'rails_helper'
 
 module Api
   module V1
-    RSpec.describe 'Team Requests', type: :request do
+    RSpec.describe 'Authenticated Requests', type: :request do
       before do
         DatabaseCleaner.start
         DatabaseCleaner.clean
       end
 
-      let(:team) { FactoryBot.create(:v1_team) }
       let(:user) do
         return User.create(email: 'test@gmail.com',
                            password: '123456',
                            password_confirmation: '123456')
       end
 
-      describe 'POST activation' do
-        it 'returns 401 if not authenticated' do
-          post '/api/v1/teams/activation',
-               params: { team: { id: team.id, active: false } }
-          expect(response).to have_http_status(:unauthorized)
+      describe 'routines request' do
+        before do
+          allow(Round).to receive(:closed_market_routines).and_return([])
+          allow(Round).to receive(:round_finished_routines).and_return([])
         end
 
+        it 'returns 200 on closed_market_routines' do
+          get '/api/v1/closed_market_routines',
+              headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+        end
+
+        it 'returns 200 on round_finished_routines' do
+          get '/api/v1/round_finished_routines',
+              headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+        end
+      end
+
+      describe 'Rerunning currencies' do
+        it 'returns success on execution' do
+          get '/api/v1/currencies/rerun/',
+              headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+        end
+      end
+
+      describe 'POST activation' do
+        let(:team) { FactoryBot.create(:v1_team) }
+        
         it 'returns 200 on activation' do
           post '/api/v1/teams/activation',
                params: { team: { id: team.id, active: false } },
@@ -58,6 +80,14 @@ module Api
 
         it 'returns official api json' do
           get '/api/v1/teams/find_team?[search]q=ferrao',
+              headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+        end
+      end
+
+      describe 'flow control list' do
+        it 'returns 200 on success' do
+          get '/api/v1/flow_control',
               headers: auth_headers(user)
           expect(response).to have_http_status(:success)
         end
