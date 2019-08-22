@@ -12,7 +12,7 @@ module Api
 
       def self.create_season
         connection = Connection.market_status
-        Season.create(year: year, finished: false) if (Season.current.nil? && open_market?(conn))
+        Season.create(year: year, finished: false) if (Season.active.nil? && open_market?(conn))
       end
 
       def self.turns_and_championship
