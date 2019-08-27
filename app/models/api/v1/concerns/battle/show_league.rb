@@ -59,6 +59,8 @@ module Api
             end
 
             def self.sort_league_report(report)
+              return [] if report.nil?
+              
               report.sort_by { |player| [player[:points], player[:diff_points]] }.reverse
             end
 
