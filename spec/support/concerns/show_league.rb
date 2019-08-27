@@ -173,6 +173,10 @@ module Api
         it 'returns the ordered array' do
           expect(model.sort_league_report(original_report)).to eq(expectation)
         end
+
+        it 'returns [] if report is nil' do
+          expect(model.sort_league_report(nil)).to eq([])
+        end
       end
 
       describe 'league_report_teams' do
