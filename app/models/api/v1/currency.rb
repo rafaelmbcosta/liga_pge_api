@@ -48,6 +48,8 @@ module Api
       end
 
       def self.dispute_month_team_details(dispute_month, teams)
+        return [] unless dispute_month.currencies.present?
+        
         team_details = []
         teams.each do |team|
           currencies = dispute_month.currencies.where(team: team).order('round_id desc')
