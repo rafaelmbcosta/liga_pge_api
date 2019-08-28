@@ -2,8 +2,14 @@ module Api
   module V1
     # Team management
     class TeamsController < ApplicationController
-      before_action :authenticate_user
+      before_action :authenticate_user, except: [:index]
 
+      # GET /teams
+      def index
+        @teams = Team.all
+
+        render json: @teams
+      end
 
       def activation
         team = Team.activation(team_params)
@@ -20,7 +26,7 @@ module Api
       end
 
       private
-      
+
       # Only allow a trusted parameter "white list" through.
       def team_params
         params.require(:team).permit(:name, :season_id, :id, :active, :slug,
