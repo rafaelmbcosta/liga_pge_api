@@ -11,6 +11,17 @@ module Api
         render json: @teams
       end
 
+      # POST /teams
+      def create
+        @team = Team.new(team_params)
+
+        if @team.save
+          render json: @team, status: :created, location: @team
+        else
+          render json: @team.errors, status: :unprocessable_entity
+        end
+      end
+
       def activation
         team = Team.activation(team_params)
         if team[:success]
