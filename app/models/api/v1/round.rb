@@ -146,6 +146,14 @@ module Api
         SeasonWorker.perform("finished_round")
       end
 
+      def self.general_tasks_routine
+        RoundWorker.perform
+        TeamWorker.perform
+        SeasonWorker.perform("season_finished")
+      end
+
+      def self.
+
       # Rules:
       # API market is open
       # battles are generated

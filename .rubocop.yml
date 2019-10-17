@@ -114,3 +114,6 @@ Style/EvalWithLocation:
 GlobalVars:
   AllowedVariables:
     - redis
+
+Style/Documentation:
+  Enabled: false
