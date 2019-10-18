@@ -11,7 +11,6 @@ module Api
       has_many :battles
       has_many :month_activities
       has_one  :round_control
-
       validate :more_than_two_active
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
@@ -152,7 +151,10 @@ module Api
         SeasonWorker.perform("season_finished")
       end
 
-      def self.
+      def self.active_round_status
+        rounds = Season.active.rounds.last(2)
+
+      end
 
       # Rules:
       # API market is open
