@@ -20,6 +20,7 @@ Rails.application.routes.draw do
       get 'closed_market_routines' => 'rounds#closed_market_routines'
       get 'round_finished_routines' => 'rounds#round_finished_routines'
       get 'general_tasks_routines' => 'rounds#general_tasks_routines'
+      get 'active_rounds_progress' => 'rounds#active_rounds_progress'
       get 'championship' => 'awards#championship'
       get 'currencies' => 'currencies#index'
       get 'currencies/rerun' => 'currencies#rerun'

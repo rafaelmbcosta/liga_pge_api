@@ -8,19 +8,19 @@ module Api
           extend ActiveSupport::Concern
 
           ORDER = [
-            { attribute: :market_closed, label: 'mercado fechado', round: false },
-            { attribute: :battles_generated, label: 'batalhas criadas', round: false },
-            { attribute: :scores_created, label: 'placares criados', round: false },
-            { attribute: :finished, label: 'rodada finalizada', round: true },
-            { attribute: :scores_updated, label: 'placares atualizados', round: false },
-            { attribute: :battle_scores_updated, label: 'confrontos atualizados', round: false },
-            { attribute: :currencies_generated, label: 'premiação criada', round: false }
+            { attribute: :market_closed, label: 'Mercado fechado', round: false },
+            { attribute: :battles_generated, label: 'Batalhas criadas', round: false },
+            { attribute: :scores_created, label: 'Placares criados', round: false },
+            { attribute: :finished, label: 'Rodada finalizada', round: true },
+            { attribute: :scores_updated, label: 'Placares atualizados', round: false },
+            { attribute: :battle_scores_updated, label: 'Confrontos atualizados', round: false },
+            { attribute: :currencies_generated, label: 'Cartoletas criadas', round: false }
           ].freeze
 
           included do
             # Return an array with all steps
             def self.progress
-              rounds = Season.active.rounds.last(2)
+              rounds = Api::V1::Season.active.rounds.last(2)
               progress = []
               rounds.each do |round|
                 progress << round.progress

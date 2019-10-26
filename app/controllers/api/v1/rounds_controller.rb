@@ -31,6 +31,11 @@ module Api
         Round.general_tasks_routine
         render json: { message: 'OK' }, status: :ok
       end
+
+      # GET active_rounds_progress
+      def active_rounds_progress
+        render json: { progress: Round.progress }, status: :ok
+      end
     end
   end
 end

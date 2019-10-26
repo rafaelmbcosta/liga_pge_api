@@ -121,6 +121,72 @@ module Api
           expect(response).to have_http_status(:success)
         end
       end
+
+      describe 'active_round_progress' do
+        let(:progress_expectation) do
+          [
+            {
+              attribute: :market_closed,
+              label: 'Mercado fechado',
+              round: false,
+              step: 1,
+              value: true
+            },
+            {
+              attribute: :battles_generated,
+              label: 'Batalhas criadas',
+              round: false,
+              step: 2,
+              value: true
+            },
+            {
+              attribute: :scores_created,
+              label: 'Placares criados',
+              round: false,
+              step: 3,
+              value: true
+            },
+            {
+              attribute: :finished,
+              label: 'Rodada finalizada',
+              round: true,
+              step: 4,
+              value: true
+            },
+            {
+              attribute: :scores_updated,
+              label: 'Placares atualizados',
+              round: false,
+              step: 5,
+              value: true
+            },
+            {
+              attribute: :battle_scores_updated,
+              label: 'Confrontos atualizados',
+              round: false,
+              step: 6,
+              value: true
+            },
+            {
+              attribute: :currencies_generated,
+              label: 'Cartoletas criadas',
+              round: false,
+              step: 7,
+              value: true
+            }
+          ]
+        end
+
+        before do
+          allow(Round).to receive(:progress).and_return(progress_expectation)
+        end
+
+        it 'returns an array of progresses' do
+          get '/api/v1/active_rounds_progress', headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+          expect(response.body).to eq({ progress: progress_expectation }.to_json)
+        end
+      end
     end
   end
 end
