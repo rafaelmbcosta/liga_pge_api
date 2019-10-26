@@ -68,7 +68,7 @@ module Api
         end
 
         it 'returns an array of progress hashes' do
-          expect(Round.progress).to eq([progress_expectation])
+          expect(Round.progress).to eq([{ number: round.number, progress: progress_expectation }])
         end
       end
 
