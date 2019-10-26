@@ -3,6 +3,8 @@ require 'rails_helper'
 module Api
   module V1
     RSpec.describe Round, type: :model do
+      it_behaves_like 'round_progress'
+      
       before do
         DatabaseCleaner.start
         DatabaseCleaner.clean
@@ -383,6 +385,23 @@ module Api
         it 'returns the battle' do
           round.battles << battle
           expect(round.find_ghost_battle).to eq(battle)
+        end
+      end
+
+      describe 'self.current' do
+        let(:season) { FactoryBot.create(:v1_season) }
+        let(:dispute_month) { FactoryBot.create(:v1_dispute_month, season: season) }
+        let(:round) do
+          FactoryBot.create(:v1_round, finished: false, season: season,
+                                       dispute_month: dispute_month)
+        end
+
+        before do
+          season.rounds << round
+        end
+
+        it 'returns the current round' do
+          expect(Round.current).to eq(round)
         end
       end
     end

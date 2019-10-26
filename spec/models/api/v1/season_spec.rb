@@ -34,8 +34,10 @@ module Api
 
       describe 'active_rounds' do
         it 'should return all rounds not finished' do
-          FactoryBot.create_list(:v1_round, 2, finished: false, dispute_month: @dispute_month,
-                                 season: @season)
+          FactoryBot.create(:v1_round, finished: false, dispute_month: @dispute_month,
+                                       season: @season, number: 12)
+          FactoryBot.create(:v1_round, finished: false, dispute_month: @dispute_month,
+                                       season: @season, number: 13)
           expect(@season.active_rounds.count).to eq(2)
         end
       end

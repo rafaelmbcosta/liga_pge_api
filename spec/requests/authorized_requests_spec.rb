@@ -43,7 +43,7 @@ module Api
 
       describe 'POST activation' do
         let(:team) { FactoryBot.create(:v1_team) }
-        
+
         it 'returns 200 on activation' do
           post '/api/v1/teams/activation',
                params: { team: { id: team.id, active: false } },
@@ -90,6 +90,101 @@ module Api
           get '/api/v1/flow_control',
               headers: auth_headers(user)
           expect(response).to have_http_status(:success)
+        end
+      end
+
+      describe 'tasks' do
+        before do
+          allow(SeasonWorker).to receive(:perform).and_return(true)
+          allow(BattleWorker).to receive(:perform).and_return(true)
+          allow(ScoresWorker).to receive(:perform).and_return(true)
+          allow(CurrencyWorker).to receive(:perform).and_return(true)
+          allow(RoundWorker).to receive(:perform).and_return(true)
+          allow(TeamWorker).to receive(:perform).and_return(true)
+        end
+
+        it 'return success on closed_market_routines' do
+          get '/api/v1/closed_market_routines',
+              headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+        end
+
+        it 'return success on round_finished_routines' do
+          get '/api/v1/round_finished_routines',
+              headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+        end
+
+        it 'return success on general_tasks_routine' do
+          get '/api/v1/general_tasks_routines',
+              headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+        end
+      end
+
+      describe 'active_round_progress' do
+        let(:progress_expectation) do
+          [
+            {
+              attribute: :market_closed,
+              label: 'Mercado fechado',
+              round: false,
+              step: 1,
+              value: true
+            },
+            {
+              attribute: :battles_generated,
+              label: 'Batalhas criadas',
+              round: false,
+              step: 2,
+              value: true
+            },
+            {
+              attribute: :scores_created,
+              label: 'Placares criados',
+              round: false,
+              step: 3,
+              value: true
+            },
+            {
+              attribute: :finished,
+              label: 'Rodada finalizada',
+              round: true,
+              step: 4,
+              value: true
+            },
+            {
+              attribute: :scores_updated,
+              label: 'Placares atualizados',
+              round: false,
+              step: 5,
+              value: true
+            },
+            {
+              attribute: :battle_scores_updated,
+              label: 'Confrontos atualizados',
+              round: false,
+              step: 6,
+              value: true
+            },
+            {
+              attribute: :currencies_generated,
+              label: 'Cartoletas criadas',
+              round: false,
+              step: 7,
+              value: true
+            }
+          ]
+        end
+
+        before do
+          allow(Round).to receive(:progress).and_return(progress_expectation)
+        end
+
+        it 'returns an array of progresses' do
+          get '/api/v1/active_rounds_progress', headers: auth_headers(user)
+          expect(response).to have_http_status(:success)
+          expect(response.body).to eq({ progress: progress_expectation }.to_json)
         end
       end
     end

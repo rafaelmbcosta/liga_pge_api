@@ -3,6 +3,7 @@ module Api
     # Gerencia tudo o que é relacionado as rodadas
     class Round < ApplicationRecord
       include Concerns::Round::RoundFinders
+      include Concerns::Round::RoundProgress
 
       belongs_to :season
       belongs_to :dispute_month
@@ -11,7 +12,6 @@ module Api
       has_many :battles
       has_many :month_activities
       has_one  :round_control
-
       validate :more_than_two_active
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
@@ -144,6 +144,17 @@ module Api
         BattleWorker.perform('finished_round')
         CurrencyWorker.perform
         SeasonWorker.perform("finished_round")
+      end
+
+      def self.general_tasks_routine
+        RoundWorker.perform
+        TeamWorker.perform
+        SeasonWorker.perform("season_finished")
+      end
+
+      def self.active_round_status
+        rounds = Season.active.rounds.last(2)
+
       end
 
       # Rules:
