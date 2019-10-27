@@ -23,7 +23,7 @@ module Api
               rounds = Api::V1::Season.active.rounds.last(2)
               progress_collection = []
               rounds.each do |round|
-                progress_hash = { progress: round_progress, number: round.number }
+                progress_hash = { progress: round.progress, number: round.number }
                 progress_collection << progress_hash
               end
               progress_collection
