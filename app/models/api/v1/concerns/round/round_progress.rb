@@ -19,19 +19,20 @@ module Api
 
           included do
             # Return an array with all steps
-            def self.progress
+            def self.progress_active
               rounds = Api::V1::Season.active.rounds.last(2)
-              progress = []
+              progress_collection = []
               rounds.each do |round|
-                progress << { progress: round.progress, number: round.number }
+                progress_hash = { progress: round.progress, number: round.number }
+                progress_collection << progress_hash
               end
-              progress
+              progress_collection
             end
 
             # Check if every step is complete
             def step_complete?(step)
               return attributes.symbolize_keys[step[:attribute]] if step[:round]
-              
+
               round_control.attributes.symbolize_keys[step[:attribute]]
             end
 
@@ -39,12 +40,14 @@ module Api
             def progress
               order_array = []
               ORDER.each_with_index do |order, i|
-                order[:value] = step_complete?(order)
-                order[:step] = i + 1
-                order_array << order
+                order_dup = order.dup
+                order_dup[:value] = step_complete?(order)
+                order_dup[:step] = i + 1
+                order_array << order_dup
               end
               order_array
             end
+
           end
         end
       end
