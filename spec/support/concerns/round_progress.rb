@@ -5,7 +5,7 @@ module Api
     shared_examples 'round_progress' do
       let(:season) { FactoryBot.create(:v1_season) }
       let(:dispute_month) { FactoryBot.create(:v1_dispute_month, season: season) }
-      let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month) }
+      let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 27, finished: true) }
       let(:progress_expectation) do
         [
           {
@@ -60,15 +60,24 @@ module Api
         ]
       end
 
+      before do
+
+      end
+
       describe 'self.progress' do
+        let(:second_round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 28, finished: false) }
+        let(:first_round_control) { FactoryBot.create(:v1_complete_round_control, round: round) }
+        let(:second_round_control) { FactoryBot.create(:v1_complete_round_control, round: second_round)}
+
         before do
+          round.round_control = first_round_control
+          second_round.round_control = second_round_control
           allow(Api::V1::Season).to receive(:active).and_return(season)
-          allow(season).to receive(:rounds).and_return([round])
-          allow(round).to receive(:step_complete?).and_return(true)
+          allow(season).to receive(:rounds).and_return([round, second_round])
         end
 
         it 'returns an array of progress hashes' do
-          expect(Round.progress).to eq([{ number: round.number, progress: progress_expectation }])
+          expect(Round.progress_active[0][:progress][3]).not_to eq(Round.progress_active[1][:progress][3])
         end
       end
 
@@ -105,6 +114,11 @@ module Api
         it 'returns true if the round step is complete' do
           round.finished = true
           expect(round.step_complete?(finished_step)).to be true
+        end
+
+        it 'returns false if the round step is not complete' do
+          round.finished = false
+          expect(round.step_complete?(finished_step)).to be false
         end
 
         it 'returns true if the round control step is complete' do

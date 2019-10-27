@@ -178,7 +178,7 @@ module Api
         end
 
         before do
-          allow(Round).to receive(:progress).and_return(progress_expectation)
+          allow(Round).to receive(:progress_active).and_return(progress_expectation)
         end
 
         it 'returns an array of progresses' do

@@ -34,7 +34,7 @@ module Api
 
       # GET active_rounds_progress
       def active_rounds_progress
-        render json: { progress: Round.progress }, status: :ok
+        render json: { progress: Round.progress_active }, status: :ok
       end
     end
   end
