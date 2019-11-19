@@ -26,6 +26,7 @@ Rails.application.routes.draw do
       get 'currencies/rerun' => 'currencies#rerun'
       get 'round_finished_routines' => 'rounds#round_finished_routines'
       get 'league' => 'dispute_months#league_points'
+      get 'season_dispute_months' => 'dispute_months#active_rounds'
       get 'monthly' => 'awards#monthly'
       get 'partials' => 'rounds#partials'
       get 'partials/:id' => 'rounds#partial'

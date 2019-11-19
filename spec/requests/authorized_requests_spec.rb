@@ -187,6 +187,14 @@ module Api
           expect(response.body).to eq({ progress: progress_expectation }.to_json)
         end
       end
+
+      describe 'GET seasons season_dispute_months' do
+        it "render 'Não há nenhuma temporada ativa no momento' if Season.active is nil" do
+          allow(Season).to receive(:active).and_return(nil)
+          get '/api/v1/season_dispute_months', headers: auth_headers(user)
+          expect(response.body).to eq({ error: 'Não há nenhuma temporada ativa no momento' }.to_json)
+        end
+      end
     end
   end
 end

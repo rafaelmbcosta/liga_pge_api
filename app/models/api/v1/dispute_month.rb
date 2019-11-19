@@ -64,6 +64,11 @@ module Api
       def self.active
         self.order('id asc').find_by(finished: false, season: Season.last)
       end
+
+      def self.active_rounds
+        active_season = Season.active
+        raise SeasonErrors::NoActiveSeasonError if active_season.nil?
+      end
     end
   end
 end

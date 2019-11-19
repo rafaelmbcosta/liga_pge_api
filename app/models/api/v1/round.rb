@@ -16,7 +16,7 @@ module Api
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
       default_scope { order('number asc') }
-      
+
       scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
       }
@@ -107,7 +107,7 @@ module Api
       def self.partial(team)
         $redis.get("partial_#{team}")
       end
-      
+
       # ghost is represented by nil
       # ghost battle is the one with first or second nil id
 
@@ -153,8 +153,7 @@ module Api
       end
 
       def self.active_round_status
-        rounds = Season.active.rounds.last(2)
-
+        Season.active.rounds.last(2)
       end
 
       # Rules:
