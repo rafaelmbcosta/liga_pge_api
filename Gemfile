@@ -15,7 +15,7 @@ gem 'pg'
 gem 'rack', '~> 2.0.6'
 gem "loofah", '>= 2.2.3'
 # Use Puma as the app server
-gem 'puma', '~> 3.0'
+gem 'puma', '~> 3.12'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
 # gem 'jbuilder', '~> 2.5'
 # Use Redis adapter to run Action Cable in production
