@@ -15,7 +15,7 @@ module Api
           included do
             def self.turns_and_championship
               season = Api::V1::Season.active
-              teams = Api::V1::Team.all
+              teams = Api::V1::Team.active
               season_scores = []
               RANGE_DATA.each do |data|
                 season_scores << range_scores(data, teams, season.scores)
