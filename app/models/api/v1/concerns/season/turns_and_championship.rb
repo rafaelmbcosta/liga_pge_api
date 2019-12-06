@@ -7,8 +7,8 @@ module Api
           extend ActiveSupport::Concern
 
           RANGE_DATA = [
-            { title: 'Primeiro Turno', range: 1..18 },
-            { title: 'Segundo Turno', range: 19..38 },
+            { title: 'Primeiro Turno', range: 1..19 },
+            { title: 'Segundo Turno', range: 20..38 },
             { title: 'Campeonato', range: 1..38 }
           ].freeze
 
