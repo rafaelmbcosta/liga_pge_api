@@ -39,7 +39,7 @@ module Api
                 score_array << {
                   team_id: team_id, team_name: team.name, player_name: team.player_name,
                   season_score: team_scores.sum(&:final_score), team_symbol: team.url_escudo_png
-                }
+                } unless team.nil?
               end
               score_array.sort_by { |hash| hash[:season_score] } .reverse!
             end
