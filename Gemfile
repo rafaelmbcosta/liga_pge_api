@@ -58,13 +58,13 @@ group :development do
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-rubocop'
-  
 end
 
 group :test do
   gem 'simplecov', require: false
   gem 'database_cleaner'
   gem 'shoulda-matchers', '~> 3.1'
+  gem 'codacy-coverage', :require => false
 end
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]

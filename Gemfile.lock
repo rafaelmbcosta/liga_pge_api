@@ -49,6 +49,8 @@ GEM
     bcrypt (3.1.12)
     builder (3.2.3)
     byebug (11.0.1)
+    codacy-coverage (2.2.0)
+      simplecov
     coderay (1.1.2)
     concurrent-ruby (1.1.5)
     crass (1.0.5)
@@ -290,6 +292,7 @@ PLATFORMS
 DEPENDENCIES
   bcrypt (~> 3.1.7)
   byebug
+  codacy-coverage
   database_cleaner
   factory_bot_rails
   faker
