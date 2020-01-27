@@ -13,7 +13,7 @@ gem 'codacy-coverage', :require => false
 gem 'rails', '~> 5.2.3'
 # Use mysql as the database for Active Record
 gem 'pg'
-gem 'rack', '~> 2.0.6'
+gem 'rack', '~> 2.0.8'
 gem "loofah", '>= 2.2.3'
 # Use Puma as the app server
 gem 'puma', '~> 3.12'
