@@ -1,5 +1,7 @@
 # Liga PGE API
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/ce97349c582c489ab0994776cf2ceaf1)](https://app.codacy.com/manual/rafaelmbcosta/liga_pge_api?utm_source=github.com&utm_medium=referral&utm_content=rafaelmbcosta/liga_pge_api&utm_campaign=Badge_Grade_Settings)
+
 Esta API existe por três motivos:
 
 1) Pôr em pratica as mais recentes tecnologias em Rails, bem como a arquitetura de API
