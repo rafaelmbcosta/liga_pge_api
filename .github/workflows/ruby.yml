@@ -20,7 +20,7 @@ jobs:
         ports: ['6379:6379']
         options: --entrypoint redis-server
       db:
-        image: postgres:11
+        image: postgres:12.3
         ports: ['5432:5432']
         options: >-
           --health-cmd pg_isready
