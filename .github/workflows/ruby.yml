@@ -7,17 +7,15 @@
 
 name: Ruby
 
-on:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
+on: [ push, pull_request]
 
 jobs:
   test:
 
     runs-on: ubuntu-latest
-
+    strategy:
+      matrix:
+        redis-version: 5
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -29,5 +27,9 @@ jobs:
         ruby-version: 2.6
     - name: Install dependencies
       run: bundle install
+    - name: Start Redis
+      run: redis-server
+      with:
+        redis-version: 5
     - name: Run tests
       run: bundle exec rake spec
