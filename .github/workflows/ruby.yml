@@ -21,6 +21,8 @@ jobs:
         options: --entrypoint redis-server
       db:
         image: postgres:12.3
+        env:
+          POSTGRES_PASSWORD: postgres
         ports: ['5432:5432']
         options: >-
           --health-cmd pg_isready
@@ -42,7 +44,9 @@ jobs:
       - name: Run tests
         env:
           REDIS_URL: redis://localhost:6379/0
-          POSTGRES_PASSWORD: postgres
+          POSTGRES_HOST: postgres
+          # The default PostgreSQL port
+          POSTGRES_PORT: 5432
           DATABASE_URL: postgres://postgres:@localhost:5432/test
         run: |
           sudo apt-get -yqq install libpq-dev
