@@ -50,5 +50,5 @@ jobs:
           DATABASE_URL: postgres://postgres:@localhost:5432/test
         run: |
           sudo apt-get -yqq install libpq-dev
-          bundle exec rails db:prepare
+          bundle exec rake db:prepare
           bundle exec rake spec
