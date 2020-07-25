@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        redis-version: 5
+        redis-version: [5]
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
@@ -29,6 +29,6 @@ jobs:
     - name: Start Redis
       uses: supercharge/redis-github-action@1.1.0
       with:
-        redis-version: 5
+        redis-version: ${{ matrix.redis }}
     - name: Run tests
       run: bundle exec rake spec
