@@ -7,11 +7,10 @@
 
 name: Ruby
 
-on: [ push, pull_request]
+on: [push, pull_request]
 
 jobs:
   test:
-
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,7 +27,7 @@ jobs:
     - name: Install dependencies
       run: bundle install
     - name: Start Redis
-      run: redis-server
+      uses: supercharge/redis-github-action@1.1.0
       with:
         redis-version: 5
     - name: Run tests
