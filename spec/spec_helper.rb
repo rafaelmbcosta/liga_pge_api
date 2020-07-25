@@ -18,10 +18,6 @@
 # See http://rubydoc.info/gems/rspec-core/RSpec/Core/Configuration
 require 'simplecov'
 
-require 'codacy-coverage'
-
-Codacy::Reporter.start
-
 SimpleCov.start 'rails' do
   add_filter '/lib/'
   add_filter '/vendor/'
