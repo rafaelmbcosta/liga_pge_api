@@ -2,10 +2,6 @@ Rails.application.routes.draw do
   post 'user_token' => 'user_token#create'
 
   namespace :api do
-    namespace :v2 do
-      mount Season::Engine => 'seasons'
-    end
-
     namespace :v1 do
       resources :scores
       resources :battles
