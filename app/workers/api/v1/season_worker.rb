@@ -21,7 +21,6 @@ module Api
 
       # Creates a new season if there is no current
       def self.perform(status)
-        create_season
         turns_and_championship if status == "finished_round"
       end
     end
