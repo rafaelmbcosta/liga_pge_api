@@ -10,6 +10,13 @@ module Api
         render json: @dispute_months
       end
 
+      def list
+        season = Api::V1::Season.active
+        @dispute_months = DisputeMonth.where(season: season)
+
+        render json: @dispute_months
+      end
+
       def league_points
         @league_points = DisputeMonth.battle_points
 
