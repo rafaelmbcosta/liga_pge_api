@@ -20,18 +20,6 @@ module Api
         it { should validate_presence_of(:year) }
       end
 
-      describe "'another_season_active?' validation" do
-        it 'should now allow two active seasons' do
-          @another_season = Season.new(year: 2019, finished: false)
-          @another_season.save
-          expect(@another_season.errors.messages).to include(:already_exist)
-        end
-        it 'should allow current active season to finish' do
-          @season.finished = true
-          expect(@season.save).to be true
-        end
-      end
-
       describe 'active_rounds' do
         it 'should return all rounds not finished' do
           FactoryBot.create(:v1_round, finished: false, dispute_month: @dispute_month,

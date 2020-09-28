@@ -7,15 +7,15 @@ module Api
           extend ActiveSupport::Concern
 
           RANGE_DATA = [
-            { title: 'Primeiro Turno', range: 1..18 },
-            { title: 'Segundo Turno', range: 19..38 },
+            { title: 'Primeiro Turno', range: 1..19 },
+            { title: 'Segundo Turno', range: 20..38 },
             { title: 'Campeonato', range: 1..38 }
           ].freeze
 
           included do
             def self.turns_and_championship
               season = Api::V1::Season.active
-              teams = Api::V1::Team.all
+              teams = Api::V1::Team.active
               season_scores = []
               RANGE_DATA.each do |data|
                 season_scores << range_scores(data, teams, season.scores)
@@ -39,7 +39,7 @@ module Api
                 score_array << {
                   team_id: team_id, team_name: team.name, player_name: team.player_name,
                   season_score: team_scores.sum(&:final_score), team_symbol: team.url_escudo_png
-                }
+                } unless team.nil?
               end
               score_array.sort_by { |hash| hash[:season_score] } .reverse!
             end

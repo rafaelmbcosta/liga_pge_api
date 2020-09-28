@@ -3,7 +3,7 @@ module Api
     # Generate team battles every round
     class Battle < ApplicationRecord
       include Concerns::Battle::ShowLeague
-      
+
       belongs_to :round
 
       scope :find_battle, lambda { |round, team, other_team|
@@ -187,6 +187,13 @@ module Api
           battle.battle_results(scores, round)
         end
         true
+      end
+
+      def self.re_run_battles(this_dispute_month = false)
+        rounds = Round.season_finished_rounds(this_dispute_month)
+        rounds.each do |round|
+          update_battle_scores_round(round)
+        end
       end
 
       # Gotta iterate through rounds so i can flag them
