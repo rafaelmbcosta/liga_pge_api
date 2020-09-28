@@ -41,6 +41,15 @@ module Api
         Round.rounds_with_scores_to_update
       end
 
+      def self.rerun_scores(current_dispute_month = false)
+        rounds = Round.season_finished_rounds(current_dispute_month)
+        rounds.each do |round|
+          Team.active.each do |team|
+            update_team_scores(round, team)
+          end
+        end
+      end
+
       def self.update_scores_round(round)
         round.round_control.update_attributes(updating_scores: true)
         Team.active.each do |team|

@@ -4,7 +4,7 @@ module Api
   module V1
     RSpec.describe Round, type: :model do
       it_behaves_like 'round_progress'
-      
+
       before do
         DatabaseCleaner.start
         DatabaseCleaner.clean

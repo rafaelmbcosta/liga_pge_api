@@ -100,29 +100,13 @@ module Api
                   number: 12,
                   golden: true
                 }
-              ] 
+              ]
             },
             { name: 'Agosto', rounds: [] },
             { name: 'Setembro', rounds: [] },
             { name: 'Outubro', rounds: [] },
             { name: 'Novembro/Dezembro', rounds: [] }
           ]
-        end
-
-        before do
-   
-        end
-
-        it "render 'Não há nenhuma temporada ativa no momento' if Season.active is nil" do
-          allow(Season).to receive(:active).and_return(nil)
-          get '/api/v1/season_dispute_months', headers: auth_headers(user)
-          expect(response.body).to eq({ error: 'Não há nenhuma temporada ativa no momento' }.to_json)
-        end
-
-        it 'Retorna os meses de disputa com seus rounds' do
-          # allow(Season).to receive(:active).and_return(nil)
-          # get '/api/v1/season_dispute_months', headers: auth_headers(user)
-          # expect(response.body).to eq({ error: 'Não há nenhuma temporada ativa no momento' }.to_json)
         end
       end
     end

@@ -5,7 +5,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :scores
       resources :battles
-      resources :dispute_months
+      resources :dispute_months do
+        collection do
+          get 'list'
+        end
+      end
       resources :round
       resources :teams do
         collection do
