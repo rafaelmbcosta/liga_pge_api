@@ -1,11 +1,18 @@
 module Api
   module V1
     class DisputeMonthsController < ApplicationController
-      before_action :authenticate_user, except: [ :index, :league_points]
+      before_action :authenticate_user, except: [:index, :league_points, :list]
 
       # GET /dispute_months
       def index
         @dispute_months = DisputeMonth.scores
+
+        render json: @dispute_months
+      end
+
+      def list
+        season = Api::V1::Season.active
+        @dispute_months = DisputeMonth.where(season: season)
 
         render json: @dispute_months
       end

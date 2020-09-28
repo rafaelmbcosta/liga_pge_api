@@ -1,7 +1,6 @@
 module Api
   module V1
     class BattleWorker
-
       def self.create_battles
         Battle.create_battles
       end
