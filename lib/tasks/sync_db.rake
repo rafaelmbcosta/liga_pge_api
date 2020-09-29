@@ -1,16 +1,24 @@
 desc "Setup database to match production"
-task :sync_db => :environment do
-  puts "Reseting database"
-  require 'database_cleaner'
-  DatabaseCleaner.strategy = :truncation
-  # then, whenever you need to clean the DB
-  DatabaseCleaner.clean
-  puts "... done"
-  puts "Getting teams"
-  # cartola-pge-api.herokuapp.com/api/v1/dispute_months
-  puts "Get Season and dispute months"
-  season = Api::V1:Season.create(year: Time.now.year)
-  puts "Getting Current Round"
+require 'open-uri'
+require 'database_cleaner'
 
-  puts "Create all Rounds"
+task :sync_db => :environment do
+  if ['development', 'test'].include?(Rails.env)
+    puts 'reseting database...'
+    DatabaseCleaner.strategy = :truncation
+    DatabaseCleaner.clean
+    puts 'creating season...'
+    Api::V1::Season.sync
+    puts 'getting teams...'
+    Api::V1::Team.sync
+    puts 'gettin dispute months...'
+    Api::V1::DisputeMonth.sync
+    puts "creating rounds..."
+    Api::V1::Round.sync
+    puts "getting scores..."
+    Api::V1::Scores.sync
+    puts "gettting battles..."
+    Api::V1::Battles.sync
+    puts "... done!"
+  end
 end

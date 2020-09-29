@@ -1,6 +1,8 @@
 module Api
   module V1
     class DisputeMonth < ApplicationRecord
+      include Concerns::DisputeMonth::Sync
+
       belongs_to :season
       has_many :rounds
       has_many :scores, through: :rounds

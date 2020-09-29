@@ -61,10 +61,10 @@ module Api
             end
 
             def self.season_finished_rounds(dispute_month_only)
-              if this.dispute_month_only == true
-                return DisputeMonth.active.rounds.where(finished: true)
+              if dispute_month_only == true
+                return ::Api::V1::DisputeMonth.active.rounds.where(finished: true)
               else
-                return Season.active.rounds.where(finished: true)
+                return ::Api::V1::Season.active.rounds.where(finished: true)
               end
             end
           end

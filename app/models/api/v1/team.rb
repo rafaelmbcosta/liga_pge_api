@@ -1,11 +1,13 @@
 module Api
   module V1
     class Team < ApplicationRecord
+      include Concerns::Team::Sync
+
       has_many :currencies
       has_many :month_activities
 
       validate :check_battles, on: [:disable]
-      
+
       scope :active, -> { where(active: true) }
 
       def self.activation(params)
@@ -14,14 +16,14 @@ module Api
       rescue StandardError => e
         { success: false, message: 'Erro ao atualizar time' }
       end
-      
+
       def disable
         dispute_month = DisputeMonth.active
         month_activity = self.month_activities.find_by(dispute_month: dispute_month)
         month_activity.update_attributes(active: false)
         self.update_attributes(active: false)
       end
-  
+
       def check_battles
         dispute_month = DisputeMonth.active
         battles = Battle.where("round_id in (:rounds) and (first_id = :team_id or second_id = :team_id)",

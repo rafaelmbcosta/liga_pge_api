@@ -1,12 +1,19 @@
 module Api
   module V1
     class RoundsController < ApplicationController
-      before_action :authenticate_user, except: %i[partials partial]
+      before_action :authenticate_user, except: %i[partials partial finished]
       before_action :set_round, only: %i[partial]
 
       def partials
         @partials = Round.partials
         render json: @partials
+      end
+
+      def finished
+        season = Season.active
+        @rounds = season.rounds.where(finished: true)
+
+        render json: @rounds
       end
 
       def partial
