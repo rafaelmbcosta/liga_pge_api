@@ -5,7 +5,6 @@ task :sync_db => :environment do
   if ['development', 'test'].include?(Rails.env)
     require 'open-uri'
     require 'database_cleaner'
-
     puts 'reseting database...'
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
@@ -18,9 +17,11 @@ task :sync_db => :environment do
     puts "creating rounds..."
     Api::V1::Round.sync
     puts "getting scores..."
-    Api::V1::Scores.sync
+    Api::V1::Score.sync
     puts "gettting battles..."
-    Api::V1::Battles.sync
+    Api::V1::Battle.sync
+    puts "updating REDIS data..."
+    Api::V1::Round.round_finished_routines
     puts "... done!"
   end
 end

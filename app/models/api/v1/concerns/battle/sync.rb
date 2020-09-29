@@ -6,7 +6,7 @@ module Api::V1::Concerns::Battle::Sync
   included do
     def self.sync
       uri = URI("#{ENV['API_PROD']}/battles/details")
-      battles =  Connection.connect(uri)
+      battles = ::Api::V1::Connection.connect(uri)
       create(battles)
     end
   end
