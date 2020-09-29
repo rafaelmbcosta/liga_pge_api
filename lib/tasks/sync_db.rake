@@ -1,9 +1,11 @@
 desc "Setup database to match production"
-require 'open-uri'
-require 'database_cleaner'
+
 
 task :sync_db => :environment do
   if ['development', 'test'].include?(Rails.env)
+    require 'open-uri'
+    require 'database_cleaner'
+
     puts 'reseting database...'
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
