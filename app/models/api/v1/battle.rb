@@ -172,7 +172,6 @@ module Api
 
       # Update battle attributes
       def battle_results(scores, round)
-        # cade os rounds ?
         first_score = round.team_score(first_id, scores)
         second_score = round.team_score(second_id, scores)
         self.draw = Battle.draw?(first_score, second_score)

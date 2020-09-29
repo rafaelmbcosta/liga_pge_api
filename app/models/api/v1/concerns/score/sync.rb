@@ -6,7 +6,7 @@ module Api::V1::Concerns::Score::Sync
   included do
     def self.sync
       uri = URI("#{ENV['API_PROD']}/scores")
-      scores =  Connection.connect(uri)
+      scores = ::Api::V1::Connection.connect(uri)
       create(scores)
     end
   end

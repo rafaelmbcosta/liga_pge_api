@@ -6,7 +6,7 @@ module Api::V1::Concerns::Team::Sync
   included do
     def self.sync
       uri = URI("#{ENV['API_PROD']}/teams")
-      api_teams =  Connection.connect(uri)
+      api_teams = ::Api::V1::Connection.connect(uri)
       create(api_teams)
     end
   end

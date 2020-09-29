@@ -6,7 +6,7 @@ module Api::V1::Concerns::Season::Sync
   included do
     def self.sync
       uri = URI("#{ENV['API_PROD']}/seasons/current")
-      season =  Connection.connect(uri)
+      season = ::Api::V1::Connection.connect(uri)
       create(season)
     end
   end

@@ -6,7 +6,7 @@ module Api::V1::Concerns::Round::Sync
   included do
     def self.sync
       uri = URI("#{ENV['API_PROD']}/rounds/finished")
-      rounds =  Connection.connect(uri)
+      rounds = ::Api::V1::Connection.connect(uri)
       create(rounds)
     end
   end
