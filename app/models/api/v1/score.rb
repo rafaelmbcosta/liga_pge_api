@@ -66,9 +66,7 @@ module Api
         raise 'Invalid API Scores' if api_scores.nil? || !api_scores.include?('pontos')
 
         score = Score.find_by(round: round, team: team)
-        raise 'Score não encontrado' if score.nil?
-
-        score.update_attributes(final_score: api_scores['pontos'].round(2))
+        score.update_attributes(final_score: api_scores['pontos'].round(2)) if score.present?
       end
 
       def self.update_scores
