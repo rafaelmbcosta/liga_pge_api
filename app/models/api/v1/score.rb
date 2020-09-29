@@ -2,6 +2,8 @@ module Api
   module V1
     # Manages team scores
     class Score < ApplicationRecord
+      include Concerns::Score::Sync
+
       belongs_to :team
       belongs_to :round
 

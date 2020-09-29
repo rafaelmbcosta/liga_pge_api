@@ -4,6 +4,7 @@ module Api
     class Round < ApplicationRecord
       include Concerns::Round::RoundFinders
       include Concerns::Round::RoundProgress
+      include Concerns::Round::Sync
 
       belongs_to :season
       belongs_to :dispute_month

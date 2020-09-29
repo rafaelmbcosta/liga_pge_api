@@ -3,6 +3,7 @@ module Api
     # Generate team battles every round
     class Battle < ApplicationRecord
       include Concerns::Battle::ShowLeague
+      include Concerns::Battle::Sync
 
       belongs_to :round
 
@@ -189,7 +190,7 @@ module Api
         true
       end
 
-      def self.re_run_battles(this_dispute_month = false)
+      def self.rerun_battles(this_dispute_month = false)
         rounds = Round.season_finished_rounds(this_dispute_month)
         rounds.each do |round|
           update_battle_scores_round(round)

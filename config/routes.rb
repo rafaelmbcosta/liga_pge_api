@@ -4,20 +4,32 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :scores
-      resources :battles
+      resources :battles do
+        collection do
+          get 'details'
+        end
+      end
       resources :dispute_months do
         collection do
           get 'list'
         end
       end
-      resources :round
+      resources :rounds do
+        collection do
+          get 'finished'
+        end
+      end
       resources :teams do
         collection do
           post 'activation'
           get 'find_team'
         end
       end
-      resources :seasons
+      resources :seasons do
+        collection do
+          get 'current'
+        end
+      end
       resources :awards
       resources :month_activities
       resources :flow_control
