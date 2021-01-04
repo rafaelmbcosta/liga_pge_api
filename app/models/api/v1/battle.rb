@@ -3,7 +3,7 @@ module Api
     # Generate team battles every round
     class Battle < ApplicationRecord
       include Concerns::Battle::ShowLeague
-      
+
       belongs_to :round
 
       scope :find_battle, lambda { |round, team, other_team|
@@ -101,8 +101,6 @@ module Api
           generate_battles(round)
         end
         true
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
 
       def self.battle_report(battle_group, teams)
@@ -197,8 +195,6 @@ module Api
           round.round_control.update_attributes(battle_scores_updated: true)
         end
         true
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
     end
   end

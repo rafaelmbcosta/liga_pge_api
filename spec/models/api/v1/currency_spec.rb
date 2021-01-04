@@ -160,9 +160,9 @@ module Api
           expect($redis.get('currencies')).to eq([{ nome: 'Abril/Maio' }].to_json)
         end
 
-        it 'returns flowcontrol if it fails' do
+        it 'returns error if it fails' do
           allow(Season).to receive(:active).and_return(nil)
-          expect(Currency.show_currencies).to be_instance_of(FlowControl)
+          expect { Currency.show_currencies }.to raise_error
         end
       end
 
@@ -183,9 +183,9 @@ module Api
           expect(round.round_control.currencies_generated).to be true
         end
 
-        it 'returns FlowControl if it fails' do
+        it 'returns error if it fails' do
           allow(Currency).to receive(:rounds_avaliable_to_save_currencies).and_return([nil])
-          expect(Currency.save_currencies).to be_instance_of(FlowControl)
+          expect { Currency.save_currencies }.to raise_error
         end
       end
 
@@ -226,7 +226,7 @@ module Api
 
         it 'returns flow control if it fails' do
           allow(Season).to receive(:active).and_return(nil)
-          expect(Currency.rerun_currencies).to be_instance_of(FlowControl)
+          expect { Currency.rerun_currencies }.to raise_error
         end
       end
     end

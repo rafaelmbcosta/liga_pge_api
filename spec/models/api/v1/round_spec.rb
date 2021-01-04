@@ -4,7 +4,7 @@ module Api
   module V1
     RSpec.describe Round, type: :model do
       it_behaves_like 'round_progress'
-      
+
       before do
         DatabaseCleaner.start
         DatabaseCleaner.clean
@@ -73,7 +73,7 @@ module Api
         it 'return error if round already exist' do
           allow(Round).to receive(:new_round).and_return(data)
           allow(Round).to receive(:exist_round?).and_return(true)
-          expect(Round.check_new_round).to be_instance_of(FlowControl)
+          expect { Round.check_new_round }.to raise_error
         end
 
         it 'return the newly created round' do
@@ -173,7 +173,7 @@ module Api
 
         it 'returns flow control if it fails' do
           allow(Round).to receive(:rounds_allowed_to_generate_battles).and_return(nil)
-          expect(Round.close_market).to be_instance_of(FlowControl)
+          expect { Round.close_market }.to raise_error
         end
       end
 

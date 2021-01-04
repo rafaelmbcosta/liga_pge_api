@@ -49,7 +49,7 @@ module Api
 
       def self.dispute_month_team_details(dispute_month, teams)
         return [] unless dispute_month.currencies.present?
-        
+
         team_details = []
         teams.each do |team|
           currencies = dispute_month.currencies.where(team: team).order('round_id desc')
@@ -80,8 +80,6 @@ module Api
           dispute_months << dispute_month_information(dm, teams)
         end
         $redis.set('currencies', order_currency_report(dispute_months).to_json)
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
 
       def self.find_and_update_currencies(round)
@@ -100,8 +98,6 @@ module Api
           find_and_update_currencies(round)
         end
         true
-      rescue StandardError
-        FlowControl.create(message_type: :error, message: 'Erro ao rodar novamente patrimonio')
       end
 
       def self.save_currencies
@@ -111,8 +107,6 @@ module Api
           round.round_control.update_attributes(currencies_generated: true)
         end
         true
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
     end
   end

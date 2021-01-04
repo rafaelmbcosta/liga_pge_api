@@ -40,7 +40,7 @@ module Api
         it 'returns a flow control if battles are odd' do
           allow(Team).to receive(:new_battle_teams).and_return([team])
           allow(Battle).to receive(:rounds_avaliable_for_battles).and_return([round])
-          expect(Battle.create_battles).to be_instance_of(FlowControl)
+          expect { Battle.create_battles }.to raise_error
         end
       end
 
@@ -338,7 +338,7 @@ module Api
 
         it 'returns flow control if it fails' do
           allow(Round).to receive(:rounds_with_battles_to_update).and_return([round])
-          expect(Battle.update_battle_scores).to be_instance_of(FlowControl)
+          expect { Battle.update_battle_scores }.to raise_error
         end
       end
     end

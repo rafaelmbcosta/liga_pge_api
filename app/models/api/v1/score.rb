@@ -14,8 +14,6 @@ module Api
           create_scores_round(round)
         end
         true
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
 
       def self.create_scores_rounds
@@ -65,8 +63,6 @@ module Api
           update_scores_round(round)
         end
         true
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
 
       def self.team_details(team, scores)

@@ -16,7 +16,7 @@ module Api
       validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
       default_scope { order('number asc') }
-      
+
       scope :valid_close_date, lambda { |date|
         where('? >= market_close', date)
       }
@@ -52,8 +52,6 @@ module Api
 
       def self.close_market
         update_market_status(rounds_allowed_to_generate_battles)
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
 
       def more_than_two_active
@@ -92,8 +90,6 @@ module Api
         raise 'Rodada já existente' if exist_round?(season, market_status['rodada_atual'])
 
         new_round(season, market_status)
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
 
       def self.check_golden(round_number)
@@ -107,7 +103,7 @@ module Api
       def self.partial(team)
         $redis.get("partial_#{team}")
       end
-      
+
       # ghost is represented by nil
       # ghost battle is the one with first or second nil id
 
@@ -167,8 +163,6 @@ module Api
           round.update_attributes(finished: true) if Connection.market_status['market_open']
         end
         true
-      rescue StandardError => e
-        FlowControl.create(message_type: :error, message: e)
       end
     end
   end

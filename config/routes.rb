@@ -16,7 +16,6 @@ Rails.application.routes.draw do
       resources :seasons
       resources :awards
       resources :month_activities
-      resources :flow_control
       get 'closed_market_routines' => 'rounds#closed_market_routines'
       get 'round_finished_routines' => 'rounds#round_finished_routines'
       get 'general_tasks_routines' => 'rounds#general_tasks_routines'

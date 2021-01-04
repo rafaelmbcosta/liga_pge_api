@@ -18,6 +18,7 @@ Bundler.require(*Rails.groups)
 
 module CartolaPgeApi
   class Application < Rails::Application
+    config.load_defaults 6.0
     config.autoload_paths += %W(#{config.root}/lib/)
     config.active_job.queue_adapter = :resque
     # Settings in config/environments/* take precedence over those specified here.

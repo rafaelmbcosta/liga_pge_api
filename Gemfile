@@ -1,4 +1,4 @@
-#ruby '2.3.4'
+#ruby '2.7.2'
 source 'https://rubygems.org'
 
 git_source(:github) do |repo_name|
@@ -9,7 +9,7 @@ end
 gem 'redis'
 gem 'resque'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 6.0.3.4'
 # Use mysql as the database for Active Record
 gem 'pg'
 gem 'rack', '~> 2.0.6'
@@ -22,7 +22,7 @@ gem 'puma', '~> 3.12'
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
-gem 'knock'
+gem "knock", github: "nsarno/knock", branch: "master", ref: "9214cd027422df8dc31eb67c60032fbbf8fc100b"
 gem 'travis'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
@@ -34,13 +34,15 @@ gem 'sinatra', '2.0.2'
 gem "figaro"
 gem 'sprockets', '3.7.2'
 
+gem 'mustermann'
+
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
   gem 'gemsurance'
   # Rspec for rails 5
-  gem 'rspec-rails', '3.8.2'
-  gem 'rspec-mocks', '3.8'
+  gem 'rspec-rails', '4.0.2'
+  gem 'rspec-mocks'
   gem 'rubocop-performance'
 
   # Mock rails models
@@ -58,7 +60,7 @@ group :development do
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-rubocop'
-  
+
 end
 
 group :test do
