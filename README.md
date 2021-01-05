@@ -19,3 +19,10 @@ This API exists for 3 main reasons:
 
 Rules can be seen on the front-end. This may not be usefull if you dont have special rules.
 Administrator front-end is being developed
+
+## Tech Stack
+
+* Modular Monolith
+* Kafka
+* GraphQl
+* Resque

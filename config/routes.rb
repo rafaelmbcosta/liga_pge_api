@@ -4,16 +4,32 @@ Rails.application.routes.draw do
   namespace :api do
     namespace :v1 do
       resources :scores
-      resources :battles
-      resources :dispute_months
-      resources :round
+      resources :battles do
+        collection do
+          get 'details'
+        end
+      end
+      resources :dispute_months do
+        collection do
+          get 'list'
+        end
+      end
+      resources :rounds do
+        collection do
+          get 'finished'
+        end
+      end
       resources :teams do
         collection do
           post 'activation'
           get 'find_team'
         end
       end
-      resources :seasons
+      resources :seasons do
+        collection do
+          get 'current'
+        end
+      end
       resources :awards
       resources :month_activities
       get 'closed_market_routines' => 'rounds#closed_market_routines'
@@ -25,6 +41,7 @@ Rails.application.routes.draw do
       get 'currencies/rerun' => 'currencies#rerun'
       get 'round_finished_routines' => 'rounds#round_finished_routines'
       get 'league' => 'dispute_months#league_points'
+      get 'season_dispute_months' => 'dispute_months#active_rounds'
       get 'monthly' => 'awards#monthly'
       get 'partials' => 'rounds#partials'
       get 'partials/:id' => 'rounds#partial'

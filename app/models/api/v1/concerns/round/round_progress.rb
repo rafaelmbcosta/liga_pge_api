@@ -47,7 +47,6 @@ module Api
               end
               order_array
             end
-
           end
         end
       end

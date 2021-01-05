@@ -3,6 +3,7 @@ module Api
     # Generate team battles every round
     class Battle < ApplicationRecord
       include Concerns::Battle::ShowLeague
+      include Concerns::Battle::Sync
 
       belongs_to :round
 
@@ -169,7 +170,6 @@ module Api
 
       # Update battle attributes
       def battle_results(scores, round)
-        # cade os rounds ?
         first_score = round.team_score(first_id, scores)
         second_score = round.team_score(second_id, scores)
         self.draw = Battle.draw?(first_score, second_score)
@@ -185,6 +185,13 @@ module Api
           battle.battle_results(scores, round)
         end
         true
+      end
+
+      def self.rerun_battles(this_dispute_month = false)
+        rounds = Round.season_finished_rounds(this_dispute_month)
+        rounds.each do |round|
+          update_battle_scores_round(round)
+        end
       end
 
       # Gotta iterate through rounds so i can flag them

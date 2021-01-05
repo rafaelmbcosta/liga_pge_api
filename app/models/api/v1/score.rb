@@ -2,6 +2,8 @@ module Api
   module V1
     # Manages team scores
     class Score < ApplicationRecord
+      include Concerns::Score::Sync
+
       belongs_to :team
       belongs_to :round
 
@@ -39,6 +41,15 @@ module Api
         Round.rounds_with_scores_to_update
       end
 
+      def self.rerun_scores(current_dispute_month = false)
+        rounds = Round.season_finished_rounds(current_dispute_month)
+        rounds.each do |round|
+          Team.active.each do |team|
+            update_team_scores(round, team)
+          end
+        end
+      end
+
       def self.update_scores_round(round)
         round.round_control.update_attributes(updating_scores: true)
         Team.active.each do |team|
@@ -53,9 +64,7 @@ module Api
         raise 'Invalid API Scores' if api_scores.nil? || !api_scores.include?('pontos')
 
         score = Score.find_by(round: round, team: team)
-        raise 'Score não encontrado' if score.nil?
-
-        score.update_attributes(final_score: api_scores['pontos'].round(2))
+        score.update_attributes(final_score: api_scores['pontos'].round(2)) if score.present?
       end
 
       def self.update_scores

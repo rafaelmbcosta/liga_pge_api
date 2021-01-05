@@ -36,7 +36,6 @@ module Api
       describe 'Rerunning currencies' do
         it 'returns success on execution' do
           get '/api/v1/currencies/rerun/', headers: auth_headers(user)
-          allow(Season).to receive(:rounds).and_return([])
           expect(response).to have_http_status(:success)
         end
       end

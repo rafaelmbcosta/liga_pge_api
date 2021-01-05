@@ -1,5 +1,5 @@
-#ruby '2.7.2'
 source 'https://rubygems.org'
+ruby '2.7.2'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -12,7 +12,7 @@ gem 'resque'
 gem 'rails', '~> 6.0.3.4'
 # Use mysql as the database for Active Record
 gem 'pg'
-gem 'rack', '~> 2.0.6'
+gem 'rack', '~> 2.2.3'
 gem "loofah", '>= 2.2.3'
 # Use Puma as the app server
 gem 'puma', '~> 3.12'
@@ -34,15 +34,13 @@ gem 'sinatra', '2.0.2'
 gem "figaro"
 gem 'sprockets', '3.7.2'
 
-gem 'mustermann'
-
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug', platform: :mri
   gem 'gemsurance'
   # Rspec for rails 5
-  gem 'rspec-rails', '4.0.2'
-  gem 'rspec-mocks'
+  gem 'rspec-rails', '3.8.2'
+  gem 'rspec-mocks', '3.8'
   gem 'rubocop-performance'
 
   # Mock rails models
@@ -60,7 +58,6 @@ group :development do
   gem 'guard'
   gem 'guard-rspec'
   gem 'guard-rubocop'
-
 end
 
 group :test do

@@ -4,6 +4,7 @@ module Api
     class Round < ApplicationRecord
       include Concerns::Round::RoundFinders
       include Concerns::Round::RoundProgress
+      include Concerns::Round::Sync
 
       belongs_to :season
       belongs_to :dispute_month
@@ -149,8 +150,7 @@ module Api
       end
 
       def self.active_round_status
-        rounds = Season.active.rounds.last(2)
-
+        Season.active.rounds.last(2)
       end
 
       # Rules:

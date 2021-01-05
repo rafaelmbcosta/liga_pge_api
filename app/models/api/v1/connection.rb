@@ -39,6 +39,7 @@ module Api
       end
 
       def self.team_score(id, round = nil)
+        raise ConnectionErrors::InvalidIdTag if id.nil?
         uri = URI(URL_TEAM_SCORE + id.to_s)
         uri = URI(URL_TEAM_SCORE + "#{id}/#{round}") unless round.nil?
         connect(uri)
