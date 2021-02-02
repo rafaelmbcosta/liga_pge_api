@@ -48,12 +48,14 @@ jobs:
           bundle exec rake db:create
           bundle exec rake db:schema:load
         env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
           RAILS_ENV: test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
       - name: Run tests
         run: bundle exec rspec
         env:
+          ACTIONS_ALLOW_UNSECURE_COMMANDS: true
           REDIS_URL: redis://localhost:6379/0
           RAILS_ENV: test
           POSTGRES_USER: postgres
