@@ -20,6 +20,10 @@ module Api
               joins(:round_control).where("round_controls.#{field.to_s}" => value)
             end
 
+            def self.current_season_finder
+              where(season: Api::V1::Season.active)
+            end
+
             def self.avaliable_for_battles
               where(finished: false).field_value(:market_closed, true)
                                     .field_value(:battles_generated, false)
@@ -46,7 +50,8 @@ module Api
             end
 
             def self.rounds_with_battles_to_update
-              where(finished: true).field_value(:battles_generated, true)
+              current_season_finder.where(finished: true)
+                                   .field_value(:battles_generated, true)
                                    .field_value(:scores_updated, true)
                                    .field_value(:updating_battle_scores, false)
                                    .field_value(:battle_scores_updated, false)
@@ -54,7 +59,8 @@ module Api
             end
 
             def self.rounds_avaliable_to_save_currencies
-              where(finished: true).field_value(:battles_generated, true)
+              current_season_finder.where(finished: true)
+                                   .field_value(:battles_generated, true)
                                    .field_value(:scores_updated, true)
                                    .field_value(:generating_currencies, false)
                                    .field_value(:currencies_generated, false)
