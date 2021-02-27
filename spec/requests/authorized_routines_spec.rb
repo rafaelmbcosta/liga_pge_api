@@ -35,8 +35,7 @@ module Api
 
       describe 'Rerunning currencies' do
         it 'returns success on execution' do
-          get '/api/v1/currencies/rerun/',
-              headers: auth_headers(user)
+          get '/api/v1/currencies/rerun/', headers: auth_headers(user)
           expect(response).to have_http_status(:success)
         end
       end
@@ -80,14 +79,6 @@ module Api
 
         it 'returns official api json' do
           get '/api/v1/teams/find_team?[search]q=ferrao',
-              headers: auth_headers(user)
-          expect(response).to have_http_status(:success)
-        end
-      end
-
-      describe 'flow control list' do
-        it 'returns 200 on success' do
-          get '/api/v1/flow_control',
               headers: auth_headers(user)
           expect(response).to have_http_status(:success)
         end

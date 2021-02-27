@@ -1,5 +1,5 @@
 source 'https://rubygems.org'
-ruby '2.7.1'
+ruby '2.7.2'
 
 git_source(:github) do |repo_name|
   repo_name = "#{repo_name}/#{repo_name}" unless repo_name.include?("/")
@@ -9,7 +9,7 @@ end
 gem 'redis'
 gem 'resque'
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '~> 5.2.3'
+gem 'rails', '~> 6.0.3.4'
 # Use mysql as the database for Active Record
 gem 'pg'
 gem 'rack', '~> 2.2.3'
@@ -22,7 +22,7 @@ gem 'puma', '~> 3.12'
 # gem 'redis', '~> 3.0'
 # Use ActiveModel has_secure_password
 gem 'bcrypt', '~> 3.1.7'
-gem 'knock'
+gem "knock", github: "nsarno/knock", branch: "master", ref: "9214cd027422df8dc31eb67c60032fbbf8fc100b"
 gem 'travis'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
