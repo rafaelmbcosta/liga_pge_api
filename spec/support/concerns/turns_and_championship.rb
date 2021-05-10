@@ -9,8 +9,8 @@ module Api
 
       describe 'turns_and_championship' do
         before do
-          allow(Api::V1::Season).to receive(:active).and_return(season)
-          allow(Api::V1::Team).to receive(:active).and_return([team])
+          allow(Season).to receive(:active).and_return(season)
+          allow(::Team).to receive(:active).and_return([team])
           allow(model).to receive(:range_scores).and_return([])
         end
 

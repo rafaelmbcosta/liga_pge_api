@@ -9,19 +9,19 @@ task :sync_db => :environment do
     DatabaseCleaner.strategy = :truncation
     DatabaseCleaner.clean
     puts 'creating season...'
-    Api::V1::Season.sync
+    Season.sync
     puts 'getting teams...'
-    Api::V1::Team.sync
+    ::Team.sync
     puts 'gettin dispute months...'
-    Api::V1::DisputeMonth.sync
+    ::DisputeMonth.sync
     puts "creating rounds..."
-    Api::V1::Round.sync
+    ::Round.sync
     puts "getting scores..."
-    Api::V1::Score.sync
+    ::Score.sync
     puts "gettting battles..."
-    Api::V1::Battle.sync
+    ::Battle.sync
     puts "updating REDIS data..."
-    Api::V1::Round.round_finished_routines
+    ::Round.round_finished_routines
     puts "... done!"
   end
 end

@@ -11,7 +11,7 @@ module Api
       end
 
       def list
-        season = Api::V1::Season.active
+        season = Season.active
         @dispute_months = DisputeMonth.where(season: season)
 
         render json: @dispute_months

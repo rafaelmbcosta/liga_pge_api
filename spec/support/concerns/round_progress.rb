@@ -72,7 +72,7 @@ module Api
         before do
           round.round_control = first_round_control
           second_round.round_control = second_round_control
-          allow(Api::V1::Season).to receive(:active).and_return(season)
+          allow(Season).to receive(:active).and_return(season)
           allow(season).to receive(:rounds).and_return([round, second_round])
         end
 
