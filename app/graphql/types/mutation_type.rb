@@ -31,9 +31,20 @@ module Types
       raise e.message
     end
 
+    field :save_rules, RulesType, null: false, description: "Creating a new Rule" do
+      argument :text, String, required: true
+    end
+
+    def save_rules(text: String)
+      Rule.create(text: text)
+    rescue StandardError => e
+      raise e.message
+    end
+
     field :create_dispute, DisputeType, null: false, description: "Creating Dispute" do
       argument :name, String, required: true
     end
+
 
     def create_dispute(**args)
       season = Season.active

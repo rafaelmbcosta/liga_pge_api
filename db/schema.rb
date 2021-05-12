@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_01_04_152648) do
+ActiveRecord::Schema.define(version: 2021_05_11_222621) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
@@ -117,6 +117,12 @@ ActiveRecord::Schema.define(version: 2021_01_04_152648) do
     t.datetime "updated_at", null: false
     t.index ["dispute_month_id"], name: "index_rounds_on_dispute_month_id"
     t.index ["season_id"], name: "index_rounds_on_season_id"
+  end
+
+  create_table "rules", force: :cascade do |t|
+    t.string "text"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "scores", id: :serial, force: :cascade do |t|

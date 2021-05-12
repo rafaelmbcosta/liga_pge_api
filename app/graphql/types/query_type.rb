@@ -1,5 +1,11 @@
 module Types
   class QueryType < Types::BaseObject
+    field :current_rules, RulesType, null: true, description:  "Current Rules"
+
+    def current_rules
+      Rule.last
+    end
+
     field :seasons, [SeasonType], null: false, description: "Season list"
 
     def seasons
