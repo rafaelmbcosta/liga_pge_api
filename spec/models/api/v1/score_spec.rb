@@ -64,10 +64,10 @@ module Api
           expect(Score.create_scores).to be true
         end
 
-        it 'return flow control in case of error' do
+        it 'throw error in case of invalid scores' do
           invalid_round = Round.new
           allow(Score).to receive(:create_scores_rounds).and_return([invalid_round])
-          expect(Score.create_scores).to be_instance_of(FlowControl)
+          expect { Score.create_scores }.to raise_error
         end
       end
 
@@ -101,10 +101,10 @@ module Api
                                      updating_scores: false)
         end
 
-        it 'returns flow control if something goes wrong' do
+        it 'raise error if something goes wrong' do
           invalid_round = Round.new
           allow(Score).to receive(:rounds_with_scores_to_update).and_return([invalid_round])
-          expect(Score.update_scores).to be_instance_of(FlowControl)
+          expect { Score.update_scores }.to raise_error
         end
 
         before do
