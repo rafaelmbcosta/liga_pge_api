@@ -15,6 +15,8 @@ Current Stack:
 * Resque
 * RSpec
 
+This league has no profit at all, all the competitors' money is distributed among themselves. Neither the programmers nor the league management are left with anything. In the case of developers, we still pay for the infrastructure, lol.
+
 ---
 
 O Cartola FC é um fantasy game muito popular. Este projeto tem duas principais razões para existir:
