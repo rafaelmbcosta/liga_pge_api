@@ -32,4 +32,4 @@ Stack Atual:
 * Resque
 * RSpec
 
-Esta liga não tem lucro algum, todo o dinheiro dos competidores são distribuidos entre sí. Nem os programadores nem a gestão da liga ficam com nada. No caso dos desenvolvedores ainda temos prejuizos com a infraestrutura, rsrs.
+Esta liga não tem lucro algum, todo o dinheiro dos competidores são distribuídos entre si. Nem os programadores nem a gestão da liga ficam com nada. No caso dos desenvolvedores ainda temos prejuízos com a infraestrutura, rsrs.
