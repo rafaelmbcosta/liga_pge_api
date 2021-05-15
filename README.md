@@ -1,4 +1,4 @@
-[![Build Status](https://github.com/rafaelmbcosta/liga_pge_api/actions/workflows/ruby.yml/badge.svg)](https://github.com/rafaelmbcosta/liga_pge_api/actions)
+[![Build Status](https://github.com/rafaelmbcosta/liga_pge_api/actions/workflows/build.yml/badge.svg)](https://github.com/rafaelmbcosta/liga_pge_api/actions)
 
 # Liga PGE API
 
