@@ -30,6 +30,9 @@ jobs:
           --health-timeout 5s
           --health-retries 5
     steps:
+      - name: Send coverage
+        run: echo ${{ secrets.PAMONHA }}
+        shell: bash
       - uses: actions/checkout@v2
       - name: Set up Ruby
       # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
@@ -60,6 +63,4 @@ jobs:
           RAILS_ENV: test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-      - name: Send coverage
-        run: echo ${{ secrets.PAMONHA }}
-        shell: bash
+
