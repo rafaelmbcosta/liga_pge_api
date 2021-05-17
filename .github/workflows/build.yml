@@ -61,5 +61,5 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
       - name: Send coverage
-        run: echo $PAMONHA
+        run: echo ${{ secrets.PAMONHA }}
         shell: bash
