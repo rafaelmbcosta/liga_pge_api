@@ -61,5 +61,5 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
       - name: Send coverage
-        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Ruby -r coverage/coverage.xml -t $CODACY_PROJECT_TOKEN
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Ruby -r coverage/coverage.xml
         shell: bash
