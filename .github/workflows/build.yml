@@ -60,3 +60,6 @@ jobs:
           RAILS_ENV: test
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
+      - name: Send coverage
+        run: bash <(curl -Ls https://coverage.codacy.com/get.sh) report -l Ruby -r coverage/coverage.xml
+        shell: bash
