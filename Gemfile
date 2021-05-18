@@ -15,7 +15,7 @@ gem 'pg'
 gem 'rack', '~> 2.2.3'
 gem "loofah", '>= 2.2.3'
 # Use Puma as the app server
-gem 'puma', '~> 3.12'
+gem 'puma', '~> 4.3'
 gem 'graphql'
 gem 'simplecov-cobertura'
 # Build JSON APIs with ease. Read more: https://github.com/rails/jbuilder
