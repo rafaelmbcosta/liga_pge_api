@@ -1,140 +1,140 @@
-require 'rails_helper'
+# require 'rails_helper'
 
-module Api
-  module V1
-    shared_examples 'round_progress' do
-      let(:season) { FactoryBot.create(:v1_season) }
-      let(:dispute_month) { FactoryBot.create(:v1_dispute_month, season: season) }
-      let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 27, finished: true) }
-      let(:progress_expectation) do
-        [
-          {
-            attribute: :market_closed,
-            label: 'Mercado fechado',
-            round: false,
-            step: 1,
-            value: true
-          },
-          {
-            attribute: :battles_generated,
-            label: 'Batalhas criadas',
-            round: false,
-            step: 2,
-            value: true
-          },
-          {
-            attribute: :scores_created,
-            label: 'Placares criados',
-            round: false,
-            step: 3,
-            value: true
-          },
-          {
-            attribute: :finished,
-            label: 'Rodada finalizada',
-            round: true,
-            step: 4,
-            value: true
-          },
-          {
-            attribute: :scores_updated,
-            label: 'Placares atualizados',
-            round: false,
-            step: 5,
-            value: true
-          },
-          {
-            attribute: :battle_scores_updated,
-            label: 'Confrontos atualizados',
-            round: false,
-            step: 6,
-            value: true
-          },
-          {
-            attribute: :currencies_generated,
-            label: 'Cartoletas criadas',
-            round: false,
-            step: 7,
-            value: true
-          }
-        ]
-      end
+# module Api
+#   module V1
+#     shared_examples 'round_progress' do
+#       let(:season) { FactoryBot.create(:v1_season) }
+#       let(:dispute_month) { FactoryBot.create(:v1_dispute_month, season: season) }
+#       let(:round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 27, finished: true) }
+#       let(:progress_expectation) do
+#         [
+#           {
+#             attribute: :market_closed,
+#             label: 'Mercado fechado',
+#             round: false,
+#             step: 1,
+#             value: true
+#           },
+#           {
+#             attribute: :battles_generated,
+#             label: 'Batalhas criadas',
+#             round: false,
+#             step: 2,
+#             value: true
+#           },
+#           {
+#             attribute: :scores_created,
+#             label: 'Placares criados',
+#             round: false,
+#             step: 3,
+#             value: true
+#           },
+#           {
+#             attribute: :finished,
+#             label: 'Rodada finalizada',
+#             round: true,
+#             step: 4,
+#             value: true
+#           },
+#           {
+#             attribute: :scores_updated,
+#             label: 'Placares atualizados',
+#             round: false,
+#             step: 5,
+#             value: true
+#           },
+#           {
+#             attribute: :battle_scores_updated,
+#             label: 'Confrontos atualizados',
+#             round: false,
+#             step: 6,
+#             value: true
+#           },
+#           {
+#             attribute: :currencies_generated,
+#             label: 'Cartoletas criadas',
+#             round: false,
+#             step: 7,
+#             value: true
+#           }
+#         ]
+#       end
 
-      before do
+#       before do
 
-      end
+#       end
 
-      describe 'self.progress' do
-        let(:second_round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 28, finished: false) }
-        let(:first_round_control) { FactoryBot.create(:v1_complete_round_control, round: round) }
-        let(:second_round_control) { FactoryBot.create(:v1_complete_round_control, round: second_round)}
+#       describe 'self.progress' do
+#         let(:second_round) { FactoryBot.create(:v1_round, season: season, dispute_month: dispute_month, number: 28, finished: false) }
+#         let(:first_round_control) { FactoryBot.create(:v1_complete_round_control, round: round) }
+#         let(:second_round_control) { FactoryBot.create(:v1_complete_round_control, round: second_round)}
 
-        before do
-          round.round_control = first_round_control
-          second_round.round_control = second_round_control
-          allow(Season).to receive(:active).and_return(season)
-          allow(season).to receive(:rounds).and_return([round, second_round])
-        end
+#         before do
+#           round.round_control = first_round_control
+#           second_round.round_control = second_round_control
+#           allow(Season).to receive(:active).and_return(season)
+#           allow(season).to receive(:rounds).and_return([round, second_round])
+#         end
 
-        it 'returns an array of progress hashes' do
-          expect(Round.progress_active[0][:progress][3]).not_to eq(Round.progress_active[1][:progress][3])
-        end
-      end
+#         it 'returns an array of progress hashes' do
+#           expect(Round.progress_active[0][:progress][3]).not_to eq(Round.progress_active[1][:progress][3])
+#         end
+#       end
 
-      describe 'progress' do
-        before do
-          allow(round).to receive(:step_complete?).and_return(true)
-        end
+#       describe 'progress' do
+#         before do
+#           allow(round).to receive(:step_complete?).and_return(true)
+#         end
 
-        it 'returns an hash with the progress' do
-          expect(round.progress).to eq(progress_expectation)
-        end
-      end
+#         it 'returns an hash with the progress' do
+#           expect(round.progress).to eq(progress_expectation)
+#         end
+#       end
 
-      describe 'step_complete?' do
-        let(:finished_step) { { attribute: :finished, label: 'rodada finalizada', round: true } }
-        let(:round_control) { FactoryBot.create(:v1_complete_round_control, round: round) }
-        let(:market_closed_step) { { attribute: :market_closed, label: 'mercado fechado', round: false } }
-        let(:battles_generated_step) { { attribute: :battles_generated, label: 'batalhas criadas', round: false } }
-        let(:scores_created_step) { { attribute: :scores_created, label: 'placares criados', round: false } }
-        let(:scores_updated_step) { { attribute: :scores_updated, label: 'placares atualizados', round: false } }
-        let(:battle_scores_updated_step) do
-          { attribute: :battle_scores_updated, label: 'confrontos atualizados', round: false }
-        end
-        let(:currencies_generated_step) do
-          { attribute: :currencies_generated, label: 'premiação criada', round: false }
-        end
+#       describe 'step_complete?' do
+#         let(:finished_step) { { attribute: :finished, label: 'rodada finalizada', round: true } }
+#         let(:round_control) { FactoryBot.create(:v1_complete_round_control, round: round) }
+#         let(:market_closed_step) { { attribute: :market_closed, label: 'mercado fechado', round: false } }
+#         let(:battles_generated_step) { { attribute: :battles_generated, label: 'batalhas criadas', round: false } }
+#         let(:scores_created_step) { { attribute: :scores_created, label: 'placares criados', round: false } }
+#         let(:scores_updated_step) { { attribute: :scores_updated, label: 'placares atualizados', round: false } }
+#         let(:battle_scores_updated_step) do
+#           { attribute: :battle_scores_updated, label: 'confrontos atualizados', round: false }
+#         end
+#         let(:currencies_generated_step) do
+#           { attribute: :currencies_generated, label: 'premiação criada', round: false }
+#         end
 
-        before do
-          season.dispute_months << dispute_month
-          round.dispute_month = dispute_month
-          round.round_control = round_control
-        end
+#         before do
+#           season.dispute_months << dispute_month
+#           round.dispute_month = dispute_month
+#           round.round_control = round_control
+#         end
 
-        it 'returns true if the round step is complete' do
-          round.finished = true
-          expect(round.step_complete?(finished_step)).to be true
-        end
+#         it 'returns true if the round step is complete' do
+#           round.finished = true
+#           expect(round.step_complete?(finished_step)).to be true
+#         end
 
-        it 'returns false if the round step is not complete' do
-          round.finished = false
-          expect(round.step_complete?(finished_step)).to be false
-        end
+#         it 'returns false if the round step is not complete' do
+#           round.finished = false
+#           expect(round.step_complete?(finished_step)).to be false
+#         end
 
-        it 'returns true if the round control step is complete' do
-          expect(round.step_complete?(market_closed_step)).to be true
-          expect(round.step_complete?(battles_generated_step)).to be true
-          expect(round.step_complete?(scores_created_step)).to be true
-          expect(round.step_complete?(scores_updated_step)).to be true
-          expect(round.step_complete?(battle_scores_updated_step)).to be true
-          expect(round.step_complete?(currencies_generated_step)).to be true
-        end
+#         it 'returns true if the round control step is complete' do
+#           expect(round.step_complete?(market_closed_step)).to be true
+#           expect(round.step_complete?(battles_generated_step)).to be true
+#           expect(round.step_complete?(scores_created_step)).to be true
+#           expect(round.step_complete?(scores_updated_step)).to be true
+#           expect(round.step_complete?(battle_scores_updated_step)).to be true
+#           expect(round.step_complete?(currencies_generated_step)).to be true
+#         end
 
-        it 'returns false if it doesnt' do
-          round_control.scores_updated = false
-          expect(round.step_complete?(scores_updated_step)).to be false
-        end
-      end
-    end
-  end
-end
+#         it 'returns false if it doesnt' do
+#           round_control.scores_updated = false
+#           expect(round.step_complete?(scores_updated_step)).to be false
+#         end
+#       end
+#     end
+#   end
+# end
