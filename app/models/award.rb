@@ -1,6 +1,4 @@
-# module Api
-#   module V1
-#     class Award < ApplicationRecord
+class Award < ApplicationRecord
 #       belongs_to :dispute_month, optional: true
 #       belongs_to :team
 #       belongs_to :season
@@ -11,6 +9,4 @@
 #         self.payed = true
 #         self.save
 #       end
-#     end
-#   end
-# end
+end
