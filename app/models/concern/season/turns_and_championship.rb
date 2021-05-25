@@ -41,7 +41,7 @@ module Concern
       #     end
       #     score_array.sort_by { |hash| hash[:season_score] } .reverse!
       #   end
-      end
+      # end
     end
   end
 end
