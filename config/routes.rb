@@ -31,7 +31,6 @@ Rails.application.routes.draw do
           get 'current'
         end
       end
-      resources :awards
       resources :month_activities
       get 'closed_market_routines' => 'rounds#closed_market_routines'
       get 'round_finished_routines' => 'rounds#round_finished_routines'
