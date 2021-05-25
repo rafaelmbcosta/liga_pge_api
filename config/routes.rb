@@ -44,8 +44,6 @@ Rails.application.routes.draw do
       get 'league' => 'dispute_months#league_points'
       get 'season_dispute_months' => 'dispute_months#active_rounds'
       get 'monthly' => 'awards#monthly'
-      get 'partials' => 'rounds#partials'
-      get 'partials/:id' => 'rounds#partial'
       get 'season_score' => 'seasons#scores'
       get 'search_player/:name' => 'players#search_player'
     end
