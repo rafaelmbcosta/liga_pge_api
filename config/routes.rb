@@ -31,7 +31,6 @@ Rails.application.routes.draw do
           get 'current'
         end
       end
-      resources :awards
       resources :month_activities
       get 'closed_market_routines' => 'rounds#closed_market_routines'
       get 'round_finished_routines' => 'rounds#round_finished_routines'
@@ -44,8 +43,6 @@ Rails.application.routes.draw do
       get 'league' => 'dispute_months#league_points'
       get 'season_dispute_months' => 'dispute_months#active_rounds'
       get 'monthly' => 'awards#monthly'
-      get 'partials' => 'rounds#partials'
-      get 'partials/:id' => 'rounds#partial'
       get 'season_score' => 'seasons#scores'
       get 'search_player/:name' => 'players#search_player'
     end

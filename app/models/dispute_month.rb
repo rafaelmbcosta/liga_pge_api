@@ -7,7 +7,7 @@ class DisputeMonth < ApplicationRecord
   has_many :battles, through: :rounds
   has_many :month_activities
   has_many :currencies, through: :rounds
-  has_many :awards
+  # has_many :awards
   serialize :dispute_rounds
 
   def self.scores

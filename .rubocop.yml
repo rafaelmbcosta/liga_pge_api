@@ -30,7 +30,7 @@ Style/FrozenStringLiteralComment:
 Layout/EndOfLine:
   EnforcedStyle: lf
 
-Layout/IndentHeredoc:
+Layout/HeredocIndentation:
   EnforcedStyle: powerpack
 
 Lint/AmbiguousBlockAssociation:
@@ -58,10 +58,6 @@ Metrics/BlockLength:
 Metrics/ModuleLength:
   Exclude:
     - 'spec/**/*.rb'
-
-Performance/Caller:
-  Exclude:
-    - spec/rubocop/cop/performance/caller_spec.rb
 
 RSpec/PredicateMatcher:
   Description: Prefer using predicate matcher over using predicate method directly.

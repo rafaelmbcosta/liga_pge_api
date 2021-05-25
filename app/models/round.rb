@@ -10,7 +10,6 @@ class Round < ApplicationRecord
   has_many :currencies
   has_many :battles
   has_many :month_activities
-  has_one  :round_control
   validate :more_than_two_active
   validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
@@ -71,7 +70,7 @@ class Round < ApplicationRecord
     dispute_month = find_dispute_month(season, market['rodada_atual'])
     round = Round.new(season: season, dispute_month: dispute_month,
                       number: market['rodada_atual'], market_close: market['close_date'])
-    round.save ? RoundControl.create(round: round) : (raise round.errors.messages.inspect)
+    round.save
     round
   end
 
