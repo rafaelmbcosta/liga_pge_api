@@ -20,7 +20,7 @@ class Season < ApplicationRecord
   # Creates a new season with all 38 rounds without any dispute.
   def self.new_season
     raise 'Season already exist' if active.present?
-
+    season = nil
     Season.transaction do
       season = create!(year: Time.now.year)
       rounds = []
@@ -29,6 +29,7 @@ class Season < ApplicationRecord
       end
       Round.create!(rounds)
     end
+    season
   end
 
   # finished rounds
