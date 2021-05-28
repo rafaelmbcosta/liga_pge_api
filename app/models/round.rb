@@ -5,12 +5,11 @@ class Round < ApplicationRecord
   include Concern::Round::Sync
 
   belongs_to :season
-  belongs_to :dispute_month
+  belongs_to :dispute_month, optional: true
   has_many :scores
   has_many :currencies
   has_many :battles
   has_many :month_activities
-  validate :more_than_two_active
   validates_uniqueness_of :number, scope: :season_id, message: 'Rodada já existente na temporada'
 
   default_scope { order('number asc') }
@@ -50,11 +49,6 @@ class Round < ApplicationRecord
 
   def self.close_market
     update_market_status(rounds_allowed_to_generate_battles)
-  end
-
-  def more_than_two_active
-    errors.add(:more_than_two, 'Já exitem 2 ativos') if Season.active.active_rounds.count >= 2 &&
-                                                        new_record?
   end
 
   def self.exist_round?(season, round_number)

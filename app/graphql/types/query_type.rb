@@ -27,7 +27,7 @@ module Types
     field :disputes, [DisputeType], null: false, description: "Dispute months"
 
     def disputes
-      Dispute.all
+      DisputeMonth.where(season: Season.active)
     end
 
     field :season_updated, subscription: Subscriptions::SeasonUpdated

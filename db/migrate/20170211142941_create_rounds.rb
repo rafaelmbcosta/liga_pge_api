@@ -4,9 +4,8 @@ class CreateRounds < ActiveRecord::Migration[5.0]
       t.integer :number, null: false
       t.boolean :golden, null: false, default: false
       t.references :season, foreign_key: true
-      t.date :market_open
-      t.date :market_close
       t.boolean :finished, null: false, default: false
+      t.boolean :active, null: false, default: false
       t.references :dispute_month, foreign_key: true
       t.timestamps
     end
