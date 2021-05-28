@@ -3,8 +3,10 @@ class CreateDisputeMonths < ActiveRecord::Migration[5.0]
     create_table :dispute_months do |t|
       t.string :name, null: false
       t.references :season
+      t.boolean :finished, null: false, default: false
+      t.boolean :active, null: false, default: false
       t.string :details
-      t.string :dispute_rounds
+      t.integer :order
       t.timestamps
     end
   end

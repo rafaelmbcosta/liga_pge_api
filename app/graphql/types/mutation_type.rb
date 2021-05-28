@@ -45,21 +45,11 @@ module Types
       argument :name, String, required: true
     end
 
-
-    def create_dispute(**args)
+    def create_dispute(name: String!)
       season = Season.active
       raise "Temporada precisa ser criada !" if season.nil?
 
-      dispute = nil
-      ActiveRecord::Base.transaction do
-        dispute = Dispute.create!(season: season, name: args[:name], order: Dispute.next_order)
-        Rails.logger.info(dispute.inspect)
-        if args[:rounds]
-          collection = Round.where(id: args[:rounds])
-          collection.update_all(dispute_id: dispute.id)
-        end
-      end
-      dispute
+      DisputeMonth.create!(season: season, name: name)
     end
   end
 end
