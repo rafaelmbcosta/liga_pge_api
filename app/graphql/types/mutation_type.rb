@@ -12,6 +12,27 @@ module Types
       end
     end
 
+    field :create_team_by_id, TeamType, null: false, description: "Create Team by id" do
+      argument :team_id, Integer, required: true
+    end 
+   
+    def create_team_by_id(team_id: Integer)
+      team = Team.create(id_tag: team_id)
+      TeamWorker.perform
+      team
+    end
+    
+    field :active, TeamType, null: false, description: 'Active or inactive on Team' do
+      argument :team_id, Integer, required: true
+      argument :active, Boolean, required: true
+    end
+     
+    def active(team_id: Integer, active: Boolean)
+      team = Team.find(team_id)
+      team.update(active: active)
+      team
+    end
+
     field :logout, Boolean, null: false
 
     def logout

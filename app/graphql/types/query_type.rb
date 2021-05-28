@@ -6,6 +6,14 @@ module Types
       Rule.last
     end
 
+    field :teams, [TeamType], null: false, description: "Team list" do
+      argument :active, Boolean, required: false
+    end
+
+    def teams(**args)
+      Team.all.where(args)
+    end
+
     field :seasons, [SeasonType], null: false, description: "Season list"
 
     def seasons

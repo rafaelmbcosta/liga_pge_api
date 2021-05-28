@@ -122,9 +122,13 @@ class Round < ApplicationRecord
     (sum_scores(score, scores) - ghost_buster_score(score, scores)) / total_scores
   end
 
-  def self.closed_market_routines
-    BattleWorker.perform("closed_market")
-    ScoresWorker.perform("closed_market")
+  def self.closed_market_routines(round_id = nil)
+    # BattleWorker.perform("closed_market")
+    # ScoresWorker.perform("closed_market")
+    pipeline = Pipeline::Pipe.new({round_id: round_id})
+    pipeline.stage(Pipeline::Battle::StageBattleWorker.new())
+    pipeline.stage(Pipeline::Scores::StageScoresWorker.new())
+    pipeline.executa()
   end
 
   def self.round_finished_routines
