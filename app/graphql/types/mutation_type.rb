@@ -24,9 +24,7 @@ module Types
     end
 
     def create_season(year: Integer)
-      # raise 'Unauthorized' if !context[:current_user]
-
-      Season.create!
+      Season.new_season
     rescue StandardError => e
       raise e.message
     end
