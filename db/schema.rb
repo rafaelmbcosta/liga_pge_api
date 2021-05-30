@@ -99,6 +99,14 @@ ActiveRecord::Schema.define(version: 2021_05_11_222621) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "sessions", force: :cascade do |t|
+    t.bigint "user_id", null: false
+    t.string "key", null: false
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+    t.index ["user_id"], name: "index_sessions_on_user_id"
+  end
+
   create_table "teams", id: :serial, force: :cascade do |t|
     t.string "name"
     t.boolean "active", default: true, null: false
@@ -127,4 +135,5 @@ ActiveRecord::Schema.define(version: 2021_05_11_222621) do
   add_foreign_key "rounds", "seasons"
   add_foreign_key "scores", "rounds"
   add_foreign_key "scores", "teams"
+  add_foreign_key "sessions", "users"
 end
