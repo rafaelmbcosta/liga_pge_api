@@ -1,4 +1,4 @@
-class Queries::Tean::List < GraphQL::Schema::Resolver
+class Queries::Team::List < GraphQL::Schema::Resolver
   description 'Team list'
 
   argument :active, Boolean, required: false
