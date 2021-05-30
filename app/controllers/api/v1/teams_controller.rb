@@ -16,15 +16,15 @@ module Api
         @team = Team.new(team_params)
 
         if @team.save
-          render json: @team, status: :created, location: @team
+          render json: @team, status: :created
         else
           render json: @team.errors, status: :unprocessable_entity
         end
       end
 
       def activation
-        team = Team.activation(team_params)
-        if team[:success]
+        team = Team.find(team_params[:id])
+        if team.update(active: team_params[:active])
           render json: team, status: :ok
         else
           render json: team, status: :unprocessable_entity
@@ -40,7 +40,7 @@ module Api
 
       # Only allow a trusted parameter "white list" through.
       def team_params
-        params.require(:team).permit(:name, :season_id, :id, :active, :slug,
+        params.require(:team).permit(:name, :id, :active, :slug,
                                      :url_escudo_png, :player_name, :id_tag)
       end
 

@@ -8,11 +8,8 @@ class Team < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  def self.activation(params)
-    team = find(params[:id])
-    { success: true } if team.update_attributes(active: params[:active])
-  rescue StandardError => e
-    { success: false, message: 'Erro ao atualizar time' }
+  after_create do
+    TeamWorker.perform
   end
 
   def disable

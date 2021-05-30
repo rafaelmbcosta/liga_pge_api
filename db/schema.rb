@@ -43,6 +43,7 @@ ActiveRecord::Schema.define(version: 2021_05_11_222621) do
     t.string "name", null: false
     t.integer "season_id"
     t.boolean "finished", default: false, null: false
+    t.boolean "active", default: false, null: false
     t.string "details"
     t.integer "order"
     t.datetime "created_at", null: false

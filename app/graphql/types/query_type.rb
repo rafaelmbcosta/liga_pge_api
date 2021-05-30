@@ -7,6 +7,7 @@ module Types
     field :rounds, [RoundType], null: false, resolver: Queries::Round::Rounds
     field :current_user, UserType, null: true, resolver: Queries::CurrentUser
     field :logout, Boolean, null: false, description: "Logout"
+    field :teams, [TeamType], null: false, resolver: Queries::Team::List
 
     def logout
       Session.where(id: context[:session_id]).destroy_all
@@ -15,6 +16,10 @@ module Types
 
     def current_rules
       Rule.last
+    end
+
+    def teams(**args)
+      Team.all.where(args)
     end
 
     def seasons
