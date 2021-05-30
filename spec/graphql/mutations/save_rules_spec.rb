@@ -10,9 +10,9 @@ RSpec.describe 'save rules mutation', type: :request do
   describe 'save_rules' do
     let(:text) { '<h2> Ja vai tarde </h2>' }
 
-    it 'should create a new rule' do
+    it 'should not permit unlogged users' do
       result =  CartolaPgeApiSchema.execute(save_rules_mutation, variables: { text: text })
-      expect(Rule.last.text).to eq(text)
+      expect(result["errors"].first["message"]).to eq("You don't have PERMISSION to access that content")
     end
   end
 end
