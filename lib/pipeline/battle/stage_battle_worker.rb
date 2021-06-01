@@ -12,7 +12,6 @@ module Pipeline
         BattleWorker.perform("closed_market")
         message
       end
-
     end
   end
 end

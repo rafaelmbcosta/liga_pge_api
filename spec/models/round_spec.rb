@@ -1,15 +1,14 @@
-# require 'rails_helper'
+require 'rails_helper'
 
-# module Api
-#   module V1
-#     RSpec.describe Round, type: :model do
-#       it_behaves_like 'round_progress'
+RSpec.describe Round, type: :model do
+  # it_behaves_like 'round_progress'
 
-#       before do
-#         DatabaseCleaner.start
-#         DatabaseCleaner.clean
-#         # allow(Round).to receive(:find_dispute_month).and_return(dispute_month)
-#       end
+  before do
+    DatabaseCleaner.start
+    DatabaseCleaner.clean
+  end
+end
+
 
 #       let(:season) { FactoryBot.create(:v1_season, year: 2019) }
 
@@ -405,5 +404,3 @@
 #         end
 #       end
 #     end
-#   end
-# end
