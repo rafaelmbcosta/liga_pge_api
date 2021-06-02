@@ -16,7 +16,7 @@ class Season < ApplicationRecord
   end
 
   def self.new_season
-    season = create!(year: Time.now.year)
+    create!(year: Time.now.year)
   end
 
   def create_rounds
