@@ -1,6 +1,7 @@
 # Gerencia tudo o que é relacionado as rodadas
 class Round < ApplicationRecord
   include Concern::Round::CheckNewRound
+  include Concern::Round::CloseMarket
   include Concern::Round::Routines
 
   belongs_to :season
@@ -22,7 +23,7 @@ class Round < ApplicationRecord
   end
 
   def self.get_by_number(market_status)
-    season.rounds.find { |round| round.number == market_status['rodada_atual'] }
+    Season.active.rounds.find { |round| round.number == market_status['rodada_atual'] }
   end
 
   def previous_round

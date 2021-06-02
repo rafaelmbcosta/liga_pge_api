@@ -10,7 +10,7 @@ module Concern::Round::CheckNewRound
       market_status = Connection.market_status
       raise 'Erro: mercado invalido / fechado' if market_status.nil? || market_status['status_mercado'] != 1
 
-      round = get_by_number(market_status['rodada_atual'])
+      round = Round.get_by_number(market_status['rodada_atual'])
       raise 'Rodada já existente' if round&.active
 
       raise 'Rodada já está finalizada' if round&.finished
@@ -25,6 +25,7 @@ module Concern::Round::CheckNewRound
       # return season.finish if number == 38
 
       previous_round.update(finished: true)
+      true
     end
 
     # def finish_season
