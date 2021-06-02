@@ -27,4 +27,11 @@ RSpec.describe Season, :type => :model do
       expect{ Season.create(seasons) }.to raise_error 'Season already exist'
     end
   end
+
+  describe 'new_season' do
+    it 'creates season and rounds' do
+      season = Season.new_season
+      expect(season.rounds.count).to eq(38)
+    end
+  end
 end

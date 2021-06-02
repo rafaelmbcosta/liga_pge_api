@@ -67,6 +67,8 @@ ActiveRecord::Schema.define(version: 2021_05_11_222621) do
     t.integer "season_id"
     t.boolean "finished", default: false, null: false
     t.boolean "active", default: false, null: false
+    t.boolean "market_closed", default: false, null: false
+    t.boolean "boolean", default: false, null: false
     t.integer "dispute_month_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
