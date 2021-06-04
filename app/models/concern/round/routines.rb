@@ -6,7 +6,7 @@ module Concern::Round::Routines
   included do
     def self.general_tasks_routine
       RoundWorker.perform
-      # TeamWorker.perform
+      TeamWorker.perform
       # SeasonWorker.perform("season_finished")
     end
 
