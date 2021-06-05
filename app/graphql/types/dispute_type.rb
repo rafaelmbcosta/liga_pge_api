@@ -4,12 +4,13 @@ module Types
     field :name, String, null: false
     field :order, Integer, null: true
     field :status, String, null: true
-    field :finished, Boolean, null: false
     field :season, SeasonType, null: false
     field :rounds, [RoundType], null: false
 
     def status
-      'active'
+      return 'active' if object.active?
+      return 'finished' if object.finished
+      'created'
     end
   end
 end

@@ -7,7 +7,7 @@ class Mutations::Dispute::Create < GraphQL::Schema::Mutation
 
   def resolve(name: String!)
     season = Season.active
-    raise "Temporada precisa ser criada !" if season.nil?
+    raise "Temporada precisa ser criada !" if season.blank?
 
     DisputeMonth.create!(season: season, name: name)
   end

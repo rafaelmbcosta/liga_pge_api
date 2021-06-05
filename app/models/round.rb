@@ -22,6 +22,14 @@ class Round < ApplicationRecord
     Season.active.rounds.find { |round| round.active }
   end
 
+  def status
+    return 'active' if active
+
+    return 'finished' if finished
+
+    'created'
+  end
+
   def self.get_by_number(market_status)
     Season.active.rounds.find { |round| round.number == market_status['rodada_atual'] }
   end
