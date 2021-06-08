@@ -21,6 +21,14 @@ class DisputeMonth < ApplicationRecord
     $redis.get("league")
   end
 
+  def status
+    return 'active' if active?
+
+    return 'finished' if finished
+
+    'created'
+  end
+
   def self.active?
     rounds.where(active: true).any?
   end

@@ -8,9 +8,7 @@ module Types
     field :rounds, [RoundType], null: false
 
     def status
-      return 'active' if object.active?
-      return 'finished' if object.finished
-      'created'
+      object.status
     end
   end
 end
