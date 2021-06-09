@@ -5,6 +5,7 @@ class Team < ApplicationRecord
   has_many :month_activities
 
   validate :check_battles, on: [:disable]
+  validates_uniqueness_of :id_tag, message: 'Time já cadastrado'
 
   scope :active, -> { where(active: true) }
 
