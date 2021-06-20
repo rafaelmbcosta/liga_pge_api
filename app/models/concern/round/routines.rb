@@ -10,7 +10,8 @@ module Concern::Round::Routines
       # SeasonWorker.perform("season_finished")
     end
 
-    def self.closed_market_routines(round_id = nil)
+    def self.closed_market_routines(round)
+      NewBattlesWorker.perform_now(round)
       # BattleWorker.perform("closed_market")
       # ScoresWorker.perform("closed_market")
       # pipeline = Pipeline::Pipe.new({round_id: round_id})
