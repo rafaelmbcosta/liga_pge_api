@@ -14,10 +14,6 @@ module Concern::Round::Routines
       NewBattlesWorker.perform_now(round)
       # BattleWorker.perform("closed_market")
       # ScoresWorker.perform("closed_market")
-      # pipeline = Pipeline::Pipe.new({round_id: round_id})
-      # pipeline.stage(Pipeline::Battle::StageBattleWorker.new())
-      # pipeline.stage(Pipeline::Scores::StageScoresWorker.new())
-      # pipeline.executa()
     end
 
     def self.round_finished_routines

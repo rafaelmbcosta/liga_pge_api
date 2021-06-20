@@ -17,9 +17,6 @@ class Round < ApplicationRecord
   after_update do
     finish_previous_round if saved_changes.dig('active', 1) == true
     Round.closed_market_routines(self) if saved_changes.dig('market_closed', 1) == true
-
-    # disparar a rotina (só que dessa vez essa é só para uma rodada específica).
-    # corrigir a rotina.
   end
 
   def self.active
