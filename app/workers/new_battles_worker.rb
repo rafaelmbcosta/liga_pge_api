@@ -9,6 +9,6 @@ class NewBattlesWorker < ApplicationJob
 
   private
   def show_battles
-    # to do
+    Battle.show_battles
   end
 end

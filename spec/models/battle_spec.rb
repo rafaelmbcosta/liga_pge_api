@@ -2,7 +2,7 @@ require 'rails_helper'
 
 RSpec.describe Battle, type: :model do
   it_behaves_like 'creation'
-  # it_behaves_like 'show_league'
+  it_behaves_like 'show_battles'
 
   describe 'find_battle' do
     let(:team) { FactoryBot.create(:team, id_tag: 1) }
@@ -57,23 +57,7 @@ end
 
 
 
-#   describe 'show_battle_data' do
-#     let(:team) { FactoryBot.create(:v1_team) }
-#     let(:rival) { FactoryBot.create(:v1_team) }
-#     let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
-#     let(:expectation) do
-#       return {
-#         first_name: "#{team.player_name} ( #{team.name} )",
-#         second_name: "#{rival.player_name} ( #{rival.name} )",
-#         first_team_symbol: team.url_escudo_png,
-#         second_team_symbol: rival.url_escudo_png
-#       }
-#     end
 
-#     it 'returns a hash with battle data' do
-#       expect(Battle.show_battle_data(battle, [team, rival])).to eq(expectation)
-#     end
-#   end
 
 #   describe 'show_list_battles' do
 #     let(:team) { FactoryBot.create(:v1_team) }
@@ -93,20 +77,6 @@ end
 #     end
 #   end
 
-#   describe 'battles_to_be_shown' do
-#     let(:team) { FactoryBot.create(:v1_team) }
-#     let(:rival) { FactoryBot.create(:v1_team) }
-#     let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
-
-#     before do
-#       allow(Battle).to receive(:where).and_return([battle])
-#     end
-
-#     it 'returns all battles where season is active' do
-#       expect(Battle.battles_to_be_shown).to eq(round.id => [battle])
-#     end
-#   end
-
 #   describe 'order_battle_report' do
 #     let(:original) do
 #       return [
@@ -116,48 +86,9 @@ end
 #       ]
 #     end
 
-#     let(:expectation) do
-#       return [
-#         { round: 3, battles: [] },
-#         { round: 2, battles: [] },
-#         { round: 1, battles: [] }
-#       ]
-#     end
 
-#     it 'returns array ordered by the round reverse' do
-#       expect(Battle.order_battle_report(original)).to eq(expectation)
-#     end
-#   end
 
-#   describe 'battle_report' do
-#     let(:team) { FactoryBot.create(:v1_team) }
-#     let(:rival) { FactoryBot.create(:v1_team) }
-#     let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
-#     let(:expectation) do
-#       return [
-#         { battles: [], round: 11 }
-#       ]
-#     end
 
-#     it 'return a list of battle groups' do
-#       allow(Battle).to receive(:show_list_battles).and_return([])
-#       expect(Battle.battle_report({ round.id => [battle] }, [team, rival])).to eq(expectation)
-#     end
-#   end
-
-#   describe 'show_battles' do
-#     let(:team) { FactoryBot.create(:v1_team) }
-#     let(:rival) { FactoryBot.create(:v1_team) }
-#     let(:battle) { Battle.create(round: round, first_id: team.id, second_id: rival.id) }
-
-#     it 'builds the battle service' do
-#       allow(Battle).to receive(:battles_to_be_shown).and_return([battle])
-#       allow(Team).to receive(:all).and_return([team, rival])
-#       allow(Battle).to receive(:battle_report).and_return([])
-#       allow(Battle).to receive(:order_battle_report).and_return([])
-#       expect(Battle.show_battles).to be_empty
-#     end
-#   end
 
 #   describe 'list_battles' do
 #     it 'returns whatever redis have' do
