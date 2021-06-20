@@ -38,7 +38,7 @@ module Concern::Battle::Creation
     end
 
     def self.pick_team(teams)
-      team = teams[rand(teams.size)]
+      team = teams.sample
       teams.delete(team)
       [team, teams]
     end
