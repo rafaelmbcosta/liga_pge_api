@@ -55,10 +55,6 @@ end
 #     end
 #   end
 
-
-
-
-
 #   describe 'show_list_battles' do
 #     let(:team) { FactoryBot.create(:v1_team) }
 #     let(:rival) { FactoryBot.create(:v1_team) }
