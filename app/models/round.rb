@@ -17,6 +17,7 @@ class Round < ApplicationRecord
   after_update do
     finish_previous_round if saved_changes.dig('active', 1) == true
     Round.closed_market_routines(self) if saved_changes.dig('market_closed', 1) == true
+    Round.round_finished_routines(self) if saved_changes.dig('finished', 1) == true
   end
 
   def self.active
