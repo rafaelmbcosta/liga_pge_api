@@ -16,7 +16,7 @@ module Concern::Round::Routines
 
     def self.round_finished_routines
       UpdateScoresWorker.perform_now(round)
-      # BattleWorker.perform('finished_round')
+      UpdateBattlesWorker.perform(round)
       # CurrencyWorker.perform
       # SeasonWorker.perform("finished_round")
     end

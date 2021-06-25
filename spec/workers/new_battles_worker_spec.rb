@@ -1,6 +1,6 @@
 require 'rails_helper'
 
-RSpec.describe BattleWorker do
+RSpec.describe NewBattlesWorker do
 
   before(:each) do
     allow(Battle).to receive(:create_battles).and_return('create_battles')
