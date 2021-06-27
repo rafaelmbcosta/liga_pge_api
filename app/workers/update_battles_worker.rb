@@ -1,4 +1,4 @@
-class UpdateBattlesWorker
+class UpdateBattlesWorker < ApplicationJob
 
   after_perform :show_league_scores
 

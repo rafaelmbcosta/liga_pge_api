@@ -4,6 +4,7 @@ RSpec.describe Battle, type: :model do
   it_behaves_like 'creation'
   it_behaves_like 'show_battles'
   it_behaves_like 'update_battles'
+  it_behaves_like 'show_league'
 
   describe 'find_battle' do
     let(:team) { FactoryBot.create(:team, id_tag: 1) }
@@ -17,6 +18,7 @@ RSpec.describe Battle, type: :model do
     end
   end
 end
+
 #   let(:season) { FactoryBot.create(:v1_season, year: 2019) }
 
 #   let(:dispute_month) do

@@ -1,5 +1,5 @@
 # Implement some jobs according to the flow
-class UpdateScoresWorker
+class UpdateScoresWorker < ApplicationJob
 
   after_perform :show_scores
 
@@ -8,7 +8,7 @@ class UpdateScoresWorker
   end
 
   private
-  def self.show_scores
+  def show_scores
     Score.show_scores
   end
 end
