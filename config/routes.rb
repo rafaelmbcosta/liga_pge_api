@@ -4,6 +4,7 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
+      get 'battles', to: 'battles#index'
       get 'battles/details', to: 'battles#details'
       get 'teams', to: 'teams#index'
       get 'teams/find_team', to: 'teams#find_team'
