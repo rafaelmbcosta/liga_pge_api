@@ -1,10 +1,12 @@
 class Team < ApplicationRecord
   include Concern::Team::Sync
+  include Concern::Team::BattleTeams
 
   has_many :currencies
   has_many :month_activities
 
   validate :check_battles, on: [:disable]
+  validates_uniqueness_of :id_tag, message: 'Time já cadastrado'
 
   scope :active, -> { where(active: true) }
 
@@ -24,15 +26,5 @@ class Team < ApplicationRecord
     battles = Battle.where("round_id in (:rounds) and (first_id = :team_id or second_id = :team_id)",
                           { team_id: self.id, rounds: dispute_month.dispute_rounds } )
     raise "Cannot disable because there is a battle with this team" if battles.present?
-  end
-
-  def self.ghost_needed?
-    active.size.odd?
-  end
-
-  def self.new_battle_teams
-    teams = active.to_a
-    teams << nil if ghost_needed?
-    teams
   end
 end

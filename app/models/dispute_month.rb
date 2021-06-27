@@ -7,7 +7,6 @@ class DisputeMonth < ApplicationRecord
   has_many :battles, through: :rounds
   has_many :month_activities
   has_many :currencies, through: :rounds
-  # has_many :awards
   serialize :dispute_rounds
 
   def self.scores
@@ -22,50 +21,20 @@ class DisputeMonth < ApplicationRecord
     $redis.get("league")
   end
 
-  def self.active
-    self.order('id asc').find_by(finished: false, season: Season.last)
+  def status
+    return 'active' if active?
+
+    return 'finished' if finished
+
+    'created'
+  end
+
+  def self.active?
+    rounds.where(active: true).any?
   end
 
   def self.active_rounds
     active_season = Season.active
     raise SeasonErrors::NoActiveSeasonError if active_season.nil?
   end
-
-  # def middle_month?
-  #   (self.dispute_rounds.include?(19) and self.dispute_rounds.index(19) + 1) <= self.dispute_rounds.length/2
-  # end
-
-  # def prize_pool
-  #   total = 0
-  #   active_players = self.month_activities.where(active: true)
-  #   return active_players.size * self.price
-  # end
-
-  # def golden_count
-  #   (self.season.golden_rounds & self.dispute_rounds).count
-  # end
-
-  # def currency_prize
-  #   prize_pool*0.0333
-  # end
-
-  # def golden_prize
-  #   # Total prize equals to 33.3 % of the total prize
-  #   # divided by the ammount of golden rounds
-  #   golden_prize_pool = prize_pool/3.0/golden_count # unless self.golden_count == 0
-  #   return split_prizes(self.active_players, golden_prize_pool)
-  # end
-
-  # def monthly_prize
-  #   # Total prize equals to 33.3 % of the total prize
-  #   monthly_prize_pool = prize_pool/3.0
-  #   # return monthly_prize_pool*0.5 , monthly_prize_pool*0.3, monthly_prize_pool*0.2
-  #   return split_prizes(self.active_players, monthly_prize_pool)
-  # end
-
-  # def league_prize
-  #   monthly_prize_pool = prize_pool*0.166666
-  #   # return monthly_prize_pool*0.5 , monthly_prize_pool*0.3, monthly_prize_pool*0.2
-  #   return split_prizes(self.active_players, monthly_prize_pool)
-  # end
 end

@@ -5,7 +5,11 @@ module Types
     field :market_closed, Boolean, null: false
     field :finished, Boolean, null: false
     field :golden, Boolean, null: false
-
+    field :status, String, null: true
     field :dispute, DisputeType, null: true
+  end
+
+  def status
+    object.status
   end
 end

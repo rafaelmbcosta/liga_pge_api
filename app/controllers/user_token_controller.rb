@@ -5,7 +5,7 @@ class UserTokenController < Knock::AuthTokenController
 
   def create
     if user = User.where(email: auth_params["email"]).first&.authenticate(auth_params["password"])
-      user.sessions.create(key: auth_token)
+      user.sessions.create(key: auth_token.token)
     end
     render json: auth_token, status: :created
   end

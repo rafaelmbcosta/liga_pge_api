@@ -8,11 +8,7 @@ class Connection
   ATHLETES_SCORES = 'https://api.cartolafc.globo.com/atletas/pontuados'.freeze
 
   def self.connect(uri)
-    # For proxy development change coment lines below
-    http = Net::HTTP::Proxy(ENV["proxy_name"], ENV["proxy_port"],
-      ENV["proxy_user"], ENV["proxy_password"]) if Rails.env == "development"
-    request = http.get_response(uri).body
-    # request = Net::HTTP.get(uri)
+    request = Net::HTTP.get(uri)
     JSON.parse(request)
   end
 
@@ -38,6 +34,7 @@ class Connection
 
   def self.team_score(id, round = nil)
     raise ConnectionErrors::InvalidIdTag if id.nil?
+
     uri = URI(URL_TEAM_SCORE + id.to_s)
     uri = URI(URL_TEAM_SCORE + "#{id}/#{round}") unless round.nil?
     connect(uri)

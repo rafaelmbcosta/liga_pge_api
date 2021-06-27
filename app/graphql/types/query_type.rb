@@ -5,6 +5,7 @@ module Types
     field :current_season, SeasonType, null: true, description: "Checks if there is an active Season"
     field :disputes, [DisputeType], null: false, resolver: Queries::Dispute::Disputes
     field :rounds, [RoundType], null: false, resolver: Queries::Round::Rounds
+    field :round_pool, [RoundType], null: false, resolver: Queries::Round::Pool
     field :current_user, UserType, null: true, resolver: Queries::CurrentUser
     field :logout, Boolean, null: false, description: "Logout"
     field :teams, [TeamType], null: false, resolver: Queries::Team::List

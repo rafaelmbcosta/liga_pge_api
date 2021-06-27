@@ -6,22 +6,17 @@ module Concern::Round::Routines
   included do
     def self.general_tasks_routine
       RoundWorker.perform
-      # TeamWorker.perform
-      # SeasonWorker.perform("season_finished")
+      TeamWorker.perform
     end
 
-    def self.closed_market_routines(round_id = nil)
-      # BattleWorker.perform("closed_market")
-      # ScoresWorker.perform("closed_market")
-      # pipeline = Pipeline::Pipe.new({round_id: round_id})
-      # pipeline.stage(Pipeline::Battle::StageBattleWorker.new())
-      # pipeline.stage(Pipeline::Scores::StageScoresWorker.new())
-      # pipeline.executa()
+    def self.closed_market_routines(round)
+      NewBattlesWorker.perform_now(round)
+      NewScoresWorker.perform_now(round)
     end
 
-    def self.round_finished_routines
-      # ScoresWorker.perform('finished_round')
-      # BattleWorker.perform('finished_round')
+    def self.round_finished_routines(round)
+      UpdateScoresWorker.perform_now(round)
+      UpdateBattlesWorker.perform_now(round)
       # CurrencyWorker.perform
       # SeasonWorker.perform("finished_round")
     end

@@ -5,6 +5,8 @@ class Mutations::Team::CreateById < GraphQL::Schema::Mutation
 
   def resolve(team_id: Integer)
     team = Team.create(id_tag: team_id)
+    raise team.errors.messages.values.join(', ') if team.errors.any?
+
     TeamWorker.perform
     team
   end

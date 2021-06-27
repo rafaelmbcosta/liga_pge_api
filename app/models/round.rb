@@ -16,10 +16,20 @@ class Round < ApplicationRecord
 
   after_update do
     finish_previous_round if saved_changes.dig('active', 1) == true
+    Round.closed_market_routines(self) if saved_changes.dig('market_closed', 1) == true
+    Round.round_finished_routines(self) if saved_changes.dig('finished', 1) == true
   end
 
   def self.active
     Season.active.rounds.find { |round| round.active }
+  end
+
+  def status
+    return 'active' if active
+
+    return 'finished' if finished
+
+    'created'
   end
 
   def self.get_by_number(market_status)
