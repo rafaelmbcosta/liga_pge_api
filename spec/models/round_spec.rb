@@ -25,8 +25,8 @@ RSpec.describe Round, type: :model do
     end
 
     it 'self.get_by_number find the corresponding round' do
-      expect(Round.get_by_number({ 'rodada_atual' => 1 })).to eq(active_round)
-      expect(Round.get_by_number({ 'rodada_atual' => 2 })).to eq(inactive_round)
+      expect(Round.get_by_number(1)).to eq(active_round)
+      expect(Round.get_by_number(2)).to eq(inactive_round)
     end
 
     it 'self.previous returns previous round' do
