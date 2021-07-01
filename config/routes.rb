@@ -11,6 +11,7 @@ Rails.application.routes.draw do
       post 'teams', to: 'teams#create'
       get 'league', to: 'dispute_months#league_points'
       post 'teams/activation', to: 'teams#activation'
+      get 'dispute_months', to: 'dispute_months#index'
     end
   end
   get 'championship', to: 'awards#championship'
