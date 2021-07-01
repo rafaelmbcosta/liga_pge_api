@@ -17,11 +17,12 @@ shared_examples 'update_battles' do
 
   describe 'update_battle_scores' do
     before do
+      allow(Team).to receive(:where).and_return([team])
       round.battles << battle
       allow(battle).to receive(:battle_results).and_return(true)
     end
 
-    it 'returns true aflter updating results' do
+    it 'returns true after updating results' do
       expect(Battle.update_battle_scores(round)).to be true
     end
   end

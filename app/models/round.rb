@@ -32,8 +32,8 @@ class Round < ApplicationRecord
     'created'
   end
 
-  def self.get_by_number(market_status)
-    Season.active.rounds.find { |round| round.number == market_status['rodada_atual'] }
+  def self.get_by_number(number)
+    Season.active.rounds.find { |round| round.number == number }
   end
 
   def previous_round
