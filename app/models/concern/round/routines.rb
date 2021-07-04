@@ -5,8 +5,9 @@ module Concern::Round::Routines
 
   included do
     def self.general_tasks_routine
-      RoundWorker.perform
-      TeamWorker.perform
+      NewRoundWorker.perform_now
+      MarketClosedWorker.perform_now
+      TeamWorker.perform_now
     end
 
     def self.closed_market_routines(round)

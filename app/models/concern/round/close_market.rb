@@ -5,6 +5,7 @@ module Concern::Round::CloseMarket
 
   included do
     def self.close_market
+      puts 'Closed market job starting...'
       market_status = Connection.market_status
       raise 'Mercado não está fechado no momento' unless market_status['market_closed']
 
@@ -14,6 +15,7 @@ module Concern::Round::CloseMarket
       raise 'Rodada atual nem está ativa' unless round.active
 
       round.update(market_closed: true)
+      puts '...done !'
     end
   end
 end

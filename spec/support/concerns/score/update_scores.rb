@@ -5,7 +5,7 @@ shared_examples 'update_scores' do
   before(:each) do
     DatabaseCleaner.start
     DatabaseCleaner.clean
-    allow(TeamWorker).to receive(:perform).and_return(true)
+    allow(TeamWorker).to receive(:perform_now).and_return(true)
   end
 
   let(:team) { FactoryBot.create(:team, id_tag: 1, active: true) }

@@ -11,7 +11,7 @@ class Team < ApplicationRecord
   scope :active, -> { where(active: true) }
 
   after_create do
-    TeamWorker.perform
+    TeamWorker.perform_now
   end
 
   def disable
