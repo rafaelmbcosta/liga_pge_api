@@ -6,6 +6,7 @@ module Concern::Round::CheckNewRound
   included do
     # only execute when market is open
     def self.new_round
+      puts 'New round job starting...'
       season = Season.active
       market_status = Connection.market_status
       raise 'Erro: mercado invalido / fechado' if market_status.nil? || market_status['status_mercado'] != 1
@@ -14,8 +15,8 @@ module Concern::Round::CheckNewRound
       raise 'Rodada já existente' if round&.active
 
       raise 'Rodada já está finalizada' if round&.finished
-
       round.update(active: true)
+      puts '...done !'
     end
 
     def finish_previous_round
