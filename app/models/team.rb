@@ -10,10 +10,6 @@ class Team < ApplicationRecord
 
   scope :active, -> { where(active: true) }
 
-  after_create do
-    TeamWorker.perform_now
-  end
-
   def disable
     dispute_month = DisputeMonth.active
     month_activity = self.month_activities.find_by(dispute_month: dispute_month)

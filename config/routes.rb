@@ -12,10 +12,10 @@ Rails.application.routes.draw do
       get 'league', to: 'dispute_months#league_points'
       post 'teams/activation', to: 'teams#activation'
       get 'dispute_months', to: 'dispute_months#index'
+      get 'currencies', to: 'currencies#index'
     end
   end
   get 'championship', to: 'awards#championship'
-  get 'currencies', to: 'currencies#index'
   get 'currencies/rerun', to: 'currencies#rerun'
   get 'season_dispute_months', to: 'dispute_months#active_rounds'
   get 'monthly', to: 'awards#monthly'
