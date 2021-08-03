@@ -11,7 +11,7 @@ class Currency < ApplicationRecord
                                   .where('rounds.number <= ?', round.number)
                                   .where(team_id: team_id)
                                   .where('rounds.season_id = ?', Season.active.id)
-    total_difference = previous_currencies.pluck(:difference).sum
+    total_difference = previous_currencies.pluck(:difference).compact.sum
     total_difference + 100
   end
 
@@ -26,13 +26,16 @@ class Currency < ApplicationRecord
   def self.save_currencies_round(round)
     Team.active.each do |team|
       team_score = Connection.team_score(team.id_tag, round.number)
-      variation = check_variation(team_score)
+      # Sometimes people miss some rounds and dont have a team_score
+      variation = check_variation(team_score) if team_score && team_score["atletas"]
       Currency.create(round: round, team: team, difference: variation)
     end
     true
   end
 
   def self.difference_details(currencies)
+    return [] if currencies.pluck(:difference).compact.empty?
+
     details = []
     currencies.each do |currency|
       details << { value: (currency.value).round(2), difference: currency.difference.round(2),
@@ -51,7 +54,7 @@ class Currency < ApplicationRecord
     team_details = []
     teams.each do |team|
       currencies = dispute_month.currencies.where(team: team).order('round_id desc')
-      difference = currencies.pluck(:difference).sum
+      difference = currencies.pluck(:difference).compact.sum
       team_details << { name: team.name, player: team.player_name,
                         difference: difference.round(2),
                         team_symbol: team.url_escudo_png,
