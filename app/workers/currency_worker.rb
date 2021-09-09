@@ -1,14 +1,14 @@
-class CurrencyWorker
-  def self.save_currencies
-    Currency.save_currencies
+class CurrencyWorker < ApplicationJob
+  queue_as :currencies
+
+  after_perform :show_currencies
+
+  def perform(round)
+    Currency.save_currencies(round)
   end
 
-  def self.show_currencies
+  private
+  def show_currencies
     Currency.show_currencies
-  end
-
-  def self.perform
-    save_currencies
-    show_currencies
   end
 end

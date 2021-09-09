@@ -7,6 +7,12 @@ module Api
         render json: @dispute_months
       end
 
+      def list
+        @dispute_months = Season.active.dispute_months
+
+        render json: @dispute_months
+      end
+
       def league_points
         @league_points = DisputeMonth.battle_points
 

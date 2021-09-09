@@ -4,7 +4,21 @@ class Currency < ApplicationRecord
   belongs_to :team
   belongs_to :round
 
-  delegate :number, to: :round, allow_nil: false
+  def self.save_currencies(round)
+    Team.active.each do |team|
+      team_score = Connection.team_score(team.id_tag, round.number)
+      # Sometimes people miss some rounds and dont have a team_score
+      variation = check_variation(team_score) if team_score && team_score["atletas"]
+      currency = find_or_initialize_by(round: round, team: team)
+      currency.difference = variation
+      currency.save
+    end
+    true
+  end
+
+  def self.check_variation(team_score)
+    team_score['atletas'].pluck('variacao_num').sum
+  end
 
   def value
     previous_currencies = Currency.joins(:round)
@@ -15,23 +29,13 @@ class Currency < ApplicationRecord
     total_difference + 100
   end
 
-  def self.rounds_avaliable_to_save_currencies
-    Round.rounds_avaliable_to_save_currencies
-  end
+  # def self.rounds_avaliable_to_save_currencies
+    # Round.rounds_avaliable_to_save_currencies
+  # end
 
-  def self.check_variation(team_score)
-    team_score['atletas'].pluck('variacao_num').sum
-  end
 
-  def self.save_currencies_round(round)
-    Team.active.each do |team|
-      team_score = Connection.team_score(team.id_tag, round.number)
-      # Sometimes people miss some rounds and dont have a team_score
-      variation = check_variation(team_score) if team_score && team_score["atletas"]
-      Currency.create(round: round, team: team, difference: variation)
-    end
-    true
-  end
+
+
 
   def self.difference_details(currencies)
     return [] if currencies.pluck(:difference).compact.empty?
@@ -89,23 +93,6 @@ class Currency < ApplicationRecord
       variation = check_variation(team_score)
       currency = Currency.find_by(round: round, team: team)
       currency.update_attributes(difference: variation)
-    end
-    true
-  end
-
-  def self.rerun_currencies
-    season = Season.active
-    season.rounds.each do |round|
-      find_and_update_currencies(round)
-    end
-    true
-  end
-
-  def self.save_currencies
-    rounds_avaliable_to_save_currencies.each do |round|
-      round.round_control.update_attributes(generating_currencies: true)
-      save_currencies_round(round)
-      round.round_control.update_attributes(currencies_generated: true)
     end
     true
   end
