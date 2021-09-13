@@ -13,6 +13,7 @@ Rails.application.routes.draw do
       post 'teams/activation', to: 'teams#activation'
       get 'dispute_months', to: 'dispute_months#index'
       get 'currencies', to: 'currencies#index'
+      get 'dispute_months/list', to: 'dispute_months#list'
     end
   end
   get 'championship', to: 'awards#championship'
