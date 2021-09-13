@@ -78,14 +78,4 @@ class Currency < ApplicationRecord
     end
     $redis.set('currencies', order_currency_report(dispute_months).to_json)
   end
-
-  def self.find_and_update_currencies(round)
-    Team.active.each do |team|
-      team_score = Connection.team_score(team.id_tag, round.number)
-      variation = check_variation(team_score)
-      currency = Currency.find_by(round: round, team: team)
-      currency.update_attributes(difference: variation)
-    end
-    true
-  end
 end
