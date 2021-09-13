@@ -29,14 +29,6 @@ class Currency < ApplicationRecord
     total_difference + 100
   end
 
-  # def self.rounds_avaliable_to_save_currencies
-    # Round.rounds_avaliable_to_save_currencies
-  # end
-
-
-
-
-
   def self.difference_details(currencies)
     return [] if currencies.pluck(:difference).compact.empty?
 
