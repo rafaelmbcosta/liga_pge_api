@@ -9,6 +9,7 @@ module Types
     field :current_user, UserType, null: true, resolver: Queries::CurrentUser
     field :logout, Boolean, null: false, description: "Logout"
     field :teams, [TeamType], null: false, resolver: Queries::Team::List
+    field :scores, [DisputeScoreType], null: true, resolver: Queries::Score::Scores
 
     def logout
       Session.where(id: context[:session_id]).destroy_all
