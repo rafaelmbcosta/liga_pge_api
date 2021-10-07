@@ -7,6 +7,8 @@ class Score < ApplicationRecord
   belongs_to :team
   belongs_to :round
 
+  delegate :dispute_month, to: :round, allow_nil: true
+
   validates_uniqueness_of :round_id, scope: :team_id, message: 'Score ja cadastrado'
 
   def self.create_scores(round)
