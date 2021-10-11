@@ -1,4 +1,6 @@
 [![Build Status](https://github.com/rafaelmbcosta/liga_pge_api/actions/workflows/build.yml/badge.svg)](https://github.com/rafaelmbcosta/liga_pge_api/actions)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/ab986d3e57ef4b0ba2a3a0e6299fc577)](https://www.codacy.com/gh/rafaelmbcosta/liga_pge_api/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=rafaelmbcosta/liga_pge_api&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Coverage/ab986d3e57ef4b0ba2a3a0e6299fc577)](https://www.codacy.com/gh/rafaelmbcosta/liga_pge_api/dashboard?utm_source=github.com&utm_medium=referral&utm_content=rafaelmbcosta/liga_pge_api&utm_campaign=Badge_Coverage)
 
 # Liga PGE API
 
