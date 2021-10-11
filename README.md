@@ -13,7 +13,7 @@ Current Stack:
 
 - Ruby 2.7.2
 - Rails 6.0.3.4
-- Graphql
+- GraphQL
 - Redis
 - Resque
 - RSpec
@@ -30,7 +30,7 @@ O Cartola FC é um fantasy game muito popular. Este projeto tem duas principais 
 Stack Atual:
 
 - Rails 6.0.3.4
-- Graphql
+- GraphQL
 - Redis
 - Resque
 - RSpec
