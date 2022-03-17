@@ -28,7 +28,7 @@ gem "knock", github: "nsarno/knock", branch: "master", ref: "9214cd027422df8dc31
 gem 'travis'
 # Use Capistrano for deployment
 # gem 'capistrano-rails', group: :development
-gem "nokogiri", ">= 1.10.4"
+gem "nokogiri", ">= 1.12.5"
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
 gem 'sinatra', '2.0.2'

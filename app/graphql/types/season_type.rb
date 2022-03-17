@@ -7,10 +7,6 @@ module Types
     end
     field :disputes, [DisputeType], null: false
 
-    # def self.visible?(context)
-    #   !!context[:current_user]
-    # end
-
     def rounds(**args)
       object.rounds.where(args)
     end
