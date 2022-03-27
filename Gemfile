@@ -35,6 +35,7 @@ gem 'sinatra', '2.0.2'
 # manage env variable
 gem "figaro"
 gem 'sprockets', '3.7.2'
+gem 'rswag'
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
@@ -44,6 +45,7 @@ group :development, :test do
   gem 'rspec-rails', '3.8.2'
   gem 'rspec-mocks', '3.8'
   gem 'rubocop-performance'
+  gem 'rswag-specs'
 
   # Mock rails models
   gem 'factory_bot_rails'

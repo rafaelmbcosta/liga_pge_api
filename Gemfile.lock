@@ -140,6 +140,8 @@ GEM
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
     json (2.5.1)
+    json-schema (2.8.1)
+      addressable (>= 2.4)
     jwt (2.2.3)
     launchy (2.4.3)
       addressable (~> 2.3)
@@ -256,6 +258,19 @@ GEM
       rspec-mocks (~> 3.8.0)
       rspec-support (~> 3.8.0)
     rspec-support (3.8.3)
+    rswag (2.5.1)
+      rswag-api (= 2.5.1)
+      rswag-specs (= 2.5.1)
+      rswag-ui (= 2.5.1)
+    rswag-api (2.5.1)
+      railties (>= 3.1, < 7.1)
+    rswag-specs (2.5.1)
+      activesupport (>= 3.1, < 7.1)
+      json-schema (~> 2.2)
+      railties (>= 3.1, < 7.1)
+    rswag-ui (2.5.1)
+      actionpack (>= 3.1, < 7.1)
+      railties (>= 3.1, < 7.1)
     rubocop (1.14.0)
       parallel (~> 1.10)
       parser (>= 3.0.0.0)
@@ -354,6 +369,8 @@ DEPENDENCIES
   resque
   rspec-mocks (= 3.8)
   rspec-rails (= 3.8.2)
+  rswag
+  rswag-specs
   rubocop-performance
   rubocop-rspec (= 1.27.0)
   shoulda-matchers (~> 3.1)
