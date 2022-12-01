@@ -31,7 +31,7 @@ gem 'travis'
 gem "nokogiri", ">= 1.12.5"
 # Use Rack CORS for handling Cross-Origin Resource Sharing (CORS), making cross-origin AJAX possible
 gem 'rack-cors'
-gem 'sinatra', '2.0.2'
+gem 'sinatra', '2.2.3'
 # manage env variable
 gem "figaro"
 gem 'sprockets', '3.7.2'
