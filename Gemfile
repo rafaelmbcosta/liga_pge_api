@@ -12,7 +12,7 @@ gem 'resque'
 gem 'rails', '~> 6.0.4.1'
 # Use mysql as the database for Active Record
 gem 'pg'
-gem 'rack', '~> 2.2.3'
+gem 'rack', '~> 2.2.6'
 gem "loofah", '>= 2.2.3'
 # Use Puma as the app server
 gem 'puma', '~> 4.3.8'
